@@ -75,46 +75,58 @@ function CreateAccount({ setAuthenticationStatus }) {
             navigate("/")
       }
 
-
-  return (
-    <div className="flex-container">
-      <div>
-        <form name="message" onSubmit={handleSubmit}>
-          <span>
-            <label htmlFor="Email">Email</label>
-            <input
-              id="email"
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </span>
-
-          <span>
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </span>
-
-          <span>
-            <input type="submit" id="submit" value="Create Account" />
-          </span>
-
-          <span>
-            <input type="button" value="Already have an account?" onClick={loginPage} />
-          </span>
-          
-          {errorStatus && <p> {errorMessage} </p>}
-        </form>
-      </div>
-    </div>
-  );
+      function Header() {
+        return (
+          <header>
+            <div className='flex'>
+              <div className="logo">
+                <img src="your-logo-left.png" alt="Left Logo" />
+              </div>
+              <div className="brand">
+                <span>Hoop:Easy</span>
+              </div>
+            </div>
+            <div className="spacer"></div>
+            <div className="logo">
+              <img src="your-logo-right.png" alt="Right Logo" />
+            </div>
+          </header>
+        );
+      }
+      
+      function LeftPanel() {
+        return (
+          <div className="left-panel">
+            left
+          </div>
+        );
+      }
+      
+      function RightPanel() {
+        return (
+          <div className="right-panel">
+            <h1>Join the fastest growing community in basketball</h1>
+            
+            <div>
+                <div className="rect">
+                  <h1>Create An Account</h1>
+                </div>
+                <p>already have one? login <b className="bold">here</b>.</p>
+            </div>
+          </div>
+        );
+      }
+      
+      
+      return (
+        <div className="App">
+          <Header />
+          <main>
+            <LeftPanel />
+            <RightPanel />
+          </main>
+        </div>
+      );
 }
 
 export default CreateAccount;

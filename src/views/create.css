@@ -1,0 +1,157 @@
+
+@font-face {
+font-family: 'Montserrat-BoldItalic';
+src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-BoldItalic.ttf');
+font-weight: bold;
+font-style: italic;
+}
+
+@font-face {
+font-family: 'Montserrat';
+src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Regular.ttf');
+font-weight: bold;
+font-style: italic;
+}
+
+@font-face {
+font-family: 'Montserrat-Bold';
+src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Bold.ttf');
+}
+
+:root {
+--background-gradient-start: #FA642F;
+--background-dark-orange: #A22A1B;
+--font-bold-italic: 'Montserrat-BoldItalic';
+--font-bold: 'Montserrat-Bold';
+--font-family: 'Montserrat';
+}
+
+html, body {
+margin: 0;
+padding: 0;
+height: 100%;
+font-family: var(--font-family);
+}
+
+body {
+margin: 0;
+padding: 0;
+width: 100vw;
+height: 100vh;
+background: 
+linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), /* Black background with 85% opacity */
+url("/Users/pmcslarrow/Developer/hoop-easy/public/hoop.jpg") no-repeat center center;
+background-size: cover;
+}
+
+header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: linear-gradient(90deg, var(--background-gradient-start), var(--background-dark-orange), black);
+padding: 10px 20px;
+}
+
+.logo img {
+max-width: 50px; 
+height: auto;
+}
+
+.brand {
+color: #fff; 
+font-size: 24px; 
+}
+
+spacer {
+flex-grow: 1; 
+}
+
+main {
+display: flex;
+justify-content: center; 
+align-items: center; 
+height: 88vh;
+}
+/*********************************************************************/
+
+
+/* Left side of the flexbox */
+.left-panel, .right-panel {
+width: 40%;
+height: 85%;
+}
+
+.left-panel {
+background-color: #f0f0f0; 
+border-radius: 75px;
+}
+
+
+
+/* Right side of the flexbox */
+.right-panel {
+background-color: transparent; 
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+}
+
+.right-panel h1 {
+font-family: var(--font-bold-italic);
+font-size: 3.2vw;
+padding-left: 50px;
+color: white;
+}
+
+.right-panel p:nth-child(2), .right-panel p {
+padding-left: 50px;
+color: white;
+}
+
+.flex {
+display: flex;
+flex-direction: row;
+}
+
+
+
+
+/* Create an account rectangle */ 
+.rect {
+height: 150px;
+background: linear-gradient(90deg, transparent, var(--background-gradient-start), var(--background-gradient-start));
+color: white;
+font-size: 3.5vw;
+
+display: flex;
+align-items: center;
+border-radius: 0 20px 20px 0;
+}
+
+.rect:hover {
+cursor: pointer;
+}
+
+.rect:hover h1 {
+transform: translateX(15px); 
+}
+
+.rect h1 {
+transition: transform 250ms; 
+transform: translateX(0); 
+font-size: 4vw;
+}
+
+
+
+/* Bolding the word "here" */
+.bold {
+font-family: var(--font-bold);
+}
+
+.bold:hover {
+cursor: pointer;
+}
+
+
+
