@@ -126,25 +126,40 @@ function CreateAccount({ setAuthenticationStatus }) {
 
 
 
+
 function PlayerCustomizationForm() {
   const navigate = useNavigate();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [retypePassword, setRetypePassword] = useState("");
-  const [feet, setFeet] = useState("");
-  const [inches, setInches] = useState("");
-  const [weight, setWeight] = useState("");
+  const [errorStatus, setError] = useState(false);
   const [errorMessage, setMessage] = useState('');
-  const [error, setError] = useState(false)
   const userCollectionRef = collection(db, "users");
- 
+  const [formData, setFormData] = useState({
+    profilePhoto: null,
+    firstName: '',
+    middleInitial: '',
+    lastName: '',
+    email: '',
+    username: '',
+    password: '',
+    retypePassword: '',
+    heightFt: '',
+    heightInches: '',
+  });
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'file' ? files[0] : value,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData)
+    return
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
 
       addUserData();
 
@@ -155,8 +170,7 @@ function PlayerCustomizationForm() {
       setTimeout(() => {
         navigate("/");
       }, 5000);
-
-    } catch(err) {
+    } catch (err) {
       handleError(setError, setMessage, err);
     }
   };
@@ -173,10 +187,142 @@ function PlayerCustomizationForm() {
     });
   };
 
-
   return (
-    <div style={{"color": "white"}}>Form</div>
+    <form>
+      <div className="form-container">
+        <div id="photo-upload">Upload Profile Photo</div>
+        
+        <div id="user-input">
+          <span className='flex-row'>
+            <label>
+              First Name*
+              <input
+                type="text"
+                name="firstName"
+                id="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                required
+              />
+            </label>
+            <label>
+              Middle Initial
+              <input
+                type="text"
+                name="middleInitial"
+                id="middleInitial"
+                value={formData.middleInitial}
+                onChange={handleInputChange}
+              />
+            </label>
+          </span>
+          <label>
+            Last Name*
+            <input
+              type="text"
+              name="lastName"
+              id="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+          <label>
+            Email*
+            <input
+              type="text"
+              name="email"
+              id="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+          <label>
+            Username*
+            <input
+              type="text"
+              name="username"
+              id="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+          <label>
+            Password*
+            <input
+              type="text"
+              name="password"
+              id="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+          <label>
+            Retype Password*
+            <input
+              type="text"
+              name="retypePassword"
+              id="retypePassword"
+              value={formData.retypePassword}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+        </div> {/* user-input */}
+
+        <div id='optional'>
+          <span className='flex-col'>
+            <div>
+              <label>Height
+              <span className='flex-row'>
+                <label>
+                    <input
+                      type="text"
+                      name="heightFt"
+                      id="heightFt"
+                      value={formData.heightFt}
+                      onChange={handleInputChange}
+                      placeholder="ft"
+                    />
+                  </label>
+                  <label>
+                    <input
+                      type="text"
+                      name="heightInches"
+                      id="heightInches"
+                      value={formData.heightInches}
+                      onChange={handleInputChange}
+                      placeholder="in"
+                    />
+                  </label>
+              </span>
+              <label>
+                Weight
+                <input
+                  type="text"
+                  name="weight"
+                  id="weight"
+                  value={formData.weight}
+                  onChange={handleInputChange}
+                  placeholder="lbs"
+                />
+              </label>
+              </label>
+            </div>
+
+            <button type="submit" onClick={handleSubmit}>
+              Submit
+            </button>
+          </span>
+            
+        </div>
+      </div> { /* form-container */}
+    </form>
   );
+  
 }
 
 
