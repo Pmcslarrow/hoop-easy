@@ -16,8 +16,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={isAuthenticated ? <Homepage setAuthenticationStatus={setAuthenticationStatus} /> : <LoginPage setAuthenticationStatus={setAuthenticationStatus} />} />
-        <Route path="/createAccount" element={<CreateAccount setAuthenticationStatus={setAuthenticationStatus} />} />
+        <Route path="/" element={isAuthenticated ? <Homepage setAuthenticationStatus={setAuthenticationStatus} /> : <CreateAccount setAuthenticationStatus={setAuthenticationStatus} />} />
+       {/*  <Route path="/createAccount" element={<CreateAccount setAuthenticationStatus={setAuthenticationStatus} />} /> */}
         <Route path="/login" element={<LoginPage setAuthenticationStatus={setAuthenticationStatus} />} />
         <Route path="/homepage" element={isAuthenticated ? <Homepage setAuthenticationStatus={setAuthenticationStatus} /> : <Navigate to="/" />} />
       </Routes>

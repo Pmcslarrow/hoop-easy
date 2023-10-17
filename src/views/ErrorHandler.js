@@ -16,6 +16,12 @@ export const handleError = (setError, setMessage, err) => {
         case "auth/weak-password":
           setMessage("Password is too weak. Please choose a stronger password.");
           break;
+        case "auth/incomplete-form-error":
+          setMessage("Please fill out all required parts of the form.");
+          break;
+        case 'auth/password-and-retype-password-error':
+          setMessage("Your password and retyped password do not match.")
+          break;
         default:
           setMessage("An error occurred during registration. Please try again later.");
           break;

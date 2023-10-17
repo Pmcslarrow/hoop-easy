@@ -131,6 +131,7 @@ function PlayerCustomizationForm() {
   const navigate = useNavigate();
   const [errorStatus, setError] = useState(false);
   const [errorMessage, setMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false)
   const userCollectionRef = collection(db, "users");
   const [formData, setFormData] = useState({
     profilePhoto: null,
@@ -154,26 +155,73 @@ function PlayerCustomizationForm() {
     });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+  
+    if (file) {
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; // Define the allowed image MIME types
+  
+      if (allowedTypes.includes(file.type)) {
+        setFormData({
+          ...formData,
+          profilePhoto: file,
+        });
+      } else {
+        alert('Please select a valid image file (JPEG, PNG, or GIF).');
+        e.target.value = '';
+      }
+    }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  }
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
-    return
+  
+    // Check if any of the required fields are empty
+    if (
+      formData.firstName.trim() === '' ||
+      formData.lastName.trim() === '' ||
+      formData.email.trim() === '' ||
+      formData.username.trim() === '' ||
+      formData.password.trim() === '' ||
+      formData.retypePassword.trim() === ''
+    ) {
+      // Handle the incomplete form error
+      handleError(setError, setMessage, {
+        code: 'auth/incomplete-form-error',
+        message: 'Please fill in all required fields.',
+      });
+      return;
+    }
+
+    if ( formData.password !== formData.retypePassword ) {
+      handleError(setError, setMessage, {
+        code: 'auth/password-and-retype-password-error',
+        message: 'Your password and retyped password do not match.',
+      });
+      return
+    }
+  
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-
+  
       addUserData();
-
+  
       await sendEmailVerification(userCredential.user);
       setMessage("Please verify your email.");
       setError(true);
-
+  
       setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 5000);
     } catch (err) {
       handleError(setError, setMessage, err);
     }
   };
+  
 
   const addUserData = async () => {
     const currentDate = Timestamp.now();
@@ -190,7 +238,10 @@ function PlayerCustomizationForm() {
   return (
     <form>
       <div className="form-container">
-        <div id="photo-upload">Upload Profile Photo</div>
+        <label>
+          Upload Profile Photo
+          <input type='file' onChange={handleFileChange}/>
+        </label>
         
         <div id="user-input">
           <span className='flex-row'>
@@ -252,7 +303,7 @@ function PlayerCustomizationForm() {
           <label>
             Password*
             <input
-              type="text"
+              type={showPassword ? 'text' : 'password'}
               name="password"
               id="password"
               value={formData.password}
@@ -263,7 +314,7 @@ function PlayerCustomizationForm() {
           <label>
             Retype Password*
             <input
-              type="text"
+              type="password"
               name="retypePassword"
               id="retypePassword"
               value={formData.retypePassword}
@@ -316,6 +367,8 @@ function PlayerCustomizationForm() {
             <button type="submit" onClick={handleSubmit}>
               Submit
             </button>
+
+            <p>{errorStatus ? errorMessage : ""}</p>
           </span>
             
         </div>
