@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from "../config/firebase"
 import { signOut, signInWithEmailAndPassword } from 'firebase/auth'
 import { handleError } from './ErrorHandler';
+import { motion, AnimatePresence } from 'framer-motion';
+import hoopEasyLogo from '../images/hoop-easy.png';
+import navButtonImg from '../images/269dd16fa1f5ff51accd09e7e1602267.png';
 import './login.css';
 
 // Utlizes firebases' authentication processes such that the user cannot get into the dashboard without
@@ -53,55 +56,69 @@ function LoginPage({ setAuthenticationStatus }) {
         console.log("Reset password")
       }
       
+      return (
+        <>
+        <Header />
+        
+        <div className='container'>
+          <div className='square'>
+            email
+          </div>
+        </div>
+        </>
+      );
+}
 
+
+{ /* HEADER */}
+function Header() {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const Navbar = () => {
+    return (
+      <header>
+        <img src={hoopEasyLogo} alt="Logo" />
+        <div className="spacer"></div>
+        <div className="logo">
+          <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} alt="Navigation button (three lines)" />
+        </div>
+      </header>
+    );
+  }
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
 
   return (
-    <div className="container">
-      <div>
-        <form name="message" onSubmit={handleSubmit}>
+    <>
+      <Navbar />
 
-            {/* Email section */}
-            <span>
-              <label htmlFor="Email">Email</label>
-              <input
-                id="email"
-                type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </span>
-
-            {/* Password section */}
-            <span>
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </span>
-
-            {/* Login button */}
-            <span>
-              <input type="submit" id="submit" value="Login" />
-            </span>
-
-            {/* Forgot Password */}
-            <span>forgot password? click here</span>
-
-            {/* Create an account */}
-            <span>
-              <input type="button" value="Create Account" onClick={createAccount} />
-            </span>
-
-          {errorStatus && <p> {errorMessage} </p>}
-
-        </form>
-      </div>
-    </div>
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            className="sidebar"
+            initial={{ width: '100%', height: '0%', zIndex: 1 }} // Add a higher z-index
+            animate={{ width: '100%', height: '88%', zIndex: 1 }} // Add a higher z-index
+            exit={{
+              width: '100%',
+              height: '0%',
+              transition: { duration: 0.3 },
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.1 } }}
+            >
+              <a href="#" className="sidebar-link">ABOUT HOOP:EASY</a>
+              <a href="#" className="sidebar-link">Rankings</a>
+              <a href="#" className="sidebar-link">FAQs</a>
+              <a href="#" className="sidebar-link">HELP</a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 

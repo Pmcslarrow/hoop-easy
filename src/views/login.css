@@ -1,0 +1,10 @@
+.container {
+      width: 40vw;
+      height: 60vh;
+      background-color: pink;
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+}
+    

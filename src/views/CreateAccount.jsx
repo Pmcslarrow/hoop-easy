@@ -6,10 +6,12 @@ import { handleError } from './ErrorHandler';
 import { db } from '../config/firebase';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
-import './create.css';
 import hoopEasyLogo from '../images/hoop-easy.png';
 import navButtonImg from '../images/269dd16fa1f5ff51accd09e7e1602267.png';
+import './create.css';
 
+
+{ /* CREATE ACCOUNT */}
 function CreateAccount({ setAuthenticationStatus }) {
   const navigate = useNavigate()
   const [showCustomizationForm, setShowCustomizationForm] = useState(false);
@@ -58,57 +60,6 @@ function CreateAccount({ setAuthenticationStatus }) {
     );
   }
 
-  function Header() {
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
-  
-    const Navbar = () => {
-      return (
-        <header>
-          <img src={hoopEasyLogo} alt="Logo" />
-          <div className="spacer"></div>
-          <div className="logo">
-            <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} alt="Navigation button (three lines)" />
-          </div>
-        </header>
-      );
-    }
-  
-    const toggleSidebar = () => {
-      setSidebarOpen(!isSidebarOpen);
-    };
-  
-    return (
-      <>
-        <Navbar />
-  
-        <AnimatePresence>
-          {isSidebarOpen && (
-            <motion.div
-              className="sidebar"
-              initial={{ width: '100%', height: '0%', zIndex: 1 }} // Add a higher z-index
-              animate={{ width: '100%', height: '88%', zIndex: 1 }} // Add a higher z-index
-              exit={{
-                width: '100%',
-                height: '0%',
-                transition: { duration: 0.3 },
-              }}
-            >
-              <motion.div
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0, transition: { duration: 0.1 } }}
-              >
-                <a href="#" className="sidebar-link">ABOUT HOOP:EASY</a>
-                <a href="#" className="sidebar-link">Rankings</a>
-                <a href="#" className="sidebar-link">FAQs</a>
-                <a href="#" className="sidebar-link">HELP</a>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </>
-    );
-  }
-  
   return (
     <div className="App">
       <Header />
@@ -126,12 +77,62 @@ function CreateAccount({ setAuthenticationStatus }) {
   );
 }
 
+{ /* HEADER */}
+function Header() {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const Navbar = () => {
+    return (
+      <header>
+        <img src={hoopEasyLogo} alt="Logo" />
+        <div className="spacer"></div>
+        <div className="logo">
+          <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} alt="Navigation button (three lines)" />
+        </div>
+      </header>
+    );
+  }
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
+
+  return (
+    <>
+      <Navbar />
+
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            className="sidebar"
+            initial={{ width: '100%', height: '0%', zIndex: 1 }} // Add a higher z-index
+            animate={{ width: '100%', height: '88%', zIndex: 1 }} // Add a higher z-index
+            exit={{
+              width: '100%',
+              height: '0%',
+              transition: { duration: 0.3 },
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.1 } }}
+            >
+              <a href="#" className="sidebar-link">ABOUT HOOP:EASY</a>
+              <a href="#" className="sidebar-link">Rankings</a>
+              <a href="#" className="sidebar-link">FAQs</a>
+              <a href="#" className="sidebar-link">HELP</a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
 
 
 
 
-
-
+{ /* PLAYER CUSTOMIZATION FORM */}
 function PlayerCustomizationForm({ formToggle }) {
   const navigate = useNavigate();
   const [errorStatus, setError] = useState(false);
@@ -243,7 +244,6 @@ function PlayerCustomizationForm({ formToggle }) {
   return (
     <form>
       <div className="form-container">
-        
         <div id='back-button-side'>
           <span className='flex-col'>
             <div></div>
@@ -252,9 +252,6 @@ function PlayerCustomizationForm({ formToggle }) {
             </div>
           </span>
         </div>
-
-
-
         <div id="user-input">
           <span className='flex-row'>
             <label>
@@ -391,4 +388,4 @@ function PlayerCustomizationForm({ formToggle }) {
 
 
 
-export default CreateAccount;
+export default CreateAccount ;
