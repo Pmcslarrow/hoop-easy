@@ -11,6 +11,7 @@ import hoopEasyLogo from '../images/hoop-easy.png';
 import navButtonImg from '../images/269dd16fa1f5ff51accd09e7e1602267.png';
 
 function CreateAccount({ setAuthenticationStatus }) {
+  const navigate = useNavigate()
   const [showCustomizationForm, setShowCustomizationForm] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,10 @@ function CreateAccount({ setAuthenticationStatus }) {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  const navigateLogin = () => {
+    navigate("/login")
   }
 
   const toggleCustomizationForm = () => {
@@ -47,7 +52,7 @@ function CreateAccount({ setAuthenticationStatus }) {
           <span className="rect">
             <h1>Create An Account</h1>
           </span>
-          <p>already have one? login <b className="bold">here</b>.</p>
+          <p onClick={navigateLogin}>already have one? login <b className="bold">here</b>.</p>
         </div>
       </div>
     );
@@ -109,7 +114,7 @@ function CreateAccount({ setAuthenticationStatus }) {
       <Header />
       <main>
         {showCustomizationForm ? (
-          <PlayerCustomizationForm />
+          <PlayerCustomizationForm formToggle={toggleCustomizationForm}/>
         ) : (
           <>
             <LeftPanel />
@@ -127,7 +132,7 @@ function CreateAccount({ setAuthenticationStatus }) {
 
 
 
-function PlayerCustomizationForm() {
+function PlayerCustomizationForm({ formToggle }) {
   const navigate = useNavigate();
   const [errorStatus, setError] = useState(false);
   const [errorMessage, setMessage] = useState('');
@@ -238,11 +243,18 @@ function PlayerCustomizationForm() {
   return (
     <form>
       <div className="form-container">
-        <label>
-          Upload Profile Photo
-          <input type='file' onChange={handleFileChange}/>
-        </label>
         
+        <div id='back-button-side'>
+          <span className='flex-col'>
+            <div></div>
+            <div>
+              <button type='button' id='back-button' onClick={formToggle}>Back</button>
+            </div>
+          </span>
+        </div>
+
+
+
         <div id="user-input">
           <span className='flex-row'>
             <label>
@@ -257,7 +269,7 @@ function PlayerCustomizationForm() {
               />
             </label>
             <label>
-              Middle Initial
+              MI
               <input
                 type="text"
                 name="middleInitial"
@@ -361,19 +373,17 @@ function PlayerCustomizationForm() {
                   placeholder="lbs"
                 />
               </label>
-              </label>
+            </label>
             </div>
-
-            <button type="submit" onClick={handleSubmit}>
+            <button type="submit" onClick={handleSubmit} id='submit-button'>
               Submit
             </button>
-
-            <p>{errorStatus ? errorMessage : ""}</p>
           </span>
-            
-        </div>
+        </div> { /* Optional */}
       </div> { /* form-container */}
+      <p id='error-message'>{errorStatus ? errorMessage : ""}</p>
     </form>
+    
   );
   
 }

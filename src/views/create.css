@@ -197,7 +197,7 @@ input, label {
 .form-container {
       display: flex;
       justify-content: center;
-      gap: 115px;
+      gap: 50px;
       color: white;
 }
 
@@ -214,17 +214,17 @@ label {
 }
 
 #firstName {
-      width: 29vw;
+      width: 26vw;
       height: 35px;
 } 
 
 #middleInitial {
-      width: 8vw;
+      width: 4.75vw;
       height: 35px;
 }
 
 #lastName, #email, #username, #password, #retypePassword {
-      width: 40vw;
+      width: 32vw;
       height: 35px;
 }
 
@@ -236,9 +236,18 @@ label {
       width: 75px;
 }
 
-button {
+#file-selection {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+}
+
+
+
+#submit-button {
       width: 100%;
       height: 35px;
+      border: none;
       border-radius: 10px;
       background-color: var(--background-gradient-start);
       font-size: larger;
@@ -246,15 +255,34 @@ button {
       color: white;
 }
 
-button:hover {
+#back-button {
+      width: 170.5px;
+      height: 35px;
+      border: none;
+      border-radius: 10px;
+      background-color: var(--background-gradient-start);
+      font-size: larger;
+      font-family: var(--font-bold);
+      color: white;
+      margin-left: 25px;
+}
+
+#submit-button:hover {
       cursor: pointer;
+      background-color: var(--background-dark-orange);
+}
+
+#error-message {
+      color: white;
+      text-align: center;
+      margin-right: 20px;
 }
 
 .flex-row {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      gap: 15px;
+      gap: 10px;
 }
 
 .flex-col {
