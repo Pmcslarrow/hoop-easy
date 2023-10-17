@@ -31,6 +31,7 @@ margin: 0;
 padding: 0;
 height: 100%;
 font-family: var(--font-family);
+overflow: hidden;
 }
 
 body {
@@ -154,7 +155,7 @@ cursor: pointer;
 
 .sidebar {
       position: absolute; /* It's important to use relative positioning here */
-      background-color: white;
+      background: linear-gradient(90deg, var(--background-gradient-start), var(--background-dark-orange), black);
 }
     
 .sidebar div {
@@ -165,10 +166,15 @@ cursor: pointer;
 }
 
 .sidebar a {
-      font-size: 50px;
+      color: white;
+      font-family: var(--font-bold);
+      font-size: 35px;
       height: 100%;
+      text-decoration: none;
+      padding: 20px;
+      text-align: right;
 }
 
 .sidebar-link:hover {
-      background-color: #A22A1B;
+      background-color: var(--background-gradient-start);
 }

@@ -9,54 +9,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './create.css';
 import hoopEasyLogo from '../images/hoop-easy.png';
 import navButtonImg from '../images/269dd16fa1f5ff51accd09e7e1602267.png';
-import { isDOMComponent } from 'react-dom/test-utils';
 
 function CreateAccount({ setAuthenticationStatus }) {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorStatus, setError] = useState(false);
-  const [errorMessage, setMessage] = useState('');
-  const userCollectionRef = collection(db, "users");
+  const [showCustomizationForm, setShowCustomizationForm] = useState(false);
 
   useEffect(() => {
     logout();
     setAuthenticationStatus(false);
   }, []);
-
-
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-      addUserData();
-
-      await sendEmailVerification(userCredential.user);
-      setMessage("Please verify your email.");
-      setError(true);
-
-      setTimeout(() => {
-        navigate("/");
-      }, 5000);
-
-    } catch(err) {
-      handleError(setError, setMessage, err);
-    }
-  };
-
-  const addUserData = async () => {
-    const currentDate = Timestamp.now();
-    const atIndex = auth?.currentUser?.email?.indexOf('@');
-    const userName = atIndex !== -1 ? auth?.currentUser?.email?.slice(0, atIndex) : '';
-
-    await addDoc(userCollectionRef, {
-      name: userName,
-      email: auth?.currentUser?.email,
-      date: currentDate
-    });
-  };
 
   const logout = async () => {
     try {
@@ -66,8 +26,8 @@ function CreateAccount({ setAuthenticationStatus }) {
     }
   }
 
-  const loginPage = () => {
-    navigate("/");
+  const toggleCustomizationForm = () => {
+    setShowCustomizationForm(!showCustomizationForm)
   }
 
   function LeftPanel() {
@@ -83,7 +43,7 @@ function CreateAccount({ setAuthenticationStatus }) {
       <div className="right-panel">
         <h1>Join the fastest growing community in basketball</h1>
 
-        <div>
+        <div onClick={toggleCustomizationForm}>
           <span className="rect">
             <h1>Create An Account</h1>
           </span>
@@ -132,9 +92,10 @@ function CreateAccount({ setAuthenticationStatus }) {
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0, transition: { duration: 0.1 } }}
               >
-                <a href="#" className="sidebar-link">Link 1</a>
-                <a href="#" className="sidebar-link">Link 2</a>
-                <a href="#" className="sidebar-link">Link 3</a>
+                <a href="#" className="sidebar-link">ABOUT HOOP:EASY</a>
+                <a href="#" className="sidebar-link">Rankings</a>
+                <a href="#" className="sidebar-link">FAQs</a>
+                <a href="#" className="sidebar-link">HELP</a>
               </motion.div>
             </motion.div>
           )}
@@ -143,17 +104,82 @@ function CreateAccount({ setAuthenticationStatus }) {
     );
   }
   
-  
-
   return (
     <div className="App">
       <Header />
       <main>
-        <LeftPanel />
-        <RightPanel />
+        {showCustomizationForm ? (
+          <PlayerCustomizationForm />
+        ) : (
+          <>
+            <LeftPanel />
+            <RightPanel />
+          </>
+        )}
       </main>
     </div>
   );
 }
+
+
+
+
+
+
+function PlayerCustomizationForm() {
+  const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [retypePassword, setRetypePassword] = useState("");
+  const [feet, setFeet] = useState("");
+  const [inches, setInches] = useState("");
+  const [weight, setWeight] = useState("");
+  const [errorMessage, setMessage] = useState('');
+  const [error, setError] = useState(false)
+  const userCollectionRef = collection(db, "users");
+ 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+      addUserData();
+
+      await sendEmailVerification(userCredential.user);
+      setMessage("Please verify your email.");
+      setError(true);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 5000);
+
+    } catch(err) {
+      handleError(setError, setMessage, err);
+    }
+  };
+
+  const addUserData = async () => {
+    const currentDate = Timestamp.now();
+    const atIndex = auth?.currentUser?.email?.indexOf('@');
+    const userName = atIndex !== -1 ? auth?.currentUser?.email?.slice(0, atIndex) : '';
+
+    await addDoc(userCollectionRef, {
+      name: userName,
+      email: auth?.currentUser?.email,
+      date: currentDate
+    });
+  };
+
+
+  return (
+    <div style={{"color": "white"}}>Form</div>
+  );
+}
+
+
+
 
 export default CreateAccount;
