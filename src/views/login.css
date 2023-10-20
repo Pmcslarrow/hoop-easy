@@ -73,6 +73,7 @@ body { height: 100vh; margin: 0; color: white;}
       background: linear-gradient(to right, #000000, #3b3a3a);
       color: white;
       border: none;
+      border-radius: 7.5px;
       
       width: 75%;
       height: 60px;
