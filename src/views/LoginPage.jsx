@@ -55,14 +55,45 @@ function LoginPage({ setAuthenticationStatus }) {
       const resetPassword = () => {
         console.log("Reset password")
       }
+
+      /**
+       * <div className='container'>
+          <div className='square'>
+            <form>
+              <label>
+                Email
+                <input type='text' required/>
+              </label>
+              <label>
+                Password
+                <input type='password' required/>
+              </label>
+              <span>
+                <button type='submit'>Sign In</button>
+              </span>
+              <span>
+                <a>Forgot your password?</a>
+              </span>
+            </form>
+          </div>
+        </div>
+       */
       
       return (
         <>
         <Header />
         
         <div className='container'>
-          <div className='square'>
-            email
+          <div className='col'>
+            <h1>LOG INTO YOUR ACCOUNT</h1>
+              <label htmlFor="username" style={{ width: '75%' }}>Username
+                <input type="text" id="username" name="username" style={{ width: '100%' }} />
+              </label>
+              <label htmlFor="password" style={{ width: '75%' }}>Password
+                <input type="password" id="password" name="password" style={{ width: '100%' }} />
+              </label>
+            <button>SIGN IN</button>
+            <p>Forgot your Password?</p>
           </div>
         </div>
         </>
