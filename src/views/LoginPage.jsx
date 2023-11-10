@@ -40,6 +40,14 @@ function LoginPage({ setAuthenticationStatus }) {
         }
       };
 
+      const handleEmailChange = (e) => {
+        setEmail(e.target.value)
+      }
+
+      const handlePasswordChange = (e) => {
+        setPassword(e.target.value)
+      }
+
       const logout = async () => {
         try {
           await signOut(auth)
@@ -55,29 +63,6 @@ function LoginPage({ setAuthenticationStatus }) {
       const resetPassword = () => {
         console.log("Reset password")
       }
-
-      /**
-       * <div className='container'>
-          <div className='square'>
-            <form>
-              <label>
-                Email
-                <input type='text' required/>
-              </label>
-              <label>
-                Password
-                <input type='password' required/>
-              </label>
-              <span>
-                <button type='submit'>Sign In</button>
-              </span>
-              <span>
-                <a>Forgot your password?</a>
-              </span>
-            </form>
-          </div>
-        </div>
-       */
       
       return (
         <>
@@ -86,15 +71,18 @@ function LoginPage({ setAuthenticationStatus }) {
         <div className='container'>
           <div className='col'>
             <h1>LOG INTO YOUR ACCOUNT</h1>
-              <label htmlFor="username" style={{ width: '75%' }}>Username
-                <input type="text" id="username" name="username" style={{ width: '100%' }} />
+              <label htmlFor="username" style={{ width: '75%' }}>Email
+                <input type="text" id="username" name="username" style={{ width: '100%' }} onChange={handleEmailChange}/>
               </label>
               <label htmlFor="password" style={{ width: '75%' }}>Password
-                <input type="password" id="password" name="password" style={{ width: '100%' }} />
+                <input type="password" id="password" name="password" style={{ width: '100%' }} onChange={handlePasswordChange}/>
               </label>
-            <button>SIGN IN</button>
+            <button onClick={handleSubmit}>SIGN IN</button>
             <p>Forgot your Password?</p>
+
+            <p className='no-underline'>{errorStatus ? errorMessage : "testing"}</p>
           </div>
+
         </div>
         </>
       );

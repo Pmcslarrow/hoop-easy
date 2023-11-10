@@ -231,12 +231,15 @@ function PlayerCustomizationForm({ formToggle }) {
 
   const addUserData = async () => {
     const currentDate = Timestamp.now();
-    const atIndex = auth?.currentUser?.email?.indexOf('@');
-    const userName = atIndex !== -1 ? auth?.currentUser?.email?.slice(0, atIndex) : '';
+    const { firstName, lastName, username, heightFt, heightInches } = formData
 
     await addDoc(userCollectionRef, {
-      name: userName,
+      username: username,
       email: auth?.currentUser?.email,
+      firstName: firstName,
+      lastName: lastName,
+      heightFt: heightFt,
+      heightInches: heightInches,
       date: currentDate
     });
   };

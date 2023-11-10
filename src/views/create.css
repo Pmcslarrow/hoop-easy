@@ -31,7 +31,6 @@ margin: 0;
 padding: 0;
 height: 100%;
 font-family: var(--font-family);
-overflow: hidden;
 }
 
 body {
@@ -39,10 +38,6 @@ margin: 0;
 padding: 0;
 width: 100vw;
 height: 100vh;
-background: 
-linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), /* Black background with 85% opacity */
-url("/Users/pmcslarrow/Developer/hoop-easy/public/hoop.jpg") no-repeat center center;
-background-size: cover;
 }
 
 header {
@@ -50,7 +45,6 @@ display: flex;
 justify-content: space-between;
 align-items: center;
 background: linear-gradient(90deg, var(--background-gradient-start), var(--background-dark-orange), black);
-padding: 10px 20px;
 }
 
 
@@ -70,6 +64,9 @@ justify-content: center;
 align-items: center; 
 height: 88vh;
 transition: margin-right 0.3s; /* Add a transition for smooth movement */
+background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), /* Black background with 85% opacity */
+url("/Users/pmcslarrow/Developer/hoop-easy/public/hoop.jpg") no-repeat center center;
+background-size: cover;
 }
 /*********************************************************************/
 

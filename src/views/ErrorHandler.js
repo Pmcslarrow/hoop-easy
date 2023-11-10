@@ -8,6 +8,7 @@
 
 export const handleError = (setError, setMessage, err) => {
       const errorCode = err.code;
+      console.log(errorCode)
     
       switch (errorCode) {
         case "auth/email-already-in-use":

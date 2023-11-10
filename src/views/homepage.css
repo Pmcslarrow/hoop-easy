@@ -1,0 +1,99 @@
+
+:root {
+--background-gradient-start: #FA642F;
+--background-dark-orange: #A22A1B;
+--font-bold-italic: 'Montserrat-BoldItalic';
+--font-bold: 'Montserrat-Bold';
+--font-family: 'Montserrat';
+}
+
+
+html, body {
+margin: 0;
+padding: 0;
+font-family: var(--font-family);
+overflow:auto;
+scroll-behavior: smooth;
+}
+
+body {
+margin: 0;
+padding: 0;
+width: 100vw;
+height: 100vh;
+background-color: black;
+}
+
+section {
+        height: 100vh;
+        width: 100vw;
+}
+
+#welcome {
+        background: url("/Users/pmcslarrow/Developer/hoop-easy/public/BACKGROUND_1.png") no-repeat center center;
+        background-size: cover;
+        display: flex;
+}
+
+#welcome-container, #history-container {
+        width: 80%;
+        height: 90%;
+        margin: auto auto; 
+}
+        
+#history {
+        background: url("/Users/pmcslarrow/Developer/hoop-easy/public/BACKGROUND_1.png") no-repeat center center;
+        background-size: stretch;
+        display: flex;
+}
+
+#find-games {
+        background-color: blue;
+}
+
+#ratings {
+    background-color: purple;
+}
+
+.flexbox-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        gap: 50px;
+        margin-right: 35px;
+}
+
+#search-bar {
+        border: 1px solid white;
+        width: 200px;
+        height: 30px;
+        padding: 10px;
+        background-color: transparent;
+}
+
+
+::placeholder  { 
+        color: white;
+        font-size: 16px;
+        opacity: 0.8;
+}
+
+a {
+text-decoration: none;
+color: #333; /* Set your preferred text color */
+background-color: transparent;
+padding: 20px 30px; /* Increase padding to create a wider and higher box */
+transition: background-color 0.3s, box-shadow 0.3s; /* Add transition properties */
+}
+
+a:hover {
+background-color: rgba(255, 255, 255, 0.2); 
+box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5); 
+}
+    
+.cursor:hover {
+    cursor: pointer;
+    background-color: green; 
+    box-shadow: 0 0 20px 10px rgb(1, 60, 1);
+}
