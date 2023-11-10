@@ -8,6 +8,7 @@ import hoopEasyLogo from '../images/hoop-easy.png';
 import addButton from '../images/add.png'
 import profileImg from '../images/icons8-male-user-48.png'
 import missingImage from '../images/missingImage.jpg'
+import {TiChevronLeftOutline, TiChevronRightOutline} from 'https://cdn.skypack.dev/react-icons/ti';
 import './homepage.css';
 
 
@@ -298,9 +299,7 @@ const Homepage = ({setAuthenticationStatus}) => {
     }
 
     const FindGames = () => {
-
-        const [currentIndex, setCurrentIndex] = useState(0);
-        
+                    
         const fakeData = [
             { 
                 date: '11.10', 
@@ -354,32 +353,10 @@ const Homepage = ({setAuthenticationStatus}) => {
             }
 
         ]
-
         const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
         const horizontalLine = setGridStyle(6, 4, 9, 6, "#da3c28", undefined, false);
         const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
-        const carouselLocation = setGridStyle(0, 10, 13, 56, undefined, undefined, undefined)
-        const buttonPrevLocation = setGridStyle(0, 57, 3, 59, undefined, undefined, undefined)
-        const buttonNextLocation = setGridStyle(10, 57, 13, 59, undefined, undefined, undefined)
-
-        const nextCard = () => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % fakeData.length);
-        };
-
-        const getNextCardIndex = () => {
-            return ( currentIndex + 1) % fakeData.length
-        }
-        
-        const prevCard = () => {
-            setCurrentIndex((prevIndex) =>
-            prevIndex === 0 ? fakeData.length - 1 : prevIndex - 1
-            );
-        };
-
-        const getPrevCardIndex = () => {
-            const prevIndex = (currentIndex - 1 + fakeData.length) % fakeData.length;
-            return prevIndex;
-        }
+        const carouselLocation = setGridStyle(6, 10, 11, 56, undefined, undefined, undefined)
 
         const gridStyle = {
             display: 'grid',
@@ -387,44 +364,12 @@ const Homepage = ({setAuthenticationStatus}) => {
             gridTemplateRows: 'repeat(60, 1fr)',
             gap: '10px',
         };
-        
-        const cardStyle = {
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-around',
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'black',
-            opacity: '0.5',
-            border: '1px solid white'
-        };
-
         const flexboxRow = {
             display: 'flex',
             flexDirection: 'space-around',
             alignItems: 'center',
             gap: '10px',
         }
-
-        const previousStyling = {
-            opacity: '0.1',
-            transform: 'translateX(15%)',
-            borderRadius: '15px'
-        }
-
-        const currentStyling = {
-            opacity: '1',
-            zIndex: '1000',
-            padding: '20px',
-            borderRadius: '15px'
-        }
-
-        const nextStyling = {
-            opacity: '0.1',
-            transform: 'translateX(-15%)',
-            borderRadius: '15px'
-        }
-
         const buttonStyle = {
             height: '35px',
             width: '150px',
@@ -432,18 +377,125 @@ const Homepage = ({setAuthenticationStatus}) => {
             borderRadius: '10px',
             margin: '0 auto'
         }
-
         const center = {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center'
-        }
+        }     
 
-        useEffect(() => {
+        // Carousel credit to: https://codepen.io/ykadosh/pen/ZEJLapj by Yoav Kadosh
+        const Carousel = ({children}) => {
+            const [active, setActive] = useState(0);
+            const count = React.Children.count(children);
+            
+            return (
+              <div className='carousel' style={{...carouselLocation, ...flexboxRow}}>
+                {active > 0 && 
+                    <button className='nav left' onClick={() => setActive(i => i - 1)}>
+                        <TiChevronLeftOutline/>
+                    </button>
+                }
+                {React.Children.map(children, (child, i) => (
+                  <div className='card-container' style={{
+                      '--active': i === active ? 1 : 0,
+                      '--offset': (active - i) / 3,
+                      '--direction': Math.sign(active - i),
+                      '--abs-offset': Math.abs(active - i) / 3,
+                      'pointer-events': active === i ? 'auto' : 'none',
+                      'opacity': Math.abs(active - i) >= 3 ? '0' : '1',
+                      'display': Math.abs(active - i) > 3 ? 'none' : 'block',
+                    }}>
+                    {child}
+                  </div>
+                ))}
+                {active < count - 1 && 
+                    <button className='nav right' onClick={() => setActive(i => i + 1)}>
+                        <TiChevronRightOutline/>
+                    </button>
+                }
+              </div>
+            );
+        };
 
-        }, [currentIndex])
+        const Card = ({ currentCard }) => (
+            <div className='card'>
+                    <div style={{display: "flex", justifyContent:'space-between'}}>
+                        <div>1v1</div>
+                        <div>
+                            <div>{currentCard.date}</div>
+                            <div>TIME</div>
+                        </div>
+                    </div>
+                    <div style={{alignItems: 'center'}}>
+                        <img src={missingImage} alt={'Profile img'}></img>
+                    </div>
+                    <div style={{fontSize: '1.5em'}}>
+                        {currentCard.name}
+                    </div>
+                    <div style={{display: "flex", justifyContent:'space-around'}}>
+                        <div>{currentCard.height}</div>
+                        <div>{currentCard.ovr} ovr</div>
+                        <div>{currentCard.age} yrs</div>
+                    </div>
+                    <div>
+                        {currentCard.location}
+                    </div>
+                    <div className='cursor' style={{ ...buttonStyle, ...center }}>
+                        accept
+                    </div>
+            </div>
+        );
+
+        return (
+            <section id="find-game" style={gridStyle}>
+                <h1 style={h1Style}>Find a game</h1>
+                <div style={horizontalLine}></div>
+                <p style={paragraph}></p>
+                <div style={{ ...carouselLocation, ...flexboxRow }}>
+
+                    <Carousel>
+                    {fakeData.map((_, i) => (
+                        <Card currentCard={fakeData[i]}/>
+                    ))}
+                    </Carousel>
+
+                </div>
+            </section>
+        )
 
 
+/*
+return (
+<section id="find-game" style={gridStyle}>
+    <h1 style={h1Style}>Find a game</h1>
+    <div style={horizontalLine}></div>
+    <p style={paragraph}>
+    Browse games, discover local courts, and connect with other hoopers instantly.
+    </p>
+
+    <button onClick={prevCard} style={buttonPrevLocation}>Previous</button>
+
+    <div style={{ ...carouselLocation, ...flexboxRow }}>
+    {getVisibleIndices(currentIndex, fakeData.length).map(index => {
+        const item = fakeData[index];
+        return (
+        <div style={cardStyle} key={index}>
+            <h2>{item.name}</h2>
+            <p>{item.height}</p>
+            <p>{item.ovr}</p>
+            <p>{item.age}</p>
+            <p>{item.location}</p>
+            <p>{item.city}</p>
+        </div>
+        );
+    })}
+    </div>
+    <button onClick={nextCard} style={buttonNextLocation}>Next</button>
+</section>
+);
+*/ 
+
+/*
       return (
         <section id="find-game">
           <div id="welcome-container" style={gridStyle}>
@@ -457,15 +509,12 @@ const Homepage = ({setAuthenticationStatus}) => {
 
             <div style={{ ...carouselLocation, ...flexboxRow }}>
 
-                { /* Previous Card */ }
-                <div style={{...cardStyle, ...previousStyling}}>
+                <div style={{...cardStyle, ...previousStyling }}>
                     
                     <div>{fakeData[getPrevCardIndex()].name}</div>
 
                 </div>
 
-                { /* Current Card */ }
-                { /* <div>{fakeData[currentIndex].name}</div> */}
                 <div style={{...cardStyle, ...currentStyling}}>
                     
                     <div style={{display: "flex", justifyContent:'space-between'}}>
@@ -502,7 +551,6 @@ const Homepage = ({setAuthenticationStatus}) => {
 
                 </div>
 
-                { /* Next Card */ }
                 <div style={{...cardStyle, ...nextStyling}}>
 
                     <div>
@@ -518,6 +566,7 @@ const Homepage = ({setAuthenticationStatus}) => {
           </div>
         </section>
       );
+*/
     };      
       
       
