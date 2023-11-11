@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { db } from '../config/firebase';
-import { getDocs, collection } from 'firebase/firestore'
+import { getDocs, collection, query, where } from 'firebase/firestore'
 import hoopEasyLogo from '../images/hoop-easy.png';
 import addButton from '../images/add.png'
 import profileImg from '../images/icons8-male-user-48.png'
@@ -17,49 +17,67 @@ import './homepage.css';
 const Homepage = ({setAuthenticationStatus}) => {
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
+    const [currentUserID, setCurrentUserID] = useState([])
+    const [availableGames, setAvailableGames] = useState([])
     const usersCollectionRef = collection(db, "users");
+    const gamesCollectionRef = collection(db, 'Games')
     //const [refreshKey, setRefreshKey] = useState(0);
 
 
-    // Reading survey data and user data from the database
+    // Reading user data from the database
     useEffect(() => {
         const getUsers = async () => {
-        try {
+            try {
+                const data = await getDocs(usersCollectionRef);
+                const filteredData = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
+                // const names = filteredData.map((obj) => obj.username);
+                setUsers(filteredData)
+            } catch(err) {
+                console.log(err);
+            }
+        }
+
+        const getCurrentUser = async () => {
             const data = await getDocs(usersCollectionRef);
             const filteredData = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
-            const names = filteredData.map((obj) => obj.name);
-            setUsers(names)
-        } catch(err) {
-            console.log(err);
+            filteredData.map((obj) => {
+                if ( obj?.email === auth?.currentUser?.email ) {
+                    setCurrentUserID(obj.id)
+                }
+            })
         }
-    }
+
+        const getAvailableGames = async () => {
+            try {
+                const games = await getDocs(gamesCollectionRef);
+                const filteredGames = games.docs.map((doc) => ({...doc.data(), id: doc.id}))
+                let joinedGames = filteredGames.map(game => {
+                    let user = users.find(user => user.id === game.playerID);
+                    if (user) {
+                        return {
+                           ...game,
+                           ...user
+                        };
+                    }
+                    return game;
+                });
+
+                setAvailableGames(joinedGames)
+            } catch(err) {
+                console.log(err);
+            }
+        }
 
     getUsers();
+    getCurrentUser();
+    getAvailableGames();
     }, [])
 
-    const Navbar = () => {
-        return (
-          <header>
-            <img src={hoopEasyLogo} alt="Logo" />
-
-            <div className='flexbox-row'>
-                <div className="search-container">
-                        <form className="no-submit">
-                                <input id='search-bar' type="search" placeholder="Search rankings..." />
-                        </form>
-                </div>
-
-                <div id='profile-button'><img src={profileImg} alt='Profile Icon' /></div>
-            </div>
-          </header>
-        );
-    }
-
-    // A function I created to make grid placement easy and fun!
-    // Very similar structure to a method I used to use in my early CS courses.
-    // Due to its familiarity, I am utilizing it to let the user choose the starting and ending columns and rows
-    // So that it automatically calculated how much the rows and columns should span with some 
-    // Extra styling
+    /*
+        A function that lets the user easily place and organize elements within a CSS Grid.
+        I just wrote it because it felt easier than having to go into CSS everytime and update the span information when it could
+        be calculated here instead. 
+    */
     function setGridStyle( startCol, startRow, endCol, endRow, color, fontSize, border ) {
         let columnDifference = endCol - startCol;
         let rowDifference = endRow - startRow;
@@ -178,6 +196,23 @@ const Homepage = ({setAuthenticationStatus}) => {
     }
 
     /* Section pages */
+    const Navbar = () => {
+        return (
+          <header>
+            <img src={hoopEasyLogo} alt="Logo" />
+
+            <div className='flexbox-row'>
+                <div className="search-container">
+                        <form className="no-submit">
+                                <input id='search-bar' type="search" placeholder="Search rankings..." />
+                        </form>
+                </div>
+
+                <div id='profile-button'><img src={profileImg} alt='Profile Icon' /></div>
+            </div>
+          </header>
+        );
+    }
     const Welcome = () => {
         const gridStyle = {
           display: 'grid',
@@ -217,7 +252,6 @@ const Homepage = ({setAuthenticationStatus}) => {
           </section>
         );
     };
-
     const History = () => {
         const gridStyle = {
                 display: 'grid',
@@ -299,60 +333,7 @@ const Homepage = ({setAuthenticationStatus}) => {
     }
 
     const FindGames = () => {
-                    
-        const fakeData = [
-            { 
-                date: '11.10', 
-                profile: '',
-                name: 'Paul 0',
-                height: '6\'4',
-                ovr: '67',
-                age: '21',
-                location: 'Cone Fieldhouse',
-                city: 'Salem, OR'
-            }, 
-            { 
-                date: '11.10', 
-                profile: '',
-                name: 'Paul 1',
-                height: '6\'4',
-                ovr: '67',
-                age: '21',
-                location: 'Cone Fieldhouse',
-                city: 'Salem, OR'
-            },
-            { 
-                date: '11.10', 
-                profile: '',
-                name: 'Paul 2',
-                height: '6\'4',
-                ovr: '67',
-                age: '21',
-                location: 'Cone Fieldhouse',
-                city: 'Salem, OR'
-            },
-            { 
-                date: '11.10', 
-                profile: '',
-                name: 'Paul 3',
-                height: '6\'4',
-                ovr: '67',
-                age: '21',
-                location: 'Cone Fieldhouse',
-                city: 'Salem, OR'
-            },
-            { 
-                date: '11.10', 
-                profile: '',
-                name: 'Paul 4',
-                height: '6\'4',
-                ovr: '67',
-                age: '21',
-                location: 'Cone Fieldhouse',
-                city: 'Salem, OR'
-            }
 
-        ]
         const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
         const horizontalLine = setGridStyle(6, 4, 9, 6, "#da3c28", undefined, false);
         const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
@@ -420,25 +401,24 @@ const Homepage = ({setAuthenticationStatus}) => {
         const Card = ({ currentCard }) => (
             <div className='card'>
                     <div style={{display: "flex", justifyContent:'space-between'}}>
-                        <div>1v1</div>
+                        <div>{currentCard.gameType}v{currentCard.gameType}</div>
                         <div>
-                            <div>{currentCard.date}</div>
-                            <div>TIME</div>
+                            <div>{currentCard.dateOfGame}</div>
+                            <div>{currentCard.time}</div>
                         </div>
                     </div>
                     <div style={{alignItems: 'center'}}>
                         <img src={missingImage} alt={'Profile img'}></img>
                     </div>
                     <div style={{fontSize: '1.5em'}}>
-                        {currentCard.name}
+                        {currentCard.username}
                     </div>
                     <div style={{display: "flex", justifyContent:'space-around'}}>
-                        <div>{currentCard.height}</div>
-                        <div>{currentCard.ovr} ovr</div>
-                        <div>{currentCard.age} yrs</div>
+                        <div>{currentCard.heightFt}'{currentCard.heightInches}"</div>
+                        <div>{currentCard.overall} ovr</div>
                     </div>
                     <div>
-                        {currentCard.location}
+                        {currentCard.addressString}
                     </div>
                     <div className='cursor' style={{ ...buttonStyle, ...center }}>
                         accept
@@ -454,125 +434,25 @@ const Homepage = ({setAuthenticationStatus}) => {
                 <div style={{ ...carouselLocation, ...flexboxRow }}>
 
                     <Carousel>
-                    {fakeData.map((_, i) => (
-                        <Card currentCard={fakeData[i]}/>
+                    {availableGames.map((_, i) => (
+                        <Card currentCard={availableGames[i]}/>
                     ))}
                     </Carousel>
 
                 </div>
             </section>
         )
-
-
-/*
-return (
-<section id="find-game" style={gridStyle}>
-    <h1 style={h1Style}>Find a game</h1>
-    <div style={horizontalLine}></div>
-    <p style={paragraph}>
-    Browse games, discover local courts, and connect with other hoopers instantly.
-    </p>
-
-    <button onClick={prevCard} style={buttonPrevLocation}>Previous</button>
-
-    <div style={{ ...carouselLocation, ...flexboxRow }}>
-    {getVisibleIndices(currentIndex, fakeData.length).map(index => {
-        const item = fakeData[index];
-        return (
-        <div style={cardStyle} key={index}>
-            <h2>{item.name}</h2>
-            <p>{item.height}</p>
-            <p>{item.ovr}</p>
-            <p>{item.age}</p>
-            <p>{item.location}</p>
-            <p>{item.city}</p>
-        </div>
-        );
-    })}
-    </div>
-    <button onClick={nextCard} style={buttonNextLocation}>Next</button>
-</section>
-);
-*/ 
-
-/*
-      return (
-        <section id="find-game">
-          <div id="welcome-container" style={gridStyle}>
-            <h1 style={h1Style}>Find a game</h1>
-            <div style={horizontalLine}></div>
-            <p style={paragraph}>
-              Browse games, discover local courts, and connect with other hoopers instantly.
-            </p>
-
-            <button onClick={prevCard} style={buttonPrevLocation}>Previous</button>
-
-            <div style={{ ...carouselLocation, ...flexboxRow }}>
-
-                <div style={{...cardStyle, ...previousStyling }}>
-                    
-                    <div>{fakeData[getPrevCardIndex()].name}</div>
-
-                </div>
-
-                <div style={{...cardStyle, ...currentStyling}}>
-                    
-                    <div style={{display: "flex", justifyContent:'space-between'}}>
-                        <div>1v1</div>
-                        <div>
-                            <div>{fakeData[currentIndex].date}</div>
-                            
-                            <div>TIME</div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <img src={missingImage} alt={'Profile img'}></img>
-                    </div>
-
-                    <div style={{fontSize: '1.5em'}}>
-                        {fakeData[currentIndex].name}
-                    </div>
-
-                    <div style={{display: "flex", justifyContent:'space-around'}}>
-                        <div>{fakeData[currentIndex].height}</div>
-                        <div>{fakeData[currentIndex].ovr} ovr</div>
-                        <div>{fakeData[currentIndex].age} yrs</div>
-                    </div>
-
-                    <div>
-                        {fakeData[currentIndex].location}
-                    </div>
-
-                    <div className='cursor' style={{ ...buttonStyle, ...center }}>
-                        accept
-                    </div>
-                    
-
-                </div>
-
-                <div style={{...cardStyle, ...nextStyling}}>
-
-                    <div>
-                        <img src={missingImage} alt={'Profile img'}></img>
-                    </div>
-                    <div>{fakeData[getNextCardIndex()].name}</div>
-
-                </div>
-              
-            </div>
-            <button onClick={nextCard} style={buttonNextLocation}>Next</button>
-
-          </div>
-        </section>
-      );
-*/
     };      
-      
-      
-      
 
-  
+    const RatingsSection = () => {
+        return (
+            <section id='ratings'>
+                ratings
+            </section>
+        )
+    }
+      
+    
   return (
     <div className="dashboard-container">
 
@@ -585,9 +465,7 @@ return (
 
         <FindGames />
 
-        <section id='ratings'>
-                ratings
-        </section>
+        <RatingsSection />
     </div>
   );
   
