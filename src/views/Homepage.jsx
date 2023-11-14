@@ -19,10 +19,9 @@ const Homepage = ({setAuthenticationStatus}) => {
     const [users, setUsers] = useState([]);
     const [currentUserID, setCurrentUserID] = useState([])
     const [availableGames, setAvailableGames] = useState([])
+    const [isCreateGameActive, setCreateGameActive] = useState(false)
     const usersCollectionRef = collection(db, "users");
     const gamesCollectionRef = collection(db, 'Games')
-    //const [refreshKey, setRefreshKey] = useState(0);
-
 
     // Reading user data from the database
     useEffect(() => {
@@ -36,7 +35,6 @@ const Homepage = ({setAuthenticationStatus}) => {
                 console.log(err);
             }
         }
-
         const getCurrentUser = async () => {
             const data = await getDocs(usersCollectionRef);
             const filteredData = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
@@ -46,7 +44,6 @@ const Homepage = ({setAuthenticationStatus}) => {
                 }
             })
         }
-
         const getAvailableGames = async () => {
             try {
                 const games = await getDocs(gamesCollectionRef);
@@ -73,11 +70,12 @@ const Homepage = ({setAuthenticationStatus}) => {
     getAvailableGames();
     }, [])
 
-    /*
-        A function that lets the user easily place and organize elements within a CSS Grid.
-        I just wrote it because it felt easier than having to go into CSS everytime and update the span information when it could
-        be calculated here instead. 
-    */
+
+    /* GLOBAL FUNCTIONS */
+
+    function toggleCreateGame() {
+        setCreateGameActive(!isCreateGameActive)
+    }
     function setGridStyle( startCol, startRow, endCol, endRow, color, fontSize, border ) {
         let columnDifference = endCol - startCol;
         let rowDifference = endRow - startRow;
@@ -121,7 +119,116 @@ const Homepage = ({setAuthenticationStatus}) => {
         return style;
     }
 
-    /* Sticky buttons with Player Overall and New Game */
+
+    /* COMPONENTS */
+
+    const CreateGameForm = () => {
+        const [isVisible, setIsVisible] = useState(false);
+       
+        useEffect(() => {
+          setIsVisible(true);
+        }, []);
+
+        const handleSubmit = (event) => {
+            event.preventDefault();
+          
+            const formData = {
+              streetAddress: document.getElementById('streetAddress').value,
+              city: document.getElementById('city').value,
+              state: document.getElementById('state').value,
+              zipcode: document.getElementById('zipcode').value,
+              dateOfGame: document.getElementById('dateOfGame').value,
+              timeOfGame: document.getElementById('timeOfGame').value,
+            };
+            
+            toggleCreateGame()
+            handleCreateGame(formData);
+        };          
+
+        // Handles the form to create a new game
+        // Iterates through the users until it finds the player that accepted the game, and the opponent
+        // It then adds a new document into each player's confirmedGames/ collection containing info like location and time
+        const handleCreateGame = async () => {
+            console.log("Paul work here next")
+            let userLoggedIn = auth?.currentUser;
+            let opponentEmail = 'jacboyd7@gmail.com'
+            if (userLoggedIn) {
+                const userCollection = await getDocs(usersCollectionRef);
+                userCollection.forEach(async (doc) => {
+                    const currentPlayerData = doc.data();
+                    const currentPlayerEmail = currentPlayerData?.email;
+                    const currentPlayerDocumentID = doc.id;
+                    const confirmedGamesPath = `users/${currentPlayerDocumentID}/confirmedGames`;
+                    const confirmedGamesCollectionRef = collection(db, confirmedGamesPath);
+
+                    if ( currentPlayerEmail === userLoggedIn?.email || currentPlayerEmail === opponentEmail ) {
+                        const userLoggedInConfirmedGamesSnapshot = await getDocs(confirmedGamesCollectionRef);
+                        const userLoggedInConfirmedGames = userLoggedInConfirmedGamesSnapshot.docs.map(doc => doc.data());
+                        
+                        // Add the form data of the new games right here into both the player and opponent's account
+                    } 
+                });
+
+                // Send the player and opponent an email confirming the game
+
+                // Remove the game from the Games/ collection
+            } else {
+                console.log("No user signed in");
+            }
+        };
+       
+        const styling = {
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            height: '60%',
+            width: '40%',
+            borderRadius: '30px',
+            backgroundColor: 'black',
+            border: '1px solid white',
+            opacity: isVisible ? 1 : 0,
+            transition: 'opacity 0.35s ease-in-out, transform 0.25s ease-in',
+            padding: '50px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+        };
+        const inputStyle = {
+            width: '100%',
+            padding: '12px',
+            border: '1px solid #ccc',
+            boxSizing: 'border-box',
+            fontSize: '16px',
+            marginBottom: '10px', 
+        };
+        const states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
+       
+        return (
+            <form style={styling} onSubmit={handleSubmit}>
+              <label htmlFor="streetAddress">Street Address:</label>
+              <input style={{...inputStyle, width: '50%'}} id="streetAddress" placeholder="Street Address" required/>
+              <label htmlFor="city">City:</label>
+              <input style={{...inputStyle, width: '50%'}} id="city" placeholder="City" required/>
+              <label htmlFor="state">State:</label>
+                <select style={{...inputStyle, width: '50%'}} id="state" required>
+                {states.map((state) => (
+                    <option key={state} value={state}>
+                    {state}
+                    </option>
+                ))}
+                </select>
+              <label htmlFor="zipcode">Zipcode:</label>
+              <input style={{...inputStyle, width: '50%'}} id="zipcode" placeholder="Zipcode" required/>
+              <label htmlFor="dateOfGame">Date of game:</label>
+              <input style={{...inputStyle, width: '50%'}} id="dateOfGame" placeholder="Date of game" type="date" required/>
+              <label htmlFor="timeOfGame">Time of game:</label>
+              <input style={{...inputStyle, width: '50%'}} id="timeOfGame" placeholder="Time of game" type="time" required/>
+              <button style={{ width: '50%', padding: '20px', fontSize: '16px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Create</button>
+            </form>
+        );
+    };
     const PlayerRating = () => {
         const flexCol = {
           display: 'flex',
@@ -166,15 +273,13 @@ const Homepage = ({setAuthenticationStatus}) => {
           </div>
         );
     };
-    const CreateGame = () => {
+    const CreateGameButton = () => {
         const flexCol = {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-around',
             alignItems: 'center',
         };
-        
-        
         const card = {
             position: 'fixed',
             width: '125px',
@@ -187,15 +292,13 @@ const Homepage = ({setAuthenticationStatus}) => {
             marginBottom: '25px',
         };
         
-          return (
-            <div style={{ ...flexCol, ...card }}>
-              <img src={addButton} alt='Add button' style={{ width: '50px'}}/>
-              <div>NEW GAME</div>
-            </div>
-          );
+        return (
+        <div id='new-game' style={{ ...flexCol, ...card }}  onClick={toggleCreateGame}>
+            <img src={addButton} alt='Add button' style={{ width: '50px'}}/>
+            <div>NEW GAME</div>
+        </div>
+        );
     }
-
-    /* Section pages */
     const Navbar = () => {
         return (
           <header>
@@ -331,13 +434,12 @@ const Homepage = ({setAuthenticationStatus}) => {
             </section>
           );          
     }
-
     const FindGames = () => {
 
         const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
         const horizontalLine = setGridStyle(6, 4, 9, 6, "#da3c28", undefined, false);
         const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
-        const carouselLocation = setGridStyle(6, 10, 11, 56, undefined, undefined, undefined)
+        const carouselLocation = setGridStyle(6, 5, 11, 52, undefined, undefined, undefined)
 
         const gridStyle = {
             display: 'grid',
@@ -443,7 +545,6 @@ const Homepage = ({setAuthenticationStatus}) => {
             </section>
         )
     };      
-
     const RatingsSection = () => {
         return (
             <section id='ratings'>
@@ -452,12 +553,13 @@ const Homepage = ({setAuthenticationStatus}) => {
         )
     }
       
-    
   return (
     <div className="dashboard-container">
 
+        { isCreateGameActive && <CreateGameForm />}
+
         <PlayerRating />
-        <CreateGame />
+        <CreateGameButton />
 
         <Navbar />
         <Welcome />

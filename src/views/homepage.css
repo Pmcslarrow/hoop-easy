@@ -157,3 +157,8 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
     transform: translateX(100%) translatey(-50%);
   }
 }
+
+#new-game:hover {
+    cursor: pointer;
+}
+
