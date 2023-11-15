@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { db } from '../config/firebase';
-import { getDocs, collection, query, where } from 'firebase/firestore'
+import { getDocs, addDoc, collection, GeoPoint } from 'firebase/firestore'
 import hoopEasyLogo from '../images/hoop-easy.png';
 import addButton from '../images/add.png'
 import profileImg from '../images/icons8-male-user-48.png'
 import missingImage from '../images/missingImage.jpg'
+import axios from 'axios';
 import {TiChevronLeftOutline, TiChevronRightOutline} from 'https://cdn.skypack.dev/react-icons/ti';
 import './homepage.css';
 
@@ -22,6 +23,7 @@ const Homepage = ({setAuthenticationStatus}) => {
     const [isCreateGameActive, setCreateGameActive] = useState(false)
     const usersCollectionRef = collection(db, "users");
     const gamesCollectionRef = collection(db, 'Games')
+    const [refreshToken, setRefreshToken] = useState(0)
 
     // Reading user data from the database
     useEffect(() => {
@@ -50,15 +52,15 @@ const Homepage = ({setAuthenticationStatus}) => {
                 const filteredGames = games.docs.map((doc) => ({...doc.data(), id: doc.id}))
                 let joinedGames = filteredGames.map(game => {
                     let user = users.find(user => user.id === game.playerID);
-                    if (user) {
+                    if (user && user.email !== auth?.currentUser?.email) {
                         return {
                            ...game,
                            ...user
                         };
                     }
-                    return game;
-                });
-
+                    return null;
+                 }).filter(game => game !== null);
+                 
                 setAvailableGames(joinedGames)
             } catch(err) {
                 console.log(err);
@@ -68,7 +70,7 @@ const Homepage = ({setAuthenticationStatus}) => {
     getUsers();
     getCurrentUser();
     getAvailableGames();
-    }, [])
+    }, [refreshToken])
 
 
     /* GLOBAL FUNCTIONS */
@@ -124,54 +126,112 @@ const Homepage = ({setAuthenticationStatus}) => {
 
     const CreateGameForm = () => {
         const [isVisible, setIsVisible] = useState(false);
-       
+        const [formData, setFormData] = useState({
+            streetAddress: '',
+            city: '',
+            state: '',
+            zipcode: '',
+            dateOfGame: '',
+            timeOfGame: '',
+          });      
+
         useEffect(() => {
           setIsVisible(true);
         }, []);
 
-        const handleSubmit = (event) => {
-            event.preventDefault();
-          
-            const formData = {
-              streetAddress: document.getElementById('streetAddress').value,
-              city: document.getElementById('city').value,
-              state: document.getElementById('state').value,
-              zipcode: document.getElementById('zipcode').value,
-              dateOfGame: document.getElementById('dateOfGame').value,
-              timeOfGame: document.getElementById('timeOfGame').value,
-            };
-            
-            toggleCreateGame()
-            handleCreateGame(formData);
-        };          
 
-        // Handles the form to create a new game
-        // Iterates through the users until it finds the player that accepted the game, and the opponent
-        // It then adds a new document into each player's confirmedGames/ collection containing info like location and time
-        const handleCreateGame = async () => {
-            console.log("Paul work here next")
+        const handleChange = (event) => {
+            const { id, value } = event.target;
+            setFormData((prevData) => ({
+              ...prevData,
+              [id]: value,
+            }));
+        };
+        const handleSubmit = (event) => {
+            event.preventDefault();  
+
+            const dateTimeString = `${formData.dateOfGame} ${formData.timeOfGame}`;
+            const dateTime = new Date(dateTimeString);
+
+            handleCreateGame(dateTime);
+        };    
+        const handleAPICall = (API_CALL, collectionReference, currentPlayerDocumentID) =>  {
+            const params = {
+                street: formData.streetAddress,
+                city: formData.city,
+                state: formData.state,
+                postalcode: formData.zipcode,
+                country: 'US'
+            };
+         
+            axios.get(API_CALL, { params: params })
+                .then((response) => {
+                    const data = response.data;
+
+                    if (data.length > 0) {
+                        toggleCreateGame()
+                        addGameToPlayersConfirmedGames(data[0], collectionReference, currentPlayerDocumentID)
+                    } else {
+                        console.log('Could not find this address')
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+        const addGameToPlayersConfirmedGames = async ( locationData, collectionReference, currentPlayerDocumentID ) => {
+            const lon = Number(locationData.lon);
+            const lat = Number(locationData.lat);
+
+            const coordinates = new GeoPoint(lat, lon);
+            const addressString = formData.streetAddress
+            const dateOfGame = formData.dateOfGame
+            const time = formData.timeOfGame
+            const gameType = '1'
+            const playerID = currentPlayerDocumentID
+
+            console.log(coordinates)
+            const DATA_UPLOAD = {
+                coordinates, 
+                addressString, 
+                dateOfGame, 
+                time, 
+                gameType, 
+                playerID
+            }
+
+            try {
+                await addDoc(collectionReference, DATA_UPLOAD);
+                setRefreshToken(refreshToken + 1)
+            } catch (error) {
+                console.error("Error adding document: ", error);
+            }
+        }
+         
+         
+        // Function that will insert the new game data into the Games/ collection
+        const handleCreateGame = async ( dateTimeOfGame ) => {
             let userLoggedIn = auth?.currentUser;
-            let opponentEmail = 'jacboyd7@gmail.com'
+            const API_START = 'https://geocode.maps.co/search'
+            
+
             if (userLoggedIn) {
                 const userCollection = await getDocs(usersCollectionRef);
                 userCollection.forEach(async (doc) => {
                     const currentPlayerData = doc.data();
                     const currentPlayerEmail = currentPlayerData?.email;
                     const currentPlayerDocumentID = doc.id;
-                    const confirmedGamesPath = `users/${currentPlayerDocumentID}/confirmedGames`;
-                    const confirmedGamesCollectionRef = collection(db, confirmedGamesPath);
+                    const pendingGamesPath = `users/${currentPlayerDocumentID}/pendingGames`;
+                    const pendingGamesCollectionRef = collection(db, pendingGamesPath);
 
-                    if ( currentPlayerEmail === userLoggedIn?.email || currentPlayerEmail === opponentEmail ) {
-                        const userLoggedInConfirmedGamesSnapshot = await getDocs(confirmedGamesCollectionRef);
-                        const userLoggedInConfirmedGames = userLoggedInConfirmedGamesSnapshot.docs.map(doc => doc.data());
+                    if ( currentPlayerEmail === userLoggedIn?.email ) {   
+
+                        handleAPICall(API_START, gamesCollectionRef, currentPlayerDocumentID)
+                        handleAPICall(API_START, pendingGamesCollectionRef, currentPlayerDocumentID)
                         
-                        // Add the form data of the new games right here into both the player and opponent's account
                     } 
                 });
 
-                // Send the player and opponent an email confirming the game
-
-                // Remove the game from the Games/ collection
             } else {
                 console.log("No user signed in");
             }
@@ -190,10 +250,13 @@ const Homepage = ({setAuthenticationStatus}) => {
             opacity: isVisible ? 1 : 0,
             transition: 'opacity 0.35s ease-in-out, transform 0.25s ease-in',
             padding: '50px',
+            paddingTop: '100px',
+            paddingBottom: '100px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
+            zIndex: '999'
         };
         const inputStyle = {
             width: '100%',
@@ -208,26 +271,81 @@ const Homepage = ({setAuthenticationStatus}) => {
         return (
             <form style={styling} onSubmit={handleSubmit}>
               <label htmlFor="streetAddress">Street Address:</label>
-              <input style={{...inputStyle, width: '50%'}} id="streetAddress" placeholder="Street Address" required/>
+              <input
+                style={{ ...inputStyle, width: '50%' }}
+                id="streetAddress"
+                placeholder="Street Address"
+                value={formData.streetAddress}
+                onChange={handleChange}
+                required
+              />
               <label htmlFor="city">City:</label>
-              <input style={{...inputStyle, width: '50%'}} id="city" placeholder="City" required/>
+              <input
+                style={{ ...inputStyle, width: '50%' }}
+                id="city"
+                placeholder="City"
+                value={formData.city}
+                onChange={handleChange}
+                required
+              />
               <label htmlFor="state">State:</label>
-                <select style={{...inputStyle, width: '50%'}} id="state" required>
+              <select
+                style={{ ...inputStyle, width: '50%' }}
+                id="state"
+                value={formData.state}
+                onChange={handleChange}
+                required
+              >
                 {states.map((state) => (
-                    <option key={state} value={state}>
+                  <option key={state} value={state}>
                     {state}
-                    </option>
+                  </option>
                 ))}
-                </select>
+              </select>
               <label htmlFor="zipcode">Zipcode:</label>
-              <input style={{...inputStyle, width: '50%'}} id="zipcode" placeholder="Zipcode" required/>
+              <input
+                style={{ ...inputStyle, width: '50%' }}
+                id="zipcode"
+                placeholder="Zipcode"
+                value={formData.zipcode}
+                onChange={handleChange}
+                required
+              />
               <label htmlFor="dateOfGame">Date of game:</label>
-              <input style={{...inputStyle, width: '50%'}} id="dateOfGame" placeholder="Date of game" type="date" required/>
+              <input
+                style={{ ...inputStyle, width: '50%' }}
+                id="dateOfGame"
+                placeholder="Date of game"
+                type="date"
+                value={formData.dateOfGame}
+                onChange={handleChange}
+                required
+              />
               <label htmlFor="timeOfGame">Time of game:</label>
-              <input style={{...inputStyle, width: '50%'}} id="timeOfGame" placeholder="Time of game" type="time" required/>
-              <button style={{ width: '50%', padding: '20px', fontSize: '16px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Create</button>
+              <input
+                style={{ ...inputStyle, width: '50%' }}
+                id="timeOfGame"
+                placeholder="Time of game"
+                type="time"
+                value={formData.timeOfGame}
+                onChange={handleChange}
+                required
+              />
+              <button
+                style={{
+                  width: '50%',
+                  padding: '20px',
+                  fontSize: '16px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                Create
+              </button>
             </form>
-        );
+          );
     };
     const PlayerRating = () => {
         const flexCol = {
@@ -327,9 +445,12 @@ const Homepage = ({setAuthenticationStatus}) => {
         const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
         const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
         const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
-        const historyStyle = setGridStyle(2, 17, 5, 22, undefined, "25px", true);
-        const gameStyle = setGridStyle(6, 17, 9, 22, undefined, "25px", true);
-        const ratingsStyle = setGridStyle(10, 17, 13, 22, undefined, "25px", true);
+        
+        const myGamesStyle = setGridStyle(4, 10, 7, 15, undefined, "25px", true)
+        const findGamesStyle = setGridStyle(8, 10, 11, 15, undefined, "25px", true);
+        
+        const historyStyle = setGridStyle(4, 17, 7, 22, undefined, "25px", true);
+        const ratingsStyle = setGridStyle(8, 17, 11, 22, undefined, "25px", true);
       
         const linkStyle = {
           display: 'flex',
@@ -347,92 +468,23 @@ const Homepage = ({setAuthenticationStatus}) => {
                 It’s good to see you again. Here you’ll find everything you need to keep hooping easy.
               </p>
       
+              <a style={{ ...linkStyle, ...myGamesStyle }} href="#my-games">My games</a>
+              <a style={{ ...linkStyle, ...findGamesStyle }} href="#find-game">Find a game</a>
               <a style={{ ...linkStyle, ...historyStyle }} href="#history">My history</a>
-              <a style={{ ...linkStyle, ...gameStyle }} href="#find-game">Find a game</a>
               <a style={{ ...linkStyle, ...ratingsStyle }} href="#ratings">My ratings</a>
 
             </div>
           </section>
         );
     };
-    const History = () => {
-        const gridStyle = {
-                display: 'grid',
-                gridTemplateColumns: 'repeat(13, 1fr)',
-                gridTemplateRows: 'repeat(30, 1fr)',
-                gap: '10px',
-        };
-
-        const tableHeaderStyle = {
-            textAlign: 'center',
-            fontSize: '25px'
-        };
-        
-        const tableCellStyle = {
-            border: '1px solid rgba(255, 255, 255, 0.5)'
-        };
-
-        const data = [
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 1', result: '2' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 2', result: '-0.5' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 3', result: '1' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 4', result: '-2' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 5', result: '3' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '1' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-
-        ];
-
-        const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
-        const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
-        const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
-        const tableGrid = setGridStyle(3, 10, 12, 30, undefined, undefined, true)
-
+    const MyGames = () => {
         return (
-            <section id="history">
-              <div id="history-container" style={gridStyle}>
-                <h1 style={h1Style}>Your history</h1>
-                <div style={horizontalLine}></div>
-                <p style={paragraph}>See how previous games stack up.</p>
-
-                <div style={{ ...tableGrid, overflow: 'auto' }}> 
-                  <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                    <thead style={tableHeaderStyle}>
-                      <tr>
-                        <th style={{ ...tableCellStyle, height: '50px' }}>When</th>
-                        <th style={ tableCellStyle }>Who</th>
-                        <th style={ tableCellStyle }>Where</th>
-                        <th style={ tableCellStyle }>Result</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.map((row, index) => ( 
-                        <tr key={index} style={{ border: '1px solid white' }}>
-                            <td style={index === 0 ? { ...tableCellStyle, borderTop: '1px solid white' } : tableCellStyle}>
-                             {row.when}
-                            </td>
-                            <td style={{ ...tableCellStyle, height: '50px' }}>{row.who}</td>
-                            <td style={tableCellStyle}>{row.where}</td>
-                            <td style={{
-                                ...tableCellStyle,
-                                color: parseFloat(row.result) > 0 ? 'green' : 'red',
-                                fontSize: '20px'
-                                }}>
-                                {row.result}
-                            </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </section>
-          );          
+            <section id="my-games">
+            <div>
+              hello
+            </div>
+          </section>
+        )
     }
     const FindGames = () => {
 
@@ -545,6 +597,85 @@ const Homepage = ({setAuthenticationStatus}) => {
             </section>
         )
     };      
+    const History = () => {
+        const gridStyle = {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(13, 1fr)',
+                gridTemplateRows: 'repeat(30, 1fr)',
+                gap: '10px',
+        };
+
+        const tableHeaderStyle = {
+            textAlign: 'center',
+            fontSize: '25px'
+        };
+        
+        const tableCellStyle = {
+            border: '1px solid rgba(255, 255, 255, 0.5)'
+        };
+
+        const data = [
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 1', result: '2' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 2', result: '-0.5' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 3', result: '1' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 4', result: '-2' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 5', result: '3' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '1' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
+            { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
+
+        ];
+
+        const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
+        const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
+        const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
+        const tableGrid = setGridStyle(3, 10, 12, 30, undefined, undefined, true)
+
+        return (
+            <section id="history">
+              <div id="history-container" style={gridStyle}>
+                <h1 style={h1Style}>Your history</h1>
+                <div style={horizontalLine}></div>
+                <p style={paragraph}>See how previous games stack up.</p>
+
+                <div style={{ ...tableGrid, overflow: 'auto' }}> 
+                  <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                    <thead style={tableHeaderStyle}>
+                      <tr>
+                        <th style={{ ...tableCellStyle, height: '50px' }}>When</th>
+                        <th style={ tableCellStyle }>Who</th>
+                        <th style={ tableCellStyle }>Where</th>
+                        <th style={ tableCellStyle }>Result</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.map((row, index) => ( 
+                        <tr key={index} style={{ border: '1px solid white' }}>
+                            <td style={index === 0 ? { ...tableCellStyle, borderTop: '1px solid white' } : tableCellStyle}>
+                             {row.when}
+                            </td>
+                            <td style={{ ...tableCellStyle, height: '50px' }}>{row.who}</td>
+                            <td style={tableCellStyle}>{row.where}</td>
+                            <td style={{
+                                ...tableCellStyle,
+                                color: parseFloat(row.result) > 0 ? 'green' : 'red',
+                                fontSize: '20px'
+                                }}>
+                                {row.result}
+                            </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+          );          
+    }
     const RatingsSection = () => {
         return (
             <section id='ratings'>
@@ -558,14 +689,15 @@ const Homepage = ({setAuthenticationStatus}) => {
 
         { isCreateGameActive && <CreateGameForm />}
 
-        <PlayerRating />
+        {/* <PlayerRating /> */ } 
         <CreateGameButton />
-
         <Navbar />
+
         <Welcome />
+        <MyGames />
+        <FindGames />
         <History />
 
-        <FindGames />
 
         <RatingsSection />
     </div>

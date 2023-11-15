@@ -30,7 +30,7 @@ section {
 }
 
 #welcome {
-        background: url("/Users/pmcslarrow/Developer/hoop-easy/public/BACKGROUND_1.png") no-repeat center center;
+        background: url("/Users/pmcslarrow/Developer/hoop-easy/public/welcome-back-background.png") no-repeat center center;
         background-size: cover;
         display: flex;
 }
@@ -42,8 +42,8 @@ section {
 }
         
 #history {
-        background: url("/Users/pmcslarrow/Developer/hoop-easy/public/BACKGROUND_1.png") no-repeat center center;
-        background-size: stretch;
+        background: url("/Users/pmcslarrow/Developer/hoop-easy/public/history-background.png") no-repeat center center;
+        background-size: cover;
         display: flex;
 }
 
@@ -52,7 +52,6 @@ section {
 }
 
 #ratings {
-    background-color: purple;
 }
 
 .flexbox-row {
