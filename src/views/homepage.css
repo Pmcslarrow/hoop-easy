@@ -161,3 +161,30 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
     cursor: pointer;
 }
 
+#my-games div, #my-games ul, #my-games li {
+    padding: 0;
+    margin: 0;
+}
+
+
+
+/* H Scroller */
+
+#my-games .cards {
+    display: flex;
+    overflow-x: scroll;
+ }
+
+ #my-games .cards {
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    gap: 25px;
+
+ }
+ 
+ #my-games .card {
+    flex: 0 0 33%;
+    height: 50vh;
+    scroll-snap-align: start;
+ }

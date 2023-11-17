@@ -3,74 +3,93 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { db } from '../config/firebase';
-import { getDocs, addDoc, collection, GeoPoint } from 'firebase/firestore'
+import { getDocs, addDoc, collection, GeoPoint, deleteDoc } from 'firebase/firestore'
 import hoopEasyLogo from '../images/hoop-easy.png';
 import addButton from '../images/add.png'
 import profileImg from '../images/icons8-male-user-48.png'
 import missingImage from '../images/missingImage.jpg'
 import axios from 'axios';
-import {TiChevronLeftOutline, TiChevronRightOutline} from 'https://cdn.skypack.dev/react-icons/ti';
 import './homepage.css';
 
 
 
 
 const Homepage = ({setAuthenticationStatus}) => {
-    const navigate = useNavigate();
+    // State variables
     const [users, setUsers] = useState([]);
-    const [currentUserID, setCurrentUserID] = useState([])
-    const [availableGames, setAvailableGames] = useState([])
-    const [isCreateGameActive, setCreateGameActive] = useState(false)
-    const usersCollectionRef = collection(db, "users");
-    const gamesCollectionRef = collection(db, 'Games')
-    const [refreshToken, setRefreshToken] = useState(0)
+    const [currentUserID, setCurrentUserID] = useState(null);
+    const [availableGames, setAvailableGames] = useState([]);
+    const [myPendingGames, setMyPendingGames] = useState([]);
+    const [myConfirmedGames, setMyConfirmedGames] = useState([]);
+    const [isCreateGameActive, setCreateGameActive] = useState(false);
 
-    // Reading user data from the database
+    // Firestore collection references
+    const usersCollectionRef = collection(db, "users");
+    const gamesCollectionRef = collection(db, 'Games');
+    const [myConfirmedGamesRef, setMyConfirmedGamesRef] = useState('');
+    const [myPendingGamesRef, setMyPendingGamesRef] = useState('');
+
+    // Navigation
+    const navigate = useNavigate();
+
+    // Loading
+    const [refreshToken, setRefreshToken] = useState(0)
+    const [isLoading, setLoading] = useState(true)
+
     useEffect(() => {
-        const getUsers = async () => {
+        const fetchData = async () => {
             try {
-                const data = await getDocs(usersCollectionRef);
-                const filteredData = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
-                // const names = filteredData.map((obj) => obj.username);
-                setUsers(filteredData)
-            } catch(err) {
-                console.log(err);
-            }
-        }
-        const getCurrentUser = async () => {
-            const data = await getDocs(usersCollectionRef);
-            const filteredData = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
-            filteredData.map((obj) => {
-                if ( obj?.email === auth?.currentUser?.email ) {
-                    setCurrentUserID(obj.id)
+                const usersData = await getDocs(usersCollectionRef);
+                const filteredUsersData = usersData.docs.map((doc) => ({...doc.data(), id: doc.id}));
+                setUsers(filteredUsersData);
+     
+                const currentUser = filteredUsersData.find((user) => user.email === auth?.currentUser?.email);
+                if (currentUser) {
+                    setCurrentUserID(currentUser.id);
+                    setMyConfirmedGamesRef(`users/${currentUser.id}/confirmedGames`);
+                    setMyPendingGamesRef(`users/${currentUser.id}/pendingGames`);
+                 
+                    const fetchAndMapData = async (path) => {
+                        const collectionRef = collection(db, path);
+                        const docs = await getDocs(collectionRef);
+                        return docs.docs.map((doc) => ({...doc.data(), id: doc.id}));
+                    }
+                 
+                    const confirmedGames = await fetchAndMapData(`users/${currentUser.id}/confirmedGames`);
+                    const pendingGames = await fetchAndMapData(`users/${currentUser.id}/pendingGames`);
+                 
+                    setMyConfirmedGames(confirmedGames);
+                    setMyPendingGames(pendingGames);
                 }
-            })
-        }
-        const getAvailableGames = async () => {
-            try {
-                const games = await getDocs(gamesCollectionRef);
-                const filteredGames = games.docs.map((doc) => ({...doc.data(), id: doc.id}))
-                let joinedGames = filteredGames.map(game => {
-                    let user = users.find(user => user.id === game.playerID);
-                    if (user && user.email !== auth?.currentUser?.email) { // Filtering out games that your user posted
-                        return {
+                 
+                const gamesData = await getDocs(gamesCollectionRef);
+                const filteredGamesData = gamesData.docs.map((doc) => ({...doc.data(), id: doc.id}));
+                let joinedGames = filteredGamesData.map(game => {
+                    let user = filteredUsersData.find(user => user.id === game.playerID);
+                    if (user && user.email !== auth?.currentUser?.email) {
+                       return {
                            ...game,
                            ...user
-                        };
+                       }
                     }
-                    return null;
-                 }).filter(game => game !== null);
-                 
-                setAvailableGames(joinedGames)
+                    return null
+                }).filter(game => game !== null);
+     
+                setAvailableGames(joinedGames);
+     
+                setLoading(false);
             } catch(err) {
                 console.log(err);
             }
         }
+     
+        fetchData();
+     }, [refreshToken]);
+     
 
-    getUsers();
-    getCurrentUser();
-    getAvailableGames();
-    }, [refreshToken])
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
 
     /* GLOBAL FUNCTIONS */
@@ -120,7 +139,6 @@ const Homepage = ({setAuthenticationStatus}) => {
 
         return style;
     }
-
 
     /* COMPONENTS */
 
@@ -298,7 +316,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                     required
                 >
                     {states.map((state) => (
-                    <option key={state} value={state}>
+                    <option value={state}>
                         {state}
                     </option>
                     ))}
@@ -438,11 +456,11 @@ const Homepage = ({setAuthenticationStatus}) => {
         const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
         const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
         
-        const myGamesStyle = setGridStyle(4, 10, 7, 15, undefined, "25px", true)
-        const findGamesStyle = setGridStyle(8, 10, 11, 15, undefined, "25px", true);
+        const myGamesStyle = setGridStyle(4, 11, 7, 16, undefined, "25px", true)
+        const findGamesStyle = setGridStyle(8, 11, 11, 16, undefined, "25px", true);
         
-        const historyStyle = setGridStyle(4, 17, 7, 22, undefined, "25px", true);
-        const ratingsStyle = setGridStyle(8, 17, 11, 22, undefined, "25px", true);
+        const historyStyle = setGridStyle(4, 18, 7, 23, undefined, "25px", true);
+        const ratingsStyle = setGridStyle(8, 18, 11, 23, undefined, "25px", true);
 
         const gridStyle = {
             display: 'grid',
@@ -477,12 +495,66 @@ const Homepage = ({setAuthenticationStatus}) => {
         );
     };
     const MyGames = () => {
+    
+        const gridStyle = {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(13, 1fr)',
+            gridTemplateRows: 'repeat(30, 1fr)',
+            gap: '10px',
+        };
+
+        const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
+        const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
+        const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
+        const myGamesLocation = setGridStyle(2, 11, 12, 28, undefined, undefined, undefined)
+
+        const Card = ({ currentCard, type }) => (
+            <li className='card' style={{padding: '20px'}}>
+                    <div style={{display: "flex", justifyContent:'space-between'}}>
+                        <div>{currentCard.gameType}v{currentCard.gameType}</div>
+                        <div>
+                            <div>{currentCard.dateOfGame}</div>
+                            <div>Time: {currentCard.time}</div>
+                        </div>
+                    </div>
+                    <div style={{alignItems: 'center'}}>
+                        <img src={missingImage} alt={'Profile img'}></img>
+                    </div>
+                    <div>
+                        {currentCard.addressString}
+                    </div>
+
+                    {type === 'confirmed' ? (
+                    <div style={{ display: 'flex', justifyContent: 'space-around'}}>
+                       <button>Submit Score</button>
+                    </div>
+                    ) : (
+                        <div>Pending...</div>
+                    )}
+
+            </li>
+        );
+
         return (
-            <section id="my-games">
-            <div>
-              hello
-            </div>
-          </section>
+            <section id="my-games" style={gridStyle}>
+                <h1 style={h1Style}>My Games</h1>
+                <div style={horizontalLine}></div>
+                <p style={paragraph}>
+                See how previous games stack up.
+                </p>
+
+                <div id='myGames-container' style={myGamesLocation}>
+                <ul className="cards" >
+                    {myConfirmedGames.map((currentCard, i) => (
+                        <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
+                    ))}
+                    {myPendingGames.map((currentCard, i) => (
+                        <Card key={`pending-${i}`} currentCard={currentCard} type='pending' />  
+                    ))}
+                </ul>
+
+                </div>
+            </section>
         )
     }
     const FindGames = () => {
@@ -516,7 +588,6 @@ const Homepage = ({setAuthenticationStatus}) => {
             justifyContent: 'center',
             alignItems: 'center'
         }     
-
         // Carousel credit to: https://codepen.io/ykadosh/pen/ZEJLapj by Yoav Kadosh
         const Carousel = ({children}) => {
             const [active, setActive] = useState(0);
@@ -526,7 +597,7 @@ const Homepage = ({setAuthenticationStatus}) => {
               <div className='carousel' style={{...carouselLocation, ...flexboxRow}}>
                 {active > 0 && 
                     <button className='nav left' onClick={() => setActive(i => i - 1)}>
-                        <TiChevronLeftOutline/>
+                        Left
                     </button>
                 }
                 {React.Children.map(children, (child, i) => (
@@ -535,7 +606,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                       '--offset': (active - i) / 3,
                       '--direction': Math.sign(active - i),
                       '--abs-offset': Math.abs(active - i) / 3,
-                      'pointer-events': active === i ? 'auto' : 'none',
+                      // 'pointer-events': active === i ? 'auto' : 'none',
                       'opacity': Math.abs(active - i) >= 3 ? '0' : '1',
                       'display': Math.abs(active - i) > 3 ? 'none' : 'block',
                     }}>
@@ -544,7 +615,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                 ))}
                 {active < count - 1 && 
                     <button className='nav right' onClick={() => setActive(i => i + 1)}>
-                        <TiChevronRightOutline/>
+                        Right
                     </button>
                 }
               </div>
@@ -573,11 +644,56 @@ const Homepage = ({setAuthenticationStatus}) => {
                     <div>
                         {currentCard.addressString}
                     </div>
-                    <div className='cursor' style={{ ...buttonStyle, ...center }}>
-                        accept
+                    <div 
+                        className='cursor' 
+                        style={{ ...buttonStyle, ...center }} 
+                        onClick={() => handleGameAcceptance(currentCard)} 
+                    >
+                    accept
                     </div>
+
             </div>
         );
+
+        async function handleGameAcceptance ( currentCard ) {
+            console.log("Steps:\n1) Add the game details into myPlayerID confirmedGames\n2) Add the game details into opponentID confirmedGames\n3) Remove from myPlayerID pending games\n4) Refresh token")
+            const opponentID = currentCard.playerID
+            
+            const myConfirmed = collection(db, myConfirmedGamesRef)
+            const opponentPending = collection(db, `users/${opponentID}/pendingGames`)
+            const opponentConfirmed = collection(db, `users/${opponentID}/confirmedGames`)
+           
+            const pendingQuerySnapshot = await getDocs(opponentPending);
+            const availableGamesQuerySnapshot = await getDocs(gamesCollectionRef)
+           
+            // Filter the documents based on dateOfGame and time
+            const matchingPendingDocs = pendingQuerySnapshot.docs.filter(doc => {
+             const data = doc.data();
+             return data.dateOfGame === currentCard.dateOfGame && data.time === currentCard.time;
+            });
+
+            const matchingAvailableGamesDocs = availableGamesQuerySnapshot.docs.filter(doc => {
+                const data = doc.data();
+                return data.dateOfGame === currentCard.dateOfGame && data.time === currentCard.time;
+               });
+           
+            // Delete the matching documents
+            matchingPendingDocs.forEach(async (doc) => {
+                await deleteDoc(doc.ref);
+            });
+
+            matchingAvailableGamesDocs.forEach(async (doc) => {
+                await deleteDoc(doc.ref)
+            })
+           
+            console.log("Matching documents have been deleted:", matchingPendingDocs)
+            console.log("Matching documents have been deleted:", matchingAvailableGamesDocs)
+           
+            await addDoc(myConfirmed, currentCard);
+            await addDoc(opponentConfirmed, currentCard);
+
+            setRefreshToken(refreshToken + 1)
+        }
 
         return (
             <section id="find-game" style={gridStyle}>
@@ -587,8 +703,8 @@ const Homepage = ({setAuthenticationStatus}) => {
                 <div style={{ ...carouselLocation, ...flexboxRow }}>
 
                     <Carousel>
-                    {availableGames.map((_, i) => (
-                        <Card currentCard={availableGames[i]}/>
+                    {availableGames.map((index, i) => (
+                        <Card key={index} currentCard={availableGames[i]}/>
                     ))}
                     </Carousel>
 
