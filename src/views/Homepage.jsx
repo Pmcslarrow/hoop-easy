@@ -52,7 +52,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                 const filteredGames = games.docs.map((doc) => ({...doc.data(), id: doc.id}))
                 let joinedGames = filteredGames.map(game => {
                     let user = users.find(user => user.id === game.playerID);
-                    if (user && user.email !== auth?.currentUser?.email) {
+                    if (user && user.email !== auth?.currentUser?.email) { // Filtering out games that your user posted
                         return {
                            ...game,
                            ...user
@@ -140,80 +140,18 @@ const Homepage = ({setAuthenticationStatus}) => {
         }, []);
 
 
-        const handleChange = (event) => {
+        const handleFormChange = (event) => {
             const { id, value } = event.target;
             setFormData((prevData) => ({
               ...prevData,
               [id]: value,
             }));
         };
-        const handleSubmit = (event) => {
+        const handleNewGameSubmission = async (event) => {
             event.preventDefault();  
-
             const dateTimeString = `${formData.dateOfGame} ${formData.timeOfGame}`;
             const dateTime = new Date(dateTimeString);
-
-            handleCreateGame(dateTime);
-        };    
-        const handleAPICall = (API_CALL, collectionReference, currentPlayerDocumentID) =>  {
-            const params = {
-                street: formData.streetAddress,
-                city: formData.city,
-                state: formData.state,
-                postalcode: formData.zipcode,
-                country: 'US'
-            };
-         
-            axios.get(API_CALL, { params: params })
-                .then((response) => {
-                    const data = response.data;
-
-                    if (data.length > 0) {
-                        toggleCreateGame()
-                        addGameToPlayersConfirmedGames(data[0], collectionReference, currentPlayerDocumentID)
-                    } else {
-                        console.log('Could not find this address')
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        }
-        const addGameToPlayersConfirmedGames = async ( locationData, collectionReference, currentPlayerDocumentID ) => {
-            const lon = Number(locationData.lon);
-            const lat = Number(locationData.lat);
-
-            const coordinates = new GeoPoint(lat, lon);
-            const addressString = formData.streetAddress
-            const dateOfGame = formData.dateOfGame
-            const time = formData.timeOfGame
-            const gameType = '1'
-            const playerID = currentPlayerDocumentID
-
-            console.log(coordinates)
-            const DATA_UPLOAD = {
-                coordinates, 
-                addressString, 
-                dateOfGame, 
-                time, 
-                gameType, 
-                playerID
-            }
-
-            try {
-                await addDoc(collectionReference, DATA_UPLOAD);
-                setRefreshToken(refreshToken + 1)
-            } catch (error) {
-                console.error("Error adding document: ", error);
-            }
-        }
-         
-         
-        // Function that will insert the new game data into the Games/ collection
-        const handleCreateGame = async ( dateTimeOfGame ) => {
             let userLoggedIn = auth?.currentUser;
-            const API_START = 'https://geocode.maps.co/search'
-            
 
             if (userLoggedIn) {
                 const userCollection = await getDocs(usersCollectionRef);
@@ -226,17 +164,80 @@ const Homepage = ({setAuthenticationStatus}) => {
 
                     if ( currentPlayerEmail === userLoggedIn?.email ) {   
 
-                        handleAPICall(API_START, gamesCollectionRef, currentPlayerDocumentID)
-                        handleAPICall(API_START, pendingGamesCollectionRef, currentPlayerDocumentID)
-                        
-                    } 
+                        fetchLocationCoordinates()
+                            .then(({ longitude, latitude }) => {
+                                addGameToPlayersConfirmedGames( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID )
+                                toggleCreateGame()
+                            })
+                            .catch((error) => {
+                                console.error(error.message);
+                            });
+
+                    }
                 });
 
             } else {
                 console.log("No user signed in");
             }
-        };
-       
+        };    
+        const fetchLocationCoordinates = () => {
+            const params = {
+                street: formData.streetAddress,
+                city: formData.city,
+                state: formData.state,
+                postalcode: formData.zipcode,
+                country: 'US'
+            };
+            const API_START = 'https://geocode.maps.co/search'
+
+        
+            return axios.get(API_START, { params: params })
+                .then((response) => {
+                    const data = response.data;
+        
+                    if (data.length > 0) {
+                        const coordinates = {
+                            longitude: data[0].lon,
+                            latitude: data[0].lat
+                        };
+                        return coordinates;
+                    } else {
+                        throw new Error('Could not find this address');
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    throw error; 
+                });
+        }
+        const addGameToPlayersConfirmedGames = async ( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID ) => {
+
+            const coordinates = new GeoPoint(Number(latitude), Number(longitude));
+            const addressString = formData.streetAddress
+            const dateOfGame = formData.dateOfGame
+            const time = formData.timeOfGame
+            const gameType = '1'
+            const playerID = currentPlayerDocumentID
+
+            const DATA_UPLOAD = {
+                coordinates, 
+                addressString, 
+                dateOfGame, 
+                time, 
+                gameType, 
+                playerID
+            }
+
+            try {
+                await addDoc(gamesCollectionRef, DATA_UPLOAD);
+                await addDoc(pendingGamesCollectionRef, DATA_UPLOAD)
+                setRefreshToken(refreshToken + 1)
+            } catch (error) {
+                console.error("Error adding document: ", error);
+            }
+        }
+    
+        
         const styling = {
             position: 'fixed',
             top: '50%',
@@ -269,68 +270,68 @@ const Homepage = ({setAuthenticationStatus}) => {
         const states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
        
         return (
-            <form style={styling} onSubmit={handleSubmit}>
+            <form style={styling} onSubmit={handleNewGameSubmission}>
               <label htmlFor="streetAddress">Street Address:</label>
-              <input
-                style={{ ...inputStyle, width: '50%' }}
-                id="streetAddress"
-                placeholder="Street Address"
-                value={formData.streetAddress}
-                onChange={handleChange}
-                required
-              />
+                <input
+                    style={{ ...inputStyle, width: '50%' }}
+                    id="streetAddress"
+                    placeholder="Street Address"
+                    value={formData.streetAddress}
+                    onChange={handleFormChange}
+                    required
+                />
               <label htmlFor="city">City:</label>
-              <input
-                style={{ ...inputStyle, width: '50%' }}
-                id="city"
-                placeholder="City"
-                value={formData.city}
-                onChange={handleChange}
-                required
-              />
+                <input
+                    style={{ ...inputStyle, width: '50%' }}
+                    id="city"
+                    placeholder="City"
+                    value={formData.city}
+                    onChange={handleFormChange}
+                    required
+                />
               <label htmlFor="state">State:</label>
-              <select
-                style={{ ...inputStyle, width: '50%' }}
-                id="state"
-                value={formData.state}
-                onChange={handleChange}
-                required
-              >
-                {states.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
+                <select
+                    style={{ ...inputStyle, width: '50%' }}
+                    id="state"
+                    value={formData.state}
+                    onChange={handleFormChange}
+                    required
+                >
+                    {states.map((state) => (
+                    <option key={state} value={state}>
+                        {state}
+                    </option>
+                    ))}
+                </select>
               <label htmlFor="zipcode">Zipcode:</label>
-              <input
-                style={{ ...inputStyle, width: '50%' }}
-                id="zipcode"
-                placeholder="Zipcode"
-                value={formData.zipcode}
-                onChange={handleChange}
-                required
-              />
+                <input
+                    style={{ ...inputStyle, width: '50%' }}
+                    id="zipcode"
+                    placeholder="Zipcode"
+                    value={formData.zipcode}
+                    onChange={handleFormChange}
+                    required
+                />
               <label htmlFor="dateOfGame">Date of game:</label>
-              <input
-                style={{ ...inputStyle, width: '50%' }}
-                id="dateOfGame"
-                placeholder="Date of game"
-                type="date"
-                value={formData.dateOfGame}
-                onChange={handleChange}
-                required
-              />
+                <input
+                    style={{ ...inputStyle, width: '50%' }}
+                    id="dateOfGame"
+                    placeholder="Date of game"
+                    type="date"
+                    value={formData.dateOfGame}
+                    onChange={handleFormChange}
+                    required
+                />
               <label htmlFor="timeOfGame">Time of game:</label>
-              <input
-                style={{ ...inputStyle, width: '50%' }}
-                id="timeOfGame"
-                placeholder="Time of game"
-                type="time"
-                value={formData.timeOfGame}
-                onChange={handleChange}
-                required
-              />
+                <input
+                    style={{ ...inputStyle, width: '50%' }}
+                    id="timeOfGame"
+                    placeholder="Time of game"
+                    type="time"
+                    value={formData.timeOfGame}
+                    onChange={handleFormChange}
+                    required
+                />
               <button
                 style={{
                   width: '50%',
@@ -354,17 +355,15 @@ const Homepage = ({setAuthenticationStatus}) => {
           justifyContent: 'space-around',
           alignItems: 'center',
         };
-      
         const flexRow = {
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-around',
-          alignItems: 'flex-end', // Use flex-end to align items at the end
+          alignItems: 'flex-end', 
           width: '100%',
         };
-      
         const card = {
-          position: 'fixed', // Change to 'fixed' if you want it relative to the viewport
+          position: 'fixed', 
           width: '125px',
           height: '125px',
           backgroundColor: 'black',
@@ -374,7 +373,6 @@ const Homepage = ({setAuthenticationStatus}) => {
           marginLeft: '25px',
           marginBottom: '25px',
         };
-      
         const ratingFont = {
           fontSize: '65px',
         };
@@ -435,13 +433,7 @@ const Homepage = ({setAuthenticationStatus}) => {
         );
     }
     const Welcome = () => {
-        const gridStyle = {
-          display: 'grid',
-          gridTemplateColumns: 'repeat(13, 1fr)',
-          gridTemplateRows: 'repeat(30, 1fr)',
-          gap: '10px',
-        };
-      
+        
         const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
         const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
         const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
@@ -451,6 +443,13 @@ const Homepage = ({setAuthenticationStatus}) => {
         
         const historyStyle = setGridStyle(4, 17, 7, 22, undefined, "25px", true);
         const ratingsStyle = setGridStyle(8, 17, 11, 22, undefined, "25px", true);
+
+        const gridStyle = {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(13, 1fr)',
+            gridTemplateRows: 'repeat(30, 1fr)',
+            gap: '10px',
+          };
       
         const linkStyle = {
           display: 'flex',
@@ -598,21 +597,6 @@ const Homepage = ({setAuthenticationStatus}) => {
         )
     };      
     const History = () => {
-        const gridStyle = {
-                display: 'grid',
-                gridTemplateColumns: 'repeat(13, 1fr)',
-                gridTemplateRows: 'repeat(30, 1fr)',
-                gap: '10px',
-        };
-
-        const tableHeaderStyle = {
-            textAlign: 'center',
-            fontSize: '25px'
-        };
-        
-        const tableCellStyle = {
-            border: '1px solid rgba(255, 255, 255, 0.5)'
-        };
 
         const data = [
             { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 1', result: '2' },
@@ -629,6 +613,19 @@ const Homepage = ({setAuthenticationStatus}) => {
             { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
 
         ];
+        const gridStyle = {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(13, 1fr)',
+            gridTemplateRows: 'repeat(30, 1fr)',
+            gap: '10px',
+        };
+        const tableHeaderStyle = {
+            textAlign: 'center',
+            fontSize: '25px'
+        };
+        const tableCellStyle = {
+            border: '1px solid rgba(255, 255, 255, 0.5)'
+        };
 
         const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
         const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
