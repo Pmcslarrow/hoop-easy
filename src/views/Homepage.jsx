@@ -18,10 +18,12 @@ const Homepage = ({setAuthenticationStatus}) => {
     // State variables
     const [users, setUsers] = useState([]);
     const [currentUserID, setCurrentUserID] = useState(null);
+    const [currentUsername, setCurrentUsername] = useState('')
     const [availableGames, setAvailableGames] = useState([]);
     const [myPendingGames, setMyPendingGames] = useState([]);
     const [myConfirmedGames, setMyConfirmedGames] = useState([]);
     const [isCreateGameActive, setCreateGameActive] = useState(false);
+    const [isScoreSubmitting, setIsScoreSubmitting] = useState(false)
 
     // Firestore collection references
     const usersCollectionRef = collection(db, "users");
@@ -46,6 +48,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                 const currentUser = filteredUsersData.find((user) => user.email === auth?.currentUser?.email);
                 if (currentUser) {
                     setCurrentUserID(currentUser.id);
+                    setCurrentUsername(currentUser.username)
                     setMyConfirmedGamesRef(`users/${currentUser.id}/confirmedGames`);
                     setMyPendingGamesRef(`users/${currentUser.id}/pendingGames`);
                  
@@ -508,6 +511,13 @@ const Homepage = ({setAuthenticationStatus}) => {
         const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
         const myGamesLocation = setGridStyle(2, 11, 12, 28, undefined, undefined, undefined)
 
+        function toggleScoreSubmissionForm( currentCard ) {
+            console.log(currentCard)
+            setIsScoreSubmitting(!isScoreSubmitting)
+
+            // Need to either create a form or create a separate page to submit the info. Then send the other user an email or something to verify.
+        }
+
         const Card = ({ currentCard, type }) => (
             <li className='card' style={{padding: '20px'}}>
                     <div style={{display: "flex", justifyContent:'space-between'}}>
@@ -521,12 +531,15 @@ const Homepage = ({setAuthenticationStatus}) => {
                         <img src={missingImage} alt={'Profile img'}></img>
                     </div>
                     <div>
+                        Opponent: {currentCard?.opponent}
+                    </div>
+                    <div>
                         {currentCard.addressString}
                     </div>
 
                     {type === 'confirmed' ? (
                     <div style={{ display: 'flex', justifyContent: 'space-around'}}>
-                       <button>Submit Score</button>
+                        <button onClick={() => toggleScoreSubmissionForm(currentCard)}>Submit Score</button>
                     </div>
                     ) : (
                         <div>Pending...</div>
@@ -534,6 +547,7 @@ const Homepage = ({setAuthenticationStatus}) => {
 
             </li>
         );
+        
 
         return (
             <section id="my-games" style={gridStyle}>
@@ -658,6 +672,7 @@ const Homepage = ({setAuthenticationStatus}) => {
         async function handleGameAcceptance ( currentCard ) {
             console.log("Steps:\n1) Add the game details into myPlayerID confirmedGames\n2) Add the game details into opponentID confirmedGames\n3) Remove from myPlayerID pending games\n4) Refresh token")
             const opponentID = currentCard.playerID
+            const opponentUsername = currentCard.username
             
             const myConfirmed = collection(db, myConfirmedGamesRef)
             const opponentPending = collection(db, `users/${opponentID}/pendingGames`)
@@ -665,7 +680,9 @@ const Homepage = ({setAuthenticationStatus}) => {
            
             const pendingQuerySnapshot = await getDocs(opponentPending);
             const availableGamesQuerySnapshot = await getDocs(gamesCollectionRef)
-           
+
+            console.log(currentCard, currentUsername, opponentUsername)
+        
             // Filter the documents based on dateOfGame and time
             const matchingPendingDocs = pendingQuerySnapshot.docs.filter(doc => {
              const data = doc.data();
@@ -685,12 +702,16 @@ const Homepage = ({setAuthenticationStatus}) => {
             matchingAvailableGamesDocs.forEach(async (doc) => {
                 await deleteDoc(doc.ref)
             })
-           
-            console.log("Matching documents have been deleted:", matchingPendingDocs)
-            console.log("Matching documents have been deleted:", matchingAvailableGamesDocs)
-           
+
+
+            currentCard.playerID = opponentID
+            currentCard.opponent = opponentUsername
             await addDoc(myConfirmed, currentCard);
+
+            currentCard.playerID = currentUserID;
+            currentCard.opponent = currentUsername
             await addDoc(opponentConfirmed, currentCard);
+           
 
             setRefreshToken(refreshToken + 1)
         }
