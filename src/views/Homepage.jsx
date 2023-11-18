@@ -542,7 +542,19 @@ const Homepage = ({setAuthenticationStatus}) => {
                         <button onClick={() => toggleScoreSubmissionForm(currentCard)}>Submit Score</button>
                     </div>
                     ) : (
-                        <div>Pending...</div>
+                        <>
+                        <div style={{display: 'flex', justifyContent: 'center', gap: '10px'}}>
+                            <div>Pending</div>
+
+                            <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '10px'}}>
+                                <div className='el'></div>
+                                <div className='el'></div>
+                                <div className='el'></div>
+                            </div>
+                        </div>
+                        
+                        </>
+                        
                     )}
 
             </li>
