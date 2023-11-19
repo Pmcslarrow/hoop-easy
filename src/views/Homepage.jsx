@@ -512,10 +512,12 @@ const Homepage = ({setAuthenticationStatus}) => {
         const myGamesLocation = setGridStyle(2, 11, 12, 28, undefined, undefined, undefined)
 
         function toggleScoreSubmissionForm( currentCard ) {
-            console.log(currentCard)
-            setIsScoreSubmitting(!isScoreSubmitting)
+            
+            const opponentEmail = currentCard.email
+            const opponentID = currentCard.opponentID
+            console.log(opponentEmail, opponentID)
 
-            // Need to either create a form or create a separate page to submit the info. Then send the other user an email or something to verify.
+            setIsScoreSubmitting(!isScoreSubmitting)            
         }
 
         const Card = ({ currentCard, type }) => (
@@ -546,7 +548,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                         <div style={{display: 'flex', justifyContent: 'center', gap: '10px'}}>
                             <div>Pending</div>
 
-                            <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '10px'}}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
                                 <div className='el'></div>
                                 <div className='el'></div>
                                 <div className='el'></div>
@@ -681,10 +683,9 @@ const Homepage = ({setAuthenticationStatus}) => {
             </div>
         );
 
-        async function handleGameAcceptance ( currentCard ) {
-            console.log("Steps:\n1) Add the game details into myPlayerID confirmedGames\n2) Add the game details into opponentID confirmedGames\n3) Remove from myPlayerID pending games\n4) Refresh token")
-            const opponentID = currentCard.playerID
-            const opponentUsername = currentCard.username
+        async function handleGameAcceptance ( opponentCard ) {
+            const opponentID = opponentCard.playerID
+            const opponentUsername = opponentCard.username
             
             const myConfirmed = collection(db, myConfirmedGamesRef)
             const opponentPending = collection(db, `users/${opponentID}/pendingGames`)
@@ -693,20 +694,18 @@ const Homepage = ({setAuthenticationStatus}) => {
             const pendingQuerySnapshot = await getDocs(opponentPending);
             const availableGamesQuerySnapshot = await getDocs(gamesCollectionRef)
 
-            console.log(currentCard, currentUsername, opponentUsername)
+            console.log(opponentCard, currentUsername, opponentUsername)
         
-            // Filter the documents based on dateOfGame and time
             const matchingPendingDocs = pendingQuerySnapshot.docs.filter(doc => {
              const data = doc.data();
-             return data.dateOfGame === currentCard.dateOfGame && data.time === currentCard.time;
+             return data.dateOfGame === opponentCard.dateOfGame && data.time === opponentCard.time;
             });
 
             const matchingAvailableGamesDocs = availableGamesQuerySnapshot.docs.filter(doc => {
                 const data = doc.data();
-                return data.dateOfGame === currentCard.dateOfGame && data.time === currentCard.time;
+                return data.dateOfGame === opponentCard.dateOfGame && data.time === opponentCard.time;
                });
            
-            // Delete the matching documents
             matchingPendingDocs.forEach(async (doc) => {
                 await deleteDoc(doc.ref);
             });
@@ -715,14 +714,16 @@ const Homepage = ({setAuthenticationStatus}) => {
                 await deleteDoc(doc.ref)
             })
 
+            // Logged in player's opponent should be the opponentID and username and the opponent's opponent should be the current users ID and username
+            // My opponent --> opponent ID
+            // Their opponent --> my ID
+            opponentCard.opponent = opponentUsername
+            opponentCard.opponentID = opponentID
+            await addDoc(myConfirmed, opponentCard);
 
-            currentCard.playerID = opponentID
-            currentCard.opponent = opponentUsername
-            await addDoc(myConfirmed, currentCard);
-
-            currentCard.playerID = currentUserID;
-            currentCard.opponent = currentUsername
-            await addDoc(opponentConfirmed, currentCard);
+            opponentCard.opponent = currentUsername
+            opponentCard.opponentID = currentUserID
+            await addDoc(opponentConfirmed, opponentCard);
            
 
             setRefreshToken(refreshToken + 1)

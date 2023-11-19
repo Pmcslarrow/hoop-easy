@@ -47,10 +47,6 @@ section {
         display: flex;
 }
 
-#find-games {
-        background-color: blue;
-}
-
 #ratings {
 }
 
@@ -185,7 +181,7 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
  
  #my-games .card {
     flex: 0 0 33%;
-    height: 50vh;
+    height: 40vh;
     scroll-snap-align: start;
  }
 
@@ -199,7 +195,7 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
     }
     50% {
       transform: translateY(0);
-    }
+    } 
   }
   
   .el {
@@ -207,7 +203,7 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
     height: 5px; /* Adjust the height as needed */
     background-color: white;
     border-radius: 50%;
-    animation: waveAnimation 1.5s infinite ease-in-out;
+    animation: waveAnimation 2s infinite ease-in-out;
   }
   
   .el:nth-child(2) {
