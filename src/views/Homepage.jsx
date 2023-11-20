@@ -510,8 +510,8 @@ const Homepage = ({setAuthenticationStatus}) => {
 
         const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
         const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
-        const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
-        const myGamesLocation = setGridStyle(2, 11, 12, 28, undefined, undefined, undefined)
+        // const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
+        const myGamesLocation = setGridStyle(2, 8, 12, 28, undefined, undefined, undefined)
 
         const ScoreSubmissionComponent = ({ currentCard }) => {
             const [scoreData, setScoreData] = useState({
@@ -619,21 +619,24 @@ const Homepage = ({setAuthenticationStatus}) => {
                 return <div>Waiting for opponent approval...</div>
             }
             const VerifyGameComponent = () => {
+                const flexRow = {
+                    display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '5px'
+                }
                 return (
-                    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
-                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '10px'}}>
-                            <div>
-                                <label>Your proposed score:</label>
+                    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', gap: '10px'}}>
+                        <div style={flexRow}>
+                            <div style={flexRow}>
+                                <div>Your Score:</div>
                                 <div>{currentCard.score.playerScore}</div>
                             </div>
-                            <div>
-                                <label>Opponent proposed score:</label>
+                            <div style={flexRow}>
+                                <div>Opponent score:</div>
                                 <div>{currentCard.score.opponentScore}</div>
                             </div>
                         </div>
-                        <div>
-                            <div>Accept</div>
-                            <div>Deny</div>
+                        <div style={flexRow}>
+                            <div id='accept-button'>Accept</div>
+                            <div id='deny-button'>Deny</div>
                         </div>
                     </div>
                 )
@@ -731,9 +734,6 @@ const Homepage = ({setAuthenticationStatus}) => {
             <section id="my-games" style={gridStyle}>
                 <h1 style={h1Style}>My Games</h1>
                 <div style={horizontalLine}></div>
-                <p style={paragraph}>
-                See how previous games stack up.
-                </p>
 
                 <div id='myGames-container' style={myGamesLocation}>
                 <ul className="cards" >

@@ -90,11 +90,29 @@ a:hover {
 background-color: rgba(255, 255, 255, 0.2); 
 box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5); 
 }
+
+#accept-button {
+    color: green;
+}
+
+#deny-button {
+    color: red;
+}
     
-.cursor:hover {
+.cursor:hover, #accept-button:hover {
+    color: white;
     cursor: pointer;
     background-color: green; 
     box-shadow: 0 0 20px 10px rgb(1, 60, 1);
+    padding: 5px;
+}
+
+#deny-button:hover {
+    color: white;
+    cursor: pointer;
+    background-color: darkred; 
+    box-shadow: 0 0 20px 10px rgb(60, 6, 1);
+    padding: 5px;
 }
 
 .carousel {
