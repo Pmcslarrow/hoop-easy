@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { db } from '../config/firebase';
-import { getDocs, addDoc, collection, GeoPoint, deleteDoc } from 'firebase/firestore'
+import { getDocs, addDoc, collection, GeoPoint, deleteDoc, getDoc, doc, updateDoc } from 'firebase/firestore'
 import hoopEasyLogo from '../images/hoop-easy.png';
 import addButton from '../images/add.png'
 import profileImg from '../images/icons8-male-user-48.png'
@@ -19,6 +19,7 @@ const Homepage = ({setAuthenticationStatus}) => {
     const [users, setUsers] = useState([]);
     const [currentUserID, setCurrentUserID] = useState(null);
     const [currentUsername, setCurrentUsername] = useState('')
+    const [currentUser, setCurrentUser] = useState({})
     const [availableGames, setAvailableGames] = useState([]);
     const [myPendingGames, setMyPendingGames] = useState([]);
     const [myConfirmedGames, setMyConfirmedGames] = useState([]);
@@ -49,6 +50,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                 if (currentUser) {
                     setCurrentUserID(currentUser.id);
                     setCurrentUsername(currentUser.username)
+                    setCurrentUser(currentUser)
                     setMyConfirmedGamesRef(`users/${currentUser.id}/confirmedGames`);
                     setMyPendingGamesRef(`users/${currentUser.id}/pendingGames`);
                  
@@ -511,15 +513,175 @@ const Homepage = ({setAuthenticationStatus}) => {
         const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
         const myGamesLocation = setGridStyle(2, 11, 12, 28, undefined, undefined, undefined)
 
-        function toggleScoreSubmissionForm( currentCard ) {
-            
-            const opponentEmail = currentCard.email
-            const opponentID = currentCard.opponentID
-            console.log(opponentEmail, opponentID)
+        const ScoreSubmissionComponent = ({ currentCard }) => {
+            const [scoreData, setScoreData] = useState({
+              userScore: '',
+              opponentScore: ''
+            });
 
-            setIsScoreSubmitting(!isScoreSubmitting)            
+            useEffect(() => {
+                console.log(currentCard)
+                console.log(currentCard.gameApprovalStatus === true)
+                console.log(!currentCard.gameApprovalStatus && (currentCard?.score?.playerScore || currentCard?.score?.opponentScore))
+                console.log((!currentCard.gameApprovalStatus && !(currentCard?.score?.playerScore || currentCard?.score?.opponentScore)))
+            }, [])
+
+
+            const handleScoreChange = (event) => {
+              const { id, value } = event.target;
+              
+              try {
+
+                if ( value > 99 ) {
+                    setScoreData((prevData) => ({
+                        ...prevData,
+                        [id]: 99,
+                      }));
+                      return
+                } else {
+                    setScoreData((prevData) => ({
+                        ...prevData,
+                        [id]: value,
+                      }));
+                }
+              } catch (err) {
+                console.log(err)
+              }    
+
+            };
+
+            const handleScoreSubmission = async () => {
+                const { userScore, opponentScore } = scoreData
+                if ( !userScore || !opponentScore ) {
+                    console.log("Please fill out the game info.")
+                    return
+                }
+
+                const dataForCurrentPlayerCollection = {
+                    ...currentCard,
+                    playerID: currentUser.id,
+                    score: {
+                      playerScore: userScore,
+                      opponentScore: opponentScore
+                    },
+                    gameApprovalStatus: true
+                };
+
+                const dataForOpponentCollection = {
+                    ...currentCard,
+                    opponentID: currentUser.id,
+                    email: currentUser.email,
+                    firstName: currentUser.firstName,
+                    heightFt: currentUser.heightFt,
+                    heightInches: currentUser.heightInches,
+                    playerID: currentCard.playerID,
+                    lastName: currentUser.lastName,
+                    username: currentUser.username,
+                    score: {
+                     playerScore: opponentScore,
+                     opponentScore: userScore
+                    },
+                    gameApprovalStatus: false
+                };
+
+                const playerDocID = currentCard.id;
+                const playerDocRef = doc(db, `users/${currentUserID}/confirmedGames`, playerDocID);
+                const opponentConfirmed = collection(db, `users/${currentCard.opponentID}/confirmedGames`);
+                const opponentConfirmedSnapshot = await getDocs(opponentConfirmed);
+
+                let opponentDoc = opponentConfirmedSnapshot.docs.find((doc) => {
+                    const currDoc = doc.data();
+                   
+                    return currDoc.dateOfGame === currentCard.dateOfGame &&
+                    currDoc.time === currentCard.time &&
+                    currDoc.addressString === currentCard.addressString;
+                });
+                   
+                
+                if (opponentDoc) {
+                    await updateDoc(opponentDoc.ref, dataForOpponentCollection);
+                    await updateDoc(playerDocRef, dataForCurrentPlayerCollection);
+                 } else {
+                    console.log("Something went wrong while submitting the game")
+                 }     
+                 
+                 setRefreshToken(refreshToken + 1)
+                
+
+                // 1) Set this player's gameApprovalPending status to true and add the score to their collection
+                // 2) Set the opponent's gameApprovalPending status to false and add the score to their collection
+                // 3) If the gameApprovalPending is true --> just return a pending ...
+                // 4) If the gameApprovalPending is false AND the scores are there --> return Accept or Deny
+                // 5) If the gameApprovalPending is false AND the the scores are NOT there --> Go through the same logic as now
+            };
+
+            const PendingComponent = () => {
+                return <div>Waiting for opponent approval...</div>
+            }
+            const VerifyGameComponent = () => {
+                return <div>Accept Deny</div>
+            }
+            const ScoreInputComponent = () => {
+                return (        
+                <>
+                    <div style={{ display: 'flex', justifyContent: 'space-around', gap: '10px'}}>
+                        <input
+                            id='userScore'
+                            type='number'
+                            placeholder='Your score'
+                            onChange={handleScoreChange}
+                            value={scoreData.userScore}
+                            min='0'
+                            max='99'
+                            className='placeholderStyle'
+                            style={{width: '100%'}}
+                        />
+                        <input
+                            id='opponentScore'
+                            type='number'
+                            placeholder='Opponent score'
+                            onChange={handleScoreChange}
+                            value={scoreData.opponentScore}
+                            min='0'
+                            max='99'
+                            className='placeholderStyle'
+                            style={{width: '100%'}}
+                        />
+                    </div>
+                    <div>
+                    <button onClick={handleScoreSubmission} style={{fontSize: '16px', height: '100%'}} id='submitScoreButton'>Submit Score</button>
+                    </div>
+                </>
+                )
+            }
+          
+            return (
+                <>
+                  {currentCard.gameApprovalStatus && <PendingComponent />}
+                  {(!currentCard.gameApprovalStatus && (currentCard?.score?.playerScore || currentCard?.score?.opponentScore)) && <VerifyGameComponent />}
+                  {(!currentCard.gameApprovalStatus && !(currentCard?.score?.playerScore || currentCard?.score?.opponentScore)) && <ScoreInputComponent />}
+                </>
+            );               
+          };
+          
+
+        const PendingGameComponent = () => {
+            <>
+            <div style={{display: 'flex', justifyContent: 'center', gap: '10px'}}>
+                <div>Pending</div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
+                    <div className='el'></div>
+                    <div className='el'></div>
+                    <div className='el'></div>
+                </div>
+            </div>
+            
+            </>
         }
 
+        // This card is where you will have to check if the currentCard already has an attribute for the score of the game
+        // If it does have the attribute, then you will have to show accept or deny. 
         const Card = ({ currentCard, type }) => (
             <li className='card' style={{padding: '20px'}}>
                     <div style={{display: "flex", justifyContent:'space-between'}}>
@@ -540,25 +702,10 @@ const Homepage = ({setAuthenticationStatus}) => {
                     </div>
 
                     {type === 'confirmed' ? (
-                    <div style={{ display: 'flex', justifyContent: 'space-around'}}>
-                        <button onClick={() => toggleScoreSubmissionForm(currentCard)}>Submit Score</button>
-                    </div>
+                        <ScoreSubmissionComponent currentCard={currentCard}/>
                     ) : (
-                        <>
-                        <div style={{display: 'flex', justifyContent: 'center', gap: '10px'}}>
-                            <div>Pending</div>
-
-                            <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
-                                <div className='el'></div>
-                                <div className='el'></div>
-                                <div className='el'></div>
-                            </div>
-                        </div>
-                        
-                        </>
-                        
+                        <PendingGameComponent />
                     )}
-
             </li>
         );
         

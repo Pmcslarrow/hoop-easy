@@ -73,6 +73,10 @@ section {
         font-size: 16px;
         opacity: 0.8;
 }
+.placeholderStyle::placeholder {
+    color: rgba(0, 0, 0, 0.5); 
+    font-size: 14px;
+}
 
 a {
 text-decoration: none;
@@ -181,12 +185,10 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
  
  #my-games .card {
     flex: 0 0 33%;
-    height: 40vh;
+    height: 50vh;
     scroll-snap-align: start;
  }
 
-
- 
 
 
  @keyframes waveAnimation {
@@ -215,6 +217,9 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
   }
   
 
+  #submitScoreButton:hover {
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5); 
+  }
 
 
 
