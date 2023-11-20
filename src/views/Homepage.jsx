@@ -519,13 +519,6 @@ const Homepage = ({setAuthenticationStatus}) => {
               opponentScore: ''
             });
 
-            useEffect(() => {
-                console.log(currentCard)
-                console.log(currentCard.gameApprovalStatus === true)
-                console.log(!currentCard.gameApprovalStatus && (currentCard?.score?.playerScore || currentCard?.score?.opponentScore))
-                console.log((!currentCard.gameApprovalStatus && !(currentCard?.score?.playerScore || currentCard?.score?.opponentScore)))
-            }, [])
-
 
             const handleScoreChange = (event) => {
               const { id, value } = event.target;
@@ -622,6 +615,18 @@ const Homepage = ({setAuthenticationStatus}) => {
                 const flexRow = {
                     display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '5px'
                 }
+
+                const handleAccept = () => {
+                    console.log("Handling score accept --> Get score, get elo, update overall in user collection, remove confirmedGame instance")
+                    let opponentCard = currentCard
+                    console.log(opponentCard, currentUser)
+                }
+                const handleDeny = () => {
+                    console.log("Handle score denial --> Remove from the confirmedGames collection for both users. Has no effect on either player's elo?")
+                    let opponentCard = currentCard
+                    console.log(opponentCard, currentUser)
+                }
+
                 return (
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', gap: '10px'}}>
                         <div style={flexRow}>
@@ -635,8 +640,8 @@ const Homepage = ({setAuthenticationStatus}) => {
                             </div>
                         </div>
                         <div style={flexRow}>
-                            <div id='accept-button'>Accept</div>
-                            <div id='deny-button'>Deny</div>
+                            <div id='accept-button' onClick={handleAccept}>Accept</div>
+                            <div id='deny-button' onClick={handleDeny}>Deny</div>
                         </div>
                     </div>
                 )
@@ -849,7 +854,6 @@ const Homepage = ({setAuthenticationStatus}) => {
 
         async function handleGameAcceptance ( opponentCard ) {
             const opponentID = opponentCard.playerID
-            const opponentUsername = opponentCard.username
             
             const myConfirmed = collection(db, myConfirmedGamesRef)
             const opponentPending = collection(db, `users/${opponentID}/pendingGames`)
@@ -858,7 +862,23 @@ const Homepage = ({setAuthenticationStatus}) => {
             const pendingQuerySnapshot = await getDocs(opponentPending);
             const availableGamesQuerySnapshot = await getDocs(gamesCollectionRef)
 
-            console.log(opponentCard, currentUsername, opponentUsername)
+            const dataForCurrentPlayer = {
+                ...opponentCard,
+                opponent: opponentCard.username,
+                opponentID: opponentCard.playerID,
+                playerID: currentUserID
+            }
+            const dataForOpponent = {
+                ...currentUser, // same
+                addressString: opponentCard.addressString, // ibid
+                coordinates: opponentCard.coordinates, // ibid
+                date: opponentCard.date, // ibid
+                dateOfGame: opponentCard.dateOfGame, // ibid
+                time: opponentCard.time, // ibid
+                opponent: currentUser.username, // Should your username
+                opponentID: currentUserID, // Should show your ID
+                playerID: opponentCard.id // Should show their ID
+            }
         
             const matchingPendingDocs = pendingQuerySnapshot.docs.filter(doc => {
              const data = doc.data();
@@ -869,27 +889,18 @@ const Homepage = ({setAuthenticationStatus}) => {
                 const data = doc.data();
                 return data.dateOfGame === opponentCard.dateOfGame && data.time === opponentCard.time;
                });
-           
+
             matchingPendingDocs.forEach(async (doc) => {
                 await deleteDoc(doc.ref);
             });
-
+            
             matchingAvailableGamesDocs.forEach(async (doc) => {
                 await deleteDoc(doc.ref)
             })
 
-            // Logged in player's opponent should be the opponentID and username and the opponent's opponent should be the current users ID and username
-            // My opponent --> opponent ID
-            // Their opponent --> my ID
-            opponentCard.opponent = opponentUsername
-            opponentCard.opponentID = opponentID
-            await addDoc(myConfirmed, opponentCard);
-
-            opponentCard.opponent = currentUsername
-            opponentCard.opponentID = currentUserID
-            await addDoc(opponentConfirmed, opponentCard);
+            await addDoc(myConfirmed, dataForCurrentPlayer);
+            await addDoc(opponentConfirmed, dataForOpponent);
            
-
             setRefreshToken(refreshToken + 1)
         }
 
