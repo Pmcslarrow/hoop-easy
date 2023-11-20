@@ -570,13 +570,13 @@ const Homepage = ({setAuthenticationStatus}) => {
                 const dataForOpponentCollection = {
                     ...currentCard,
                     opponentID: currentUser.id,
+                    opponent: currentUser.username,
                     email: currentUser.email,
                     firstName: currentUser.firstName,
                     heightFt: currentUser.heightFt,
                     heightInches: currentUser.heightInches,
                     playerID: currentCard.playerID,
                     lastName: currentUser.lastName,
-                    username: currentUser.username,
                     score: {
                      playerScore: opponentScore,
                      opponentScore: userScore
@@ -619,7 +619,24 @@ const Homepage = ({setAuthenticationStatus}) => {
                 return <div>Waiting for opponent approval...</div>
             }
             const VerifyGameComponent = () => {
-                return <div>Accept Deny</div>
+                return (
+                    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
+                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '10px'}}>
+                            <div>
+                                <label>Your proposed score:</label>
+                                <div>{currentCard.score.playerScore}</div>
+                            </div>
+                            <div>
+                                <label>Opponent proposed score:</label>
+                                <div>{currentCard.score.opponentScore}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>Accept</div>
+                            <div>Deny</div>
+                        </div>
+                    </div>
+                )
             }
             const ScoreInputComponent = () => {
                 return (        
