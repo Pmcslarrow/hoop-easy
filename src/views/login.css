@@ -46,7 +46,12 @@ body { height: 100vh; margin: 0; color: white;}
 }
 
   .col {
-      background: linear-gradient(90deg, #ff5733, #ff0000, 75%, transparent);
+    background: -webkit-linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
+    background: -moz-linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
+    background: -o-linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
+    background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
+
+    border-radius: 20px;
       height: 50%;
       width: 40%;
 

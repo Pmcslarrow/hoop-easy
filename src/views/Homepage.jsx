@@ -8,10 +8,12 @@ import hoopEasyLogo from '../images/hoop-easy.png';
 import addButton from '../images/add.png'
 import profileImg from '../images/icons8-male-user-48.png'
 import missingImage from '../images/missingImage.jpg'
+import { bouncyArc } from 'ldrs'
+
 import axios from 'axios';
 import './homepage.css';
 
-
+bouncyArc.register()
 
 
 const Homepage = ({setAuthenticationStatus}) => {
@@ -79,10 +81,15 @@ const Homepage = ({setAuthenticationStatus}) => {
                     }
                     return null
                 }).filter(game => game !== null);
-     
                 setAvailableGames(joinedGames);
-     
-                setLoading(false);
+                
+                setAvailableGames(joinedGames);
+
+                // Pause for 3 seconds
+                setTimeout(function() {
+                    setLoading(false);
+                }, 1000);
+
             } catch(err) {
                 console.log(err);
             }
@@ -93,7 +100,15 @@ const Homepage = ({setAuthenticationStatus}) => {
      
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div style={{position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)'}}>
+                <l-bouncy-arc
+                    size="100"
+                    speed="0.7" 
+                    color="orange" 
+                ></l-bouncy-arc>
+            </div>
+        ) 
     }
 
 
@@ -617,7 +632,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                 }
 
                 const handleAccept = () => {
-                    console.log("Handling score accept --> Get score, get elo, update overall in user collection, remove confirmedGame instance")
+                    console.log("Handling score accept --> Get game info, set history for both players, get elo, update overall in user collection, remove confirmedGame instance")
                     let opponentCard = currentCard
                     console.log(opponentCard, currentUser)
                 }
