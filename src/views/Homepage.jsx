@@ -569,8 +569,6 @@ const Homepage = ({setAuthenticationStatus}) => {
               opponentScore: ''
             });
 
-            console.log(currentCard)
-
             const handleScoreChange = (event) => {
               const { id, value } = event.target;
               
@@ -593,7 +591,6 @@ const Homepage = ({setAuthenticationStatus}) => {
               }    
 
             };
-
             const handleScoreSubmission = async () => {
                 const { userScore, opponentScore } = scoreData
                 if ( !userScore || !opponentScore ) {
@@ -608,11 +605,11 @@ const Homepage = ({setAuthenticationStatus}) => {
                       playerScore: userScore,
                       opponentScore: opponentScore
                     },
-                    gameApprovalStatus: true
+                    gameApprovalStatus: true,
                 };
 
                 const dataForOpponentCollection = {
-                    ...currentCard,
+                    ...currentUser,
                     opponentID: currentUser.id,
                     opponent: currentUser.username,
                     email: currentUser.email,
@@ -662,58 +659,234 @@ const Homepage = ({setAuthenticationStatus}) => {
             const PendingComponent = () => {
                 return <div>Waiting for opponent approval...</div>
             }
+
+            // Accept and Deny handling
             const VerifyGameComponent = () => {
                 const flexRow = {
                     display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '5px'
                 }
 
-                const handleAccept = async () => {
-                    console.log(`
-                        Handling score accept --> 
-                        Get game info, GOOD
-                        set history for both players,  NOT DONE
-                        get elo, GOOD (but get Jack)
-                        update overall GOOD (but get Jack) 
-                        remove confirmedGame instance, NOT DONE
-                        update gamesAccepted for the user, GOOD
-                        update gamesPlayed for the user GOOD
-                    `);  
-                    let opponentCard = currentCard
-                    const opponentDocRef = doc(db, `users/${opponentCard.id}`);
-                    const currentUserDocRef = doc(db, `users/${currentUser.id}`);
+                // Player A should be current player and Player B should be opponent
+                // Returns { player A new rating, player B new rating}
+                function ratingAlgorithm( player_A, player_B, score_A, score_B ) {
+                    let R_A, R_B, Q_A, Q_B, E_A, E_B, S_A, S_B, new_R_A, new_R_B
+                    const c = 400
 
-                    // THIS IS WHERE YOU WILL CALCULATE CHANGE FOR THE PLAYER OVERALL
-                    let opponentScore = parseInt(opponentCard?.score?.opponentScore)
-                    let currentUserScore = parseInt(opponentCard?.score?.playerScore)
-                    let opponentELO;
-                    let currentUserELO;
+                    R_A = parseFloat(player_A.overall)
+                    R_B = parseFloat(player_B.overall)
 
-                    if ( opponentScore > currentUserScore ) {
-                        console.log("Your opponent beat you... Please calculate the elo adjustment here")
-                        opponentELO = 1
-                        currentUserELO = -1
+                    Q_A = 10**(R_A/c)
+                    Q_B = 10**(R_B/c)
+
+                    E_A = Q_A/(Q_A + Q_B)
+                    E_B = 1 - E_A
+
+                    if ( score_A > score_B ) {
+                        S_A = 1
+                        S_B = 0
+                    } else if ( score_B > score_A ) {
+                        S_A = 0
+                        S_B = 1
                     } else {
-                        console.log("You won!!! Please adjust the elo here")
-                        opponentELO = -1
-                        currentUserELO = 1
+                        S_A= 0
+                        S_B = 0
                     }
 
+                    function calculate_k_scale(games_played) {
+                        const k_scaler = { 10: 4, 25: 2, 50: 1, 100: 0.5 };
+                    
+                        for (const threshold in k_scaler) {
+                            if (games_played <= parseInt(threshold)) {
+                                return k_scaler[threshold];
+                            }
+                        }
+
+                        if ( games_played >= 100 ) {
+                            return 0.3
+                        }
+
+                        return null
+                
+                    }
+
+                    function calculate_l_scale(games_played) {
+                        const l_scaler = { 10: 2, 25: 1, 50: 0.5, 100: 0.25 };
+                    
+                        for (const threshold in l_scaler) {
+                            if (games_played <= parseInt(threshold)) {
+                                return l_scaler[threshold];
+                            }
+                        }
+
+                        if ( games_played >= 100 ) {
+                            return 0.2
+                        }
+                        return null; 
+                    }
+
+                    // Calculating K
+                    let player_A_games_played = parseInt(player_A.gamesPlayed)
+                    let player_B_games_played = parseInt(player_B.gamesPlayed)
+                    let k_A = calculate_k_scale(player_A_games_played)
+                    let k_B = calculate_k_scale(player_B_games_played)
+                    let l_A = calculate_l_scale(player_A_games_played)
+                    let l_B = calculate_l_scale(player_B_games_played)
+
+                    new_R_A = R_A + k_A*(S_A-E_A) + l_A*(score_A/(score_A + score_B)) 
+                    new_R_B = R_B + k_B*(S_B-E_B) + l_B*(score_B/(score_A + score_B))
+                    
+                    new_R_A = Number.parseFloat(new_R_A).toFixed(2)
+                    new_R_B = Number.parseFloat(new_R_B).toFixed(2)
+
+                    return { new_R_A, new_R_B }
+                }
+
+                async function findConfirmedGameID(ref, dataToMatchOn) {
+                    try {
+                        const confirmedGames = await getDocs(ref);
+                        const filteredConfirmedGames = confirmedGames.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                
+                        for (const game of filteredConfirmedGames) {
+                            if (
+                                game.dateOfGame === dataToMatchOn.dateOfGame &&
+                                game.coordinates._lat === dataToMatchOn.coordinates._lat &&
+                                game.coordinates._long === dataToMatchOn.coordinates._long &&
+                                game.playerID === dataToMatchOn.opponentID &&
+                                game.time === dataToMatchOn.time
+                            ) {
+                                return game.id;
+                            }
+                        }
+                
+                        // If no match is found, you might want to return something, e.g., null
+                        return null;
+                    } catch (error) {
+                        console.error("Error in findConfirmedGameID:", error);
+                        throw error; // Re-throw the error to indicate that something went wrong
+                    }
+                }                
+
+                const handleAccept = async () => {
+                    let opponentCard = currentCard
+                    const opponentDocRef = doc(db, `users/${opponentCard.playerID}`);
+                    const currentUserDocRef = doc(db, `users/${currentUser.id}`);
+                    const opponentHistoryRef = collection(db, `users/${opponentCard.playerID}/history`);
+                    const currentUserHistoryRef = collection(db, `users/${currentUser.id}/history`);
+                    const opponentConfirmedGamesRef = collection(db, `users/${opponentCard.opponentID}/confirmedGames`)
+                    const currentUserConfirmedGamesRef = collection(db,  `users/${currentUser.id}/confirmedGames`)
+
+                    let opponentScore = parseInt(opponentCard?.score?.opponentScore)
+                    let currentUserScore = parseInt(opponentCard?.score?.playerScore)
+
+                    let newOverallRatings = ratingAlgorithm(currentUser, opponentCard, currentUserScore, opponentScore)
+                    let currentUserNewOverallRating = newOverallRatings.new_R_A
+                    let opponentNewOverallRating = newOverallRatings.new_R_B
+
+
+                    
+                    const {
+                        addressString,
+                        coordinates,
+                        dateOfGame,
+                        gameType,
+                        time,
+                        score,
+                        opponent,
+                        opponentID,
+                        gameApprovalStatus,
+                        username,
+                        ...restOpponentCard
+                    } = opponentCard;
                     const dataForOpponentCollection = {
-                        ...opponentCard,
+                        //...restOpponentCard,
                         gamesAccepted: String(parseInt(opponentCard.gamesAccepted) + 1),
                         gamesPlayed: String(parseInt(opponentCard.gamesPlayed) + 1),
-                        overall: String(parseInt(opponentCard.overall) + opponentELO)
+                        overall: String(opponentNewOverallRating) // Adjust overall rating by ELO for opponent here
                     };
-
                     const dataForCurrentUserCollection = {
-                        ...currentUser,
+                        //...currentUser,
                         gamesAccepted: String(parseInt(currentUser.gamesAccepted) + 1),
                         gamesPlayed: String(parseInt(currentUser.gamesPlayed) + 1),
-                        overall: String(parseInt(currentUser.overall) + currentUserELO)
+                        overall: String(currentUserNewOverallRating) // Adjust overall rating by ELO for current player here
+                    };
+                    const dataForOpponentHistoryCollection = {
+                        addressString,
+                        coordinates,
+                        dateOfGame,
+                        time,
+                        yourScore: opponentCard.score.opponentScore,
+                        opponentScore: opponentCard.score.playerScore,
+                        ratingBeforeGame: opponentCard.overall,
+                        ratingAfterGame: opponentNewOverallRating,
+                        opponent: currentUser.email
+                    }
+                    const dataForCurrentPlayerHistoryCollection = {
+                        addressString,
+                        coordinates,
+                        dateOfGame,
+                        time,
+                        yourScore: opponentCard.score.playerScore,
+                        opponentScore: opponentCard.score.opponentScore,
+                        ratingBeforeGame: currentUser.overall,
+                        ratingAfterGame: currentUserNewOverallRating,
+                        opponent: opponentCard.email
+                    }
+
+                    // Update user data
+                    const updatingUserData = async () => {
+                        try {
+                            await updateDoc(opponentDocRef, dataForOpponentCollection);
+                            await updateDoc(currentUserDocRef, dataForCurrentUserCollection);
+                            console.log("Data updated successfully");
+                        } catch (error) {
+                            console.error("Error updating user data:", error);
+                        }
                     };
                     
-                    //await updateDoc(opponentDocRef, dataForOpponentCollection)
-                    //await updateDoc(currentUserDocRef, dataForCurrentUserCollection)
+                
+                    // Add entry into history collection
+                    const addingHistory = async () => {
+
+                        try {
+                            await addDoc(opponentHistoryRef, dataForOpponentHistoryCollection);
+                            await addDoc(currentUserHistoryRef, dataForCurrentPlayerHistoryCollection);
+                    
+                            console.log("History added successfully");
+                        } catch (error) {
+                            console.error("Error adding history:", error);
+                        }
+                    };
+                    
+                    // Remove the confirmed game from both
+                    const deletingConfirmedGames = async () => {
+                        try {
+                            const confirmedGameID = await findConfirmedGameID(opponentConfirmedGamesRef, { coordinates, dateOfGame, time, opponentID });
+                        
+                            if (confirmedGameID) {
+                                const opponentConfirmedGameDocRef = doc(opponentConfirmedGamesRef, confirmedGameID);
+                                const currentUserConfirmedGameDocRef = doc(currentUserConfirmedGamesRef, opponentCard.id)
+                                console.log(`Trying to delete opponent confirmedGame with ${confirmedGameID}`)
+                                console.log(`Trying to delete jrae confirmedGame with ${opponentCard.id}`)
+
+                                await deleteDoc(opponentConfirmedGameDocRef);
+                                await deleteDoc(currentUserConfirmedGameDocRef)
+                                console.log(`Confirmed Game Successfully Deleted.`);
+                            } else {
+                                console.log("No matching document found to delete.");
+                            }
+                        } catch (error) {
+                            console.error("Error:", error);
+                        }
+                    }
+
+                    Promise.all([updatingUserData(), addingHistory(), deletingConfirmedGames()])
+                    .then(() => {
+                        setRefreshToken(refreshToken + 1);
+                    })
+                    .catch((error) => {
+                        console.error("Error in one or more async functions:", error);
+                    });   
+
                 }
                 const handleDeny = () => {
                     console.log(`
