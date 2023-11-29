@@ -197,14 +197,15 @@ const Homepage = ({setAuthenticationStatus}) => {
                     const currentPlayerData = doc.data();
                     const currentPlayerEmail = currentPlayerData?.email;
                     const currentPlayerDocumentID = doc.id;
+                    const currentPlayerOverall = currentPlayerData?.overall
                     const pendingGamesPath = `users/${currentPlayerDocumentID}/pendingGames`;
                     const pendingGamesCollectionRef = collection(db, pendingGamesPath);
-
+                    
                     if ( currentPlayerEmail === userLoggedIn?.email ) {   
 
                         fetchLocationCoordinates()
                             .then(({ longitude, latitude }) => {
-                                addGameToPlayersConfirmedGames( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID )
+                                addGameToPlayersConfirmedGames( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID, currentPlayerOverall )
                                 toggleCreateGame()
                             })
                             .catch((error) => {
@@ -248,7 +249,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                     throw error; 
                 });
         }
-        const addGameToPlayersConfirmedGames = async ( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID ) => {
+        const addGameToPlayersConfirmedGames = async ( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID, currentPlayerOverall ) => {
 
             const coordinates = new GeoPoint(Number(latitude), Number(longitude));
             const addressString = formData.streetAddress
@@ -263,8 +264,10 @@ const Homepage = ({setAuthenticationStatus}) => {
                 dateOfGame, 
                 time, 
                 gameType, 
-                playerID
+                playerID,
+                overall: currentPlayerOverall
             }
+            console.log("PAUL CHECK FOR OVERALL", DATA_UPLOAD)
 
             try {
                 await addDoc(gamesCollectionRef, DATA_UPLOAD);
@@ -291,100 +294,132 @@ const Homepage = ({setAuthenticationStatus}) => {
             padding: '50px',
             paddingTop: '100px',
             paddingBottom: '100px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: '999'
+            boxShadow: '0px 0px 20px 10px rgba(250, 70, 47, 0.625)',
+            zIndex: '999'  
         };
-        const inputStyle = {
-            width: '100%',
-            padding: '12px',
-            border: '1px solid #ccc',
-            boxSizing: 'border-box',
-            fontSize: '16px',
-            marginBottom: '10px', 
+        const inputBoxStyling = {
+        padding: '12px',
+        border: '1px solid #ccc',
+        boxSizing: 'border-box',
+        fontSize: '16px',
+        marginBottom: '10px',
+        width: '100%'
         };
+        const gridStyling = {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gridGap: '10px'
+        };
+           
+               
         const states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
        
         return (
             <form style={styling} onSubmit={handleNewGameSubmission}>
-              <label htmlFor="streetAddress">Street Address:</label>
+            <div style={gridStyling}>
+              <div>
+                <label htmlFor="streetAddress">Street Address:</label>
                 <input
-                    style={{ ...inputStyle, width: '50%' }}
-                    id="streetAddress"
-                    placeholder="Street Address"
-                    value={formData.streetAddress}
-                    onChange={handleFormChange}
-                    required
+                  style={inputBoxStyling}
+                  id="streetAddress"
+                  placeholder="Street Address"
+                  value={formData.streetAddress}
+                  onChange={handleFormChange}
+                  required
                 />
-              <label htmlFor="city">City:</label>
+              </div>
+              <div>
+                <label htmlFor="city">City:</label>
                 <input
-                    style={{ ...inputStyle, width: '50%' }}
-                    id="city"
-                    placeholder="City"
-                    value={formData.city}
-                    onChange={handleFormChange}
-                    required
+                  style={inputBoxStyling}
+                  id="city"
+                  placeholder="City"
+                  value={formData.city}
+                  onChange={handleFormChange}
+                  required
                 />
-              <label htmlFor="state">State:</label>
+              </div>
+            </div>
+            <div style={gridStyling}>
+              <div>
+                <label htmlFor="state">State:</label>
                 <select
-                    style={{ ...inputStyle, width: '50%' }}
-                    id="state"
-                    value={formData.state}
-                    onChange={handleFormChange}
-                    required
+                  style={inputBoxStyling}
+                  id="state"
+                  value={formData.state}
+                  onChange={handleFormChange}
+                  required
                 >
-                    {states.map((state) => (
+                  {states.map((state) => (
                     <option value={state}>
-                        {state}
+                      {state}
                     </option>
-                    ))}
+                  ))}
                 </select>
-              <label htmlFor="zipcode">Zipcode:</label>
+              </div>
+              <div>
+                <label htmlFor="zipcode">Zipcode:</label>
                 <input
-                    style={{ ...inputStyle, width: '50%' }}
-                    id="zipcode"
-                    placeholder="Zipcode"
-                    value={formData.zipcode}
-                    onChange={handleFormChange}
-                    required
+                  style={inputBoxStyling}
+                  id="zipcode"
+                  placeholder="Zipcode"
+                  value={formData.zipcode}
+                  onChange={handleFormChange}
+                  required
                 />
-              <label htmlFor="dateOfGame">Date of game:</label>
+              </div>
+            </div>
+            <div style={gridStyling}>
+              <div>
+                <label htmlFor="dateOfGame">Date of game:</label>
                 <input
-                    style={{ ...inputStyle, width: '50%' }}
-                    id="dateOfGame"
-                    placeholder="Date of game"
-                    type="date"
-                    value={formData.dateOfGame}
-                    onChange={handleFormChange}
-                    required
+                  style={inputBoxStyling}
+                  id="dateOfGame"
+                  placeholder="Date of game"
+                  type="date"
+                  value={formData.dateOfGame}
+                  onChange={handleFormChange}
+                  required
                 />
-              <label htmlFor="timeOfGame">Time of game:</label>
+              </div>
+              <div>
+                <label htmlFor="timeOfGame">Time of game:</label>
                 <input
-                    style={{ ...inputStyle, width: '50%' }}
-                    id="timeOfGame"
-                    placeholder="Time of game"
-                    type="time"
-                    value={formData.timeOfGame}
-                    onChange={handleFormChange}
-                    required
+                  style={inputBoxStyling}
+                  id="timeOfGame"
+                  placeholder="Time of game"
+                  type="time"
+                  value={formData.timeOfGame}
+                  onChange={handleFormChange}
+                  required
                 />
-              <button
-                style={{
-                  width: '50%',
-                  padding: '20px',
-                  fontSize: '16px',
-                  textAlign: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                Create
-              </button>
+              </div>
+            </div>
+            <div style={{...gridStyling}}>
+                <div style={{gridColumn: 'span 2', justifySelf: 'center', alignSelf: 'center'}}>
+                    <button
+                        style={{
+                            padding: '25px',
+                            fontSize: '40px',
+                            textAlign: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%',
+                            background: 'linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625))',
+                            border: '1px solid white'
+                        }}
+                        id='create-button'
+                    >
+                        Create
+                    </button>
+                </div>
+            </div>
+
             </form>
-          );
+           );
+           
+            
     };
     const PlayerRating = () => {
         const flexCol = {
@@ -534,6 +569,7 @@ const Homepage = ({setAuthenticationStatus}) => {
               opponentScore: ''
             });
 
+            console.log(currentCard)
 
             const handleScoreChange = (event) => {
               const { id, value } = event.target;
@@ -631,13 +667,60 @@ const Homepage = ({setAuthenticationStatus}) => {
                     display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '5px'
                 }
 
-                const handleAccept = () => {
-                    console.log("Handling score accept --> Get game info, set history for both players, get elo, update overall in user collection, remove confirmedGame instance")
+                const handleAccept = async () => {
+                    console.log(`
+                        Handling score accept --> 
+                        Get game info, GOOD
+                        set history for both players,  NOT DONE
+                        get elo, GOOD (but get Jack)
+                        update overall GOOD (but get Jack) 
+                        remove confirmedGame instance, NOT DONE
+                        update gamesAccepted for the user, GOOD
+                        update gamesPlayed for the user GOOD
+                    `);  
                     let opponentCard = currentCard
-                    console.log(opponentCard, currentUser)
+                    const opponentDocRef = doc(db, `users/${opponentCard.id}`);
+                    const currentUserDocRef = doc(db, `users/${currentUser.id}`);
+
+                    // THIS IS WHERE YOU WILL CALCULATE CHANGE FOR THE PLAYER OVERALL
+                    let opponentScore = parseInt(opponentCard?.score?.opponentScore)
+                    let currentUserScore = parseInt(opponentCard?.score?.playerScore)
+                    let opponentELO;
+                    let currentUserELO;
+
+                    if ( opponentScore > currentUserScore ) {
+                        console.log("Your opponent beat you... Please calculate the elo adjustment here")
+                        opponentELO = 1
+                        currentUserELO = -1
+                    } else {
+                        console.log("You won!!! Please adjust the elo here")
+                        opponentELO = -1
+                        currentUserELO = 1
+                    }
+
+                    const dataForOpponentCollection = {
+                        ...opponentCard,
+                        gamesAccepted: String(parseInt(opponentCard.gamesAccepted) + 1),
+                        gamesPlayed: String(parseInt(opponentCard.gamesPlayed) + 1),
+                        overall: String(parseInt(opponentCard.overall) + opponentELO)
+                    };
+
+                    const dataForCurrentUserCollection = {
+                        ...currentUser,
+                        gamesAccepted: String(parseInt(currentUser.gamesAccepted) + 1),
+                        gamesPlayed: String(parseInt(currentUser.gamesPlayed) + 1),
+                        overall: String(parseInt(currentUser.overall) + currentUserELO)
+                    };
+                    
+                    //await updateDoc(opponentDocRef, dataForOpponentCollection)
+                    //await updateDoc(currentUserDocRef, dataForCurrentUserCollection)
                 }
                 const handleDeny = () => {
-                    console.log("Handle score denial --> Remove from the confirmedGames collection for both users. Has no effect on either player's elo?")
+                    console.log(`
+                    Handle score denial --> 
+                    Remove from the confirmedGames collection for both users,
+                    Has no effect on either player's elo.
+                    update gamesDenied`)
                     let opponentCard = currentCard
                     console.log(opponentCard, currentUser)
                 }
@@ -749,7 +832,6 @@ const Homepage = ({setAuthenticationStatus}) => {
             </li>
         );
         
-
         return (
             <section id="my-games" style={gridStyle}>
                 <h1 style={h1Style}>My Games</h1>

@@ -41,11 +41,13 @@ section {
         margin: auto auto; 
 }
         
-#history {
-        background: url("/Users/pmcslarrow/Developer/hoop-easy/public/history-background.png") no-repeat center center;
-        background-size: cover;
-        display: flex;
+#my-games {
+    background: url("/Users/pmcslarrow/Developer/hoop-easy/public/history-background.png") no-repeat center center;
+    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
 }
+ 
 
 #ratings {
 }
@@ -239,5 +241,10 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
     box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5); 
   }
 
+#create-button {
+    transition: 0.1s linear scale;
+}
 
-
+#create-button:hover {
+    scale: 1.03;
+}

@@ -150,6 +150,9 @@ function PlayerCustomizationForm({ formToggle }) {
     retypePassword: '',
     heightFt: '',
     heightInches: '',
+    gamesAccepted: '',
+    gamesDenied: '',
+    gamesPlayed: ''
   });
 
   // Handle form input changes
@@ -234,13 +237,16 @@ function PlayerCustomizationForm({ formToggle }) {
     const { firstName, lastName, username, heightFt, heightInches } = formData
 
     await addDoc(userCollectionRef, {
-      username: username,
-      email: auth?.currentUser?.email,
-      firstName: firstName,
-      lastName: lastName,
-      heightFt: heightFt,
-      heightInches: heightInches,
-      date: currentDate
+        username: username,
+        email: auth?.currentUser?.email,
+        firstName: firstName,
+        lastName: lastName,
+        heightFt: heightFt,
+        heightInches: heightInches,
+        gamesAccepted: '0',
+        gamesDenied: '0',
+        gamesPlayed: '0',
+        date: currentDate
     });
   };
 
