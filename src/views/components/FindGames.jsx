@@ -1,10 +1,61 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import setGridStyle from '../setGridStyle';
 import missingImage from '../../images/missingImage.jpg'
+import leftArrow from '../../images/left_arrow.png'
+import rightArrow from '../../images/right_arrow.png'
+import getUserCoordinates from '../../locationServices';
+
 
 const FindGames = ( props ) => {
     const { db, currentUser, currentUserID, setRefreshToken, refreshToken, myConfirmedGamesRef, gamesCollectionRef, availableGames } = props 
+    const [sortedAvailableGames, setSortedAvailableGames] = useState([])
+
+    function getDistanceFromLatLonInMiles(lat1, lon1, lat2, lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2 - lat1); // deg2rad below
+        var dLon = deg2rad(lon2 - lon1); 
+        var a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2)
+            ; 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c; // Distance in km
+        var dInMiles = d * 0.621371; // Convert to miles
+        return dInMiles;
+     }
+     
+     function deg2rad(deg) {
+        return deg * (Math.PI/180)
+     }
+     
+
+     
+    useEffect(() => {
+        const sortGamesByLocationDistance = async () => {
+            const userCoordinates = await getUserCoordinates();
+            const { latitude: userLat, longitude: userLon } = userCoordinates;
+           
+            const sortedGames = availableGames.sort((game1, game2) => {
+              const distance1 = getDistanceFromLatLonInMiles(userLat, userLon, game1.coordinates._lat, game1.coordinates._long);
+              const distance2 = getDistanceFromLatLonInMiles(userLat, userLon, game2.coordinates._lat, game2.coordinates._long);
+              return distance1 - distance2;
+            });
+           
+            const games = sortedGames.map((game) => {
+              const distance = getDistanceFromLatLonInMiles(userLat, userLon, game.coordinates._lat, game.coordinates._long);
+              return { ...game, distance };
+            });
+           
+            console.log(games)
+            setSortedAvailableGames(games);
+        }
+           
+           
+
+        sortGamesByLocationDistance()
+    }, [])
 
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
     const horizontalLine = setGridStyle(6, 4, 9, 6, "#da3c28", undefined, false);
@@ -44,25 +95,26 @@ const FindGames = ( props ) => {
           <div className='carousel' style={{...carouselLocation, ...flexboxRow}}>
             {active > 0 && 
                 <button className='nav left' onClick={() => setActive(i => i - 1)}>
-                    Left
+                    <img className='arrows' id='left-arrow' src={leftArrow} alt='Left arrow' style={{width: '50px'}}/>
                 </button>
             }
-            {React.Children.map(children, (child, i) => (
-              <div className='card-container' style={{
-                  '--active': i === active ? 1 : 0,
-                  '--offset': (active - i) / 3,
-                  '--direction': Math.sign(active - i),
-                  '--abs-offset': Math.abs(active - i) / 3,
-                  // 'pointer-events': active === i ? 'auto' : 'none',
-                  'opacity': Math.abs(active - i) >= 3 ? '0' : '1',
-                  'display': Math.abs(active - i) > 3 ? 'none' : 'block',
+            {
+            React.Children.map(children, (child, i) => (
+                <div className='card-container' key={i} style={{
+                    '--active': i === active ? 1 : 0,
+                    '--offset': (active - i) / 3,
+                    '--direction': Math.sign(active - i),
+                    '--abs-offset': Math.abs(active - i) / 3,
+                    'opacity': Math.abs(active - i) >= 3 ? '0' : '1',
+                    'display': Math.abs(active - i) > 3 ? 'none' : 'block',
                 }}>
-                {child}
-              </div>
-            ))}
+                    {child}
+                </div>
+              ))              
+            }
             {active < count - 1 && 
                 <button className='nav right' onClick={() => setActive(i => i + 1)}>
-                    Right
+                    <img className='arrows' id='right-arrow' src={rightArrow} alt='Right arrow' style={{position: 'relative', width: '50px', left: '60px'}}/>
                 </button>
             }
           </div>
@@ -72,7 +124,7 @@ const FindGames = ( props ) => {
     const Card = ({ currentCard }) => (
         <div className='card'>
                 <div style={{display: "flex", justifyContent:'space-between'}}>
-                    <div>{currentCard.gameType}v{currentCard.gameType}</div>
+                    <div>~{currentCard.distance.toFixed(2)} miles</div>
                     <div>
                         <div>{currentCard.dateOfGame}</div>
                         <div>{currentCard.time}</div>
@@ -162,8 +214,8 @@ const FindGames = ( props ) => {
             <div style={{ ...carouselLocation, ...flexboxRow }}>
 
                 <Carousel>
-                {availableGames.map((index, i) => (
-                    <Card key={index} currentCard={availableGames[i]}/>
+                {sortedAvailableGames.map((index, i) => (
+                    <Card key={index} currentCard={sortedAvailableGames[i]}/>
                 ))}
                 </Carousel>
 

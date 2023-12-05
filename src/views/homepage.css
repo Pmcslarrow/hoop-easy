@@ -98,16 +98,22 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
     color: green;
 }
 
+
+
 #deny-button {
     color: red;
 }
+
+.cursor {
+    transition: 0.2s linear background-color, 0.25s linear box-shadow;
+ }
+ 
     
 .cursor:hover, #accept-button:hover {
     color: white;
     cursor: pointer;
     background-color: green; 
     box-shadow: 0 0 20px 10px rgb(1, 60, 1);
-    padding: 5px;
 }
 
 #deny-button:hover {
@@ -249,3 +255,16 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
 #create-button:hover {
     scale: 1.03;
 }
+
+.arrows {
+    transition: transform 0.25s ease-in-out;
+}
+
+#left-arrow:hover {
+    transform: translateX(-5px)
+}
+
+#right-arrow:hover {
+    transform: translateX(5px)
+}
+

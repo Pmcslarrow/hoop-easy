@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { auth } from '../config/firebase';
 import { db } from '../config/firebase';
-import { getDocs, collection } from 'firebase/firestore'
+import { getDocs, collection, where, query } from 'firebase/firestore'
 import { bouncyArc } from 'ldrs'
 
 /* Components */
@@ -91,7 +91,7 @@ const Homepage = ({setAuthenticationStatus}) => {
                 console.log(err);
             }
         }
-     
+
         fetchData();
      }, [refreshToken]);
      
