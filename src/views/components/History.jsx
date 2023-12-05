@@ -1,24 +1,32 @@
-import React, { useState } from 'react';
-import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
+import React, { useEffect, useState } from 'react';
+import { getDocs, collection } from 'firebase/firestore'
 import setGridStyle from '../setGridStyle';
 
-const History = () => {
+const History = ( { currentUser, currentUserID, db }) => {
+    const [gameHistory, setGameHistory] = useState({})
 
-    const data = [
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 1', result: '2' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 2', result: '-0.5' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 3', result: '1' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 4', result: '-2' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 5', result: '3' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '1' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
-        { when: '11.07.2023', who: 'P. McSlarrow', where: 'Random Address 6', result: '-1' },
+    useEffect(() => {
 
-    ];
+        const fetchGameHistory = async () => {
+            const historyCollectionPath = `users/${currentUserID}/history/`
+            const historyRef = collection(db, historyCollectionPath)
+    
+            const historySnapshot = await getDocs(historyRef);
+    
+            const gameHistory = historySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
+            setGameHistory(gameHistory)
+        }
+        fetchGameHistory()
+
+    }, [])
+
+    const data = gameHistory.map(obj => ({
+        when: obj.dateOfGame,
+        who: obj.opponent,
+        where: obj.addressString,
+        ratingDifference: (parseFloat(obj.ratingAfterGame) - parseFloat(obj.ratingBeforeGame)).toFixed(2)
+    }));
+        
     const gridStyle = {
         display: 'grid',
         gridTemplateColumns: 'repeat(13, 1fr)',
@@ -30,13 +38,14 @@ const History = () => {
         fontSize: '25px'
     };
     const tableCellStyle = {
-        border: '1px solid rgba(255, 255, 255, 0.5)'
+        border: '1px solid rgba(255, 255, 255, 0.5)',
+        padding: '5px'
     };
 
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
     const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
     const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
-    const tableGrid = setGridStyle(3, 10, 12, 30, undefined, undefined, true)
+    const tableGrid = setGridStyle(1, 10, 15, 30, undefined, undefined, false)
 
     return (
         <section id="history">
@@ -52,7 +61,7 @@ const History = () => {
                     <th style={{ ...tableCellStyle, height: '50px' }}>When</th>
                     <th style={ tableCellStyle }>Who</th>
                     <th style={ tableCellStyle }>Where</th>
-                    <th style={ tableCellStyle }>Result</th>
+                    <th style={ tableCellStyle }>Rating</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -65,11 +74,12 @@ const History = () => {
                         <td style={tableCellStyle}>{row.where}</td>
                         <td style={{
                             ...tableCellStyle,
-                            color: parseFloat(row.result) > 0 ? 'green' : 'red',
+                            color: row.ratingDifference > 0.0 ? 'green' : 'red',
                             fontSize: '20px'
                             }}>
-                            {row.result}
+                            {row.ratingDifference > 0.0 ? `+${row.ratingDifference}` : `-${Math.abs(row.ratingDifference)}`}
                         </td>
+
                     </tr>
                   ))}
                 </tbody>

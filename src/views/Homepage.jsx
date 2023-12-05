@@ -150,7 +150,7 @@ const Homepage = ({setAuthenticationStatus}) => {
             gamesCollectionRef={gamesCollectionRef}
             availableGames={availableGames}
         />
-        <History />
+        <History currentUser={currentUser} currentUserID={currentUserID} db={db}/>
 
 
         <RatingsSection />
