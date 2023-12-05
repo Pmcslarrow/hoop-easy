@@ -153,7 +153,7 @@ const Homepage = ({setAuthenticationStatus}) => {
         <History currentUser={currentUser} currentUserID={currentUserID} db={db}/>
 
 
-        <RatingsSection />
+        <RatingsSection currentUser={currentUser} currentUserID={currentUserID} db={db}/>
     </div>
   );
   
