@@ -61,7 +61,7 @@ function LoginPage({ setAuthenticationStatus }) {
       }
 
       const resetPassword = () => {
-        console.log("Reset password")
+        navigate("/resetPassword")
       }
       
       return (
@@ -72,15 +72,14 @@ function LoginPage({ setAuthenticationStatus }) {
           <div className='col'>
             <h1>LOG INTO YOUR ACCOUNT</h1>
               <label htmlFor="username" style={{ width: '75%' }}>Email
-                <input type="text" id="username" name="username" style={{ width: '100%' }} onChange={handleEmailChange}/>
+                <input type="text" id="username" name="username" style={{ width: '100%', padding: '2px' }} onChange={handleEmailChange}/>
               </label>
               <label htmlFor="password" style={{ width: '75%' }}>Password
-                <input type="password" id="password" name="password" style={{ width: '100%' }} onChange={handlePasswordChange}/>
+                <input type="password" id="password" name="password" style={{ width: '100%', padding: '2px' }} onChange={handlePasswordChange}/>
               </label>
             <button onClick={handleSubmit}>SIGN IN</button>
-            <p>Forgot your Password?</p>
-
-            <p className='no-underline'>{errorStatus ? errorMessage : "testing"}</p>
+            <p onClick={resetPassword} id='forgot-password'>Forgot your Password?</p>
+            <p className='no-underline'>{errorStatus ? errorMessage : ""}</p>
           </div>
 
         </div>

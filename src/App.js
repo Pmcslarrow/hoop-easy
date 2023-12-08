@@ -5,6 +5,7 @@ import { Navigate, Route, Routes, BrowserRouter as Router } from 'react-router-d
 import LoginPage from './views/LoginPage';
 import Homepage from './views/Homepage';
 import CreateAccount from './views/CreateAccount';
+import ResetPassword from './views/ResetPassword'
 
 function App() {
   const [isAuthenticated, setAuthenticationStatus] = useState(false);
@@ -20,6 +21,7 @@ function App() {
         <Route path="/createAccount" element={<CreateAccount setAuthenticationStatus={setAuthenticationStatus} />} />
         <Route path="/login" element={<LoginPage setAuthenticationStatus={setAuthenticationStatus} />} />
         <Route path="/homepage" element={isAuthenticated ? <Homepage setAuthenticationStatus={setAuthenticationStatus} /> : <Navigate to="/" />} />
+        <Route path="/resetPassword" element={<ResetPassword setAuthenticationStatus={setAuthenticationStatus} />} />
       </Routes>
     </Router>
   );

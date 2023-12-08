@@ -23,6 +23,9 @@ export const handleError = (setError, setMessage, err) => {
         case 'auth/password-and-retype-password-error':
           setMessage("Your password and retyped password do not match.")
           break;
+        case 'auth/invalid-login-credentials':
+            setMessage("Incorrect username or password")
+            break;
         default:
           setMessage("An error occurred during registration. Please try again later.");
           break;

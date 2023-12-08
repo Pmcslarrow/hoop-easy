@@ -33,15 +33,15 @@ html {
 body { height: 100vh; margin: 0; color: white;}
   
 .container {
-      height: 100vh;
+      height: 90vh;
 
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
 
-      background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), /* Black background with 85% opacity */
-        url("/Users/pmcslarrow/Developer/hoop-easy/public/hoop.jpg") no-repeat center center;
+      background: linear-gradient(rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.60)), /* Black background with 85% opacity */
+        url("/Users/pmcslarrow/Developer/hoop-easy/public/login-background.png") no-repeat center center;
         background-size: cover;
 }
 
@@ -78,7 +78,7 @@ body { height: 100vh; margin: 0; color: white;}
       text-align: center;
   }
 
-  button {
+  .col button {
       background: linear-gradient(to right, #000000, #3b3a3a);
       color: white;
       border: none;
@@ -88,10 +88,12 @@ body { height: 100vh; margin: 0; color: white;}
       height: 60px;
       font-size: 30px;
       font-family: var(--font-bold-italic);
+      transition: 100ms linear transform
   }
 
-  button:hover {
+  .col button:hover {
     cursor: pointer;
+    transform: scale(1.03);
   }
 
   p {
@@ -114,5 +116,15 @@ body { height: 100vh; margin: 0; color: white;}
   #drop-down:hover {
     cursor: pointer;
     transform: scale(1.1);
+  }
+
+  #forgot-password {
+    font-family: var(--font-bold-italic);
+    transition: 100ms linear transform;
+  }
+
+  #forgot-password:hover {
+    cursor: pointer;
+    transform: scale(1.03);
   }
 
