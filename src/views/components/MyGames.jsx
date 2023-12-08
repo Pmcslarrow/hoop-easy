@@ -8,7 +8,7 @@ const MyGames = ( props ) => {
     
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
     const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
-    const myGamesLocation = setGridStyle(2, 8, 12, 28, undefined, undefined, undefined)
+    const myGamesLocation = setGridStyle(2, 6, 12, 30, undefined, undefined, undefined)
     const gridStyle = {
         display: 'grid',
         gridTemplateColumns: 'repeat(13, 1fr)',
@@ -26,7 +26,6 @@ const MyGames = ( props ) => {
           const { id, value } = event.target;
           
           try {
-
             if ( value > 99 ) {
                 setScoreData((prevData) => ({
                     ...prevData,
@@ -373,6 +372,7 @@ const MyGames = ( props ) => {
     const ScoreInputComponent = () => {
         return (        
         <>
+   
             <div style={{ display: 'flex', justifyContent: 'space-around', gap: '10px'}}>
                 <input
                     id='userScore'
@@ -383,8 +383,8 @@ const MyGames = ( props ) => {
                     min='0'
                     max='99'
                     className='placeholderStyle'
-                    style={{width: '100%'}}
                 />
+                :
                 <input
                     id='opponentScore'
                     type='number'
@@ -394,11 +394,10 @@ const MyGames = ( props ) => {
                     min='0'
                     max='99'
                     className='placeholderStyle'
-                    style={{width: '100%'}}
                 />
             </div>
             <div>
-                <button onClick={handleScoreSubmission} style={{fontSize: '16px', height: '100%'}} id='submitScoreButton'>Submit Score</button>
+                <button onClick={handleScoreSubmission} id='submitScoreButton'>Submit Score</button>
             </div>
         </>
         )
@@ -417,22 +416,7 @@ const MyGames = ( props ) => {
         </>
     );               
 };
-      
-
-    const PendingGameComponent = () => {
-        <>
-        <div style={{display: 'flex', justifyContent: 'center', gap: '10px'}}>
-            <div>Pending</div>
-
-            <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
-                <div className='el'></div>
-                <div className='el'></div>
-                <div className='el'></div>
-            </div>
-        </div>
-        
-        </>
-    }
+    
 
     // If the game is confirmed, it will show pending, otherwise it will let you submit the scores
     const Card = ({ currentCard, type }) => (
@@ -444,20 +428,31 @@ const MyGames = ( props ) => {
                         <div>Time: {currentCard.time}</div>
                     </div>
                 </div>
-                <div style={{alignItems: 'center'}}>
-                    <img src={missingImage} alt={'Profile img'}></img>
+                <div style={{ alignItems: 'center' }}>
+                    <img src={missingImage} alt={'Profile img'} style={{ boxShadow: '0 0 8px 3px var(--background-gradient-start)', borderRadius: '5px', overflow: 'hidden' }} />
                 </div>
-                <div>
-                    Opponent: {currentCard?.opponent}
+
+                <div className='opponentText'>
+                    {currentCard?.opponent}
                 </div>
-                <div>
+                <div className='addressText'>
                     {currentCard.addressString}
                 </div>
 
                 {type === 'confirmed' ? (
                     <ScoreSubmissionComponent currentCard={currentCard}/>
                 ) : (
-                    <PendingGameComponent />
+                    <>
+                    <div style={{display: 'flex', justifyContent: 'center', gap: '10px'} }>
+                        <div>Pending</div>
+
+                        <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
+                            <div className='el'></div>
+                            <div className='el'></div>
+                            <div className='el'></div>
+                        </div>
+                    </div>
+                    </>
                 )}
         </li>
     );
@@ -467,7 +462,7 @@ const MyGames = ( props ) => {
             <h1 style={h1Style}>My Games</h1>
             <div style={horizontalLine}></div>
 
-            <div id='myGames-container' style={myGamesLocation}>
+            <div id='myGamesContainer' style={myGamesLocation}>
             <ul className="cards" >
                 {myConfirmedGames.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  

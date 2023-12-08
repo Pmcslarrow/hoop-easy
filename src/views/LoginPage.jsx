@@ -99,7 +99,7 @@ function Header() {
         <img src={hoopEasyLogo} alt="Logo" />
         <div className="spacer"></div>
         <div className="logo">
-          <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} alt="Navigation button (three lines)" />
+          <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
         </div>
       </header>
     );

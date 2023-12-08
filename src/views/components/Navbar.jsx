@@ -15,7 +15,9 @@ const Navbar = () => {
                     </form>
             </div>
 
-            <div id='profile-button'><img src={profileImg} alt='Profile Icon' /></div>
+            <div id='profile-button'>
+                <img src={profileImg} alt='Profile Icon'/>
+            </div>
         </div>
       </header>
     );

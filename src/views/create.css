@@ -31,6 +31,7 @@ margin: 0;
 padding: 0;
 height: 100%;
 font-family: var(--font-family);
+scroll-behavior: smooth;
 }
 
 body {
@@ -70,17 +71,68 @@ background-size: cover;
 }
 /*********************************************************************/
 
-
-/* Left side of the flexbox */
-.left-panel, .right-panel {
-width: 40%;
-height: 85%;
-}
-
 .left-panel {
-background-color: #f0f0f0; 
-border-radius: 75px;
+    width: 50%;
+    padding: 2rem;
 }
+
+
+.slider {
+    display: flex;
+    aspect-ratio: 16 / 9;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    box-shadow: 0 1.5rem 3rem -0.75rem hsla(0, 0%, 0%, 0.25);
+    border-radius: 75px;
+}
+
+.slider img {
+    flex: 1 0 100%;
+    scroll-snap-align: start;
+    object-fit: cover;
+}
+.slider-nav {
+    display: flex;
+    justify-content: center;
+    column-gap: 0.25rem;
+    position: relative;
+    top: 20px;
+    z-index: 1;
+}
+
+.slider-nav li:last-child {
+    margin-right: 0; 
+}
+
+.slider-nav li:hover {
+    opacity: 1;
+}
+
+.active {
+    background-color: var(--background-gradient-start);
+    border-radius: 50%;
+}
+
+.slider-wrapper {
+    position: relative;
+    max-width: 48rem;
+    margin: 0 auto;
+}
+
+.white-outline {
+    color: white;  
+    border: 1px solid white;  
+    border-radius: 50%;  
+    padding: 5px;  
+  }
+  
+
+
+
+   
+   
+ 
 
 
 
@@ -90,17 +142,17 @@ background-color: transparent;
 display: flex;
 flex-direction: column;
 justify-content: space-between;
+width: 100%;
 }
 
 .right-panel h1 {
 font-family: var(--font-bold-italic);
 font-size: 3vw;
-padding-left: 50px;
 color: white;
+text-align: left;
 }
 
 .right-panel p:nth-child(2), .right-panel p {
-padding-left: 50px;
 color: white;
 }
 

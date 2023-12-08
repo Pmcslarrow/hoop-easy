@@ -96,7 +96,6 @@ body { height: 100vh; margin: 0; color: white;}
 
   p {
       font-size: 18px;
-      text-decoration: underline;
   }
 
   .no-underline {
@@ -104,4 +103,16 @@ body { height: 100vh; margin: 0; color: white;}
     text-align: center;
   }
 
-  
+  b {
+    text-decoration: underline;
+  }
+
+  #drop-down {
+    transition: 0.1s linear transform;
+  }
+
+  #drop-down:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+  }
+

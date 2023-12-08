@@ -168,7 +168,8 @@ const FindGames = ( props ) => {
             ...opponentCard,
             opponent: opponentCard.username,
             opponentID: opponentCard.playerID,
-            playerID: currentUserID
+            playerID: currentUserID,
+            gameType: '1'
         }
         const dataForOpponent = {
             ...currentUser, // same
@@ -179,7 +180,8 @@ const FindGames = ( props ) => {
             time: opponentCard.time, // ibid
             opponent: currentUser.username, // Should your username
             opponentID: currentUserID, // Should show your ID
-            playerID: opponentCard.id // Should show their ID
+            playerID: opponentCard.id, // Should show their ID
+            gameType: '1'
         }
     
         const matchingPendingDocs = pendingQuerySnapshot.docs.filter(doc => {

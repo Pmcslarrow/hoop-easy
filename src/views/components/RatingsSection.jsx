@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getDocs, collection } from 'firebase/firestore'
 import setGridStyle from '../setGridStyle';
-import {XYPlot, LineSeries, XAxis, YAxis, HorizontalGridLines, VerticalGridLines} from 'react-vis';
+
 
 
 const RatingsSection = ({ currentUser, currentUserID, db}) => {
@@ -48,14 +48,7 @@ const RatingsSection = ({ currentUser, currentUserID, db}) => {
             <div style={horizontalLine}></div>
             <p style={paragraph}>Courtside access to all your stats.</p>
             <div style={{ ...graphGrid, overflow: 'auto', backgroundColor: 'white' }}> 
-            <XYPlot xType="time" width={600} height={300}>
-            <HorizontalGridLines />
-            <VerticalGridLines />
-            <XAxis title="Date of Game" />
-            <YAxis title="Rating After Game" />
-            <LineSeries data={data} />
-            </XYPlot>
-
+            ratings
 
             </div>
           </div>

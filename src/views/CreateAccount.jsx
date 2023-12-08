@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from "../config/firebase";
 import { createUserWithEmailAndPassword, signOut, sendEmailVerification } from 'firebase/auth';
@@ -8,6 +8,15 @@ import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import hoopEasyLogo from '../images/hoop-easy.png';
 import navButtonImg from '../images/269dd16fa1f5ff51accd09e7e1602267.png';
+import { FaRegCircle } from "react-icons/fa6";
+import AnchorLink from 'react-anchor-link-smooth-scroll'
+
+
+import randomPhoto from '../images/missingImage.jpg'
+import randomPhoto2 from '../images/269dd16fa1f5ff51accd09e7e1602267.png'
+import randomPhoto3 from '../images/hoop-easy.png'
+import randomPhoto4 from '../images/icons8-male-user-48.png'
+
 import './create.css';
 
 
@@ -37,24 +46,85 @@ function CreateAccount({ setAuthenticationStatus }) {
     setShowCustomizationForm(!showCustomizationForm)
   }
 
-  function LeftPanel() {
+
+
+  const LeftPanel = () => {
+    const images = [randomPhoto, randomPhoto2, randomPhoto3, randomPhoto4];
+    const [prevSlideIndex, setPrev] = useState(0);
+    const [currSlideIndex, setCurr] = useState(0);
+    const circles = document.getElementsByClassName('circles');
+    const sliderRef = useRef(null);
+  
+    useEffect(() => {
+      circles[0].classList.add("active");
+    }, []);
+  
+    useEffect(() => {
+      const timeoutId = setTimeout(() => {
+        handleSlideChange(currSlideIndex);
+      }, 5000);
+  
+      return () => clearTimeout(timeoutId);
+    }, [currSlideIndex]); // Include currSlideIndex in the dependency array
+  
+    const handleSlideChange = (index) => {
+      const updatedIndex = (index + 1) % images.length;
+      setCurr(updatedIndex);
+      const slideElement = document.getElementById(`slide-${updatedIndex}`); // Use updatedIndex here
+      if (slideElement) {
+        slideElement.scrollIntoView({ behavior: 'smooth' });
+      }
+      circles[updatedIndex].classList.add("active");
+  
+      if (updatedIndex !== prevSlideIndex) {
+        circles[prevSlideIndex].classList.remove("active");
+      }
+      setPrev(updatedIndex);
+    };
+  
     return (
-      <div className="left-panel">
-        left
-      </div>
+      <>
+        <div className="left-panel">
+          <div className="sliderWrapper" ref={sliderRef}>
+            <div className="slider">
+              {images.map((img, i) => (
+                <img key={i} src={img} alt={`Slider img ${i}`} id={`slide-${i}`} />
+              ))}
+            </div>
+          </div>
+          <div className='slider-nav'>
+            {images.map((_, i) => (
+              <div key={i} >
+                <FaRegCircle className="circles" key={i}/>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
     );
-  }
+  };
+  
+  
+    
+   
 
   function RightPanel() {
     return (
       <div className="right-panel">
         <h1>Join the fastest growing community in basketball</h1>
+        
+        <div>
+            <div>
+                <div onClick={toggleCustomizationForm}>
+                    <span className="rect">
+                        <h1>Create An Account</h1>
+                    </span>
+                </div>
+            </div>
 
-        <div onClick={toggleCustomizationForm}>
-          <span className="rect">
-            <h1>Create An Account</h1>
-          </span>
-          <p onClick={navigateLogin}>already have one? login <b className="bold">here</b>.</p>
+            <div>
+                <p onClick={navigateLogin} >already have an account? login <b className="bold">here</b>.</p>
+            </div>
         </div>
       </div>
     );
@@ -87,7 +157,7 @@ function Header() {
         <img src={hoopEasyLogo} alt="Logo" />
         <div className="spacer"></div>
         <div className="logo">
-          <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} alt="Navigation button (three lines)" />
+          <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
         </div>
       </header>
     );

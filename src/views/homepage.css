@@ -81,18 +81,20 @@ section {
     font-size: 14px;
 }
 
+/*
 a {
 text-decoration: none;
-color: #333; /* Set your preferred text color */
+color: #333; 
 background-color: transparent;
-padding: 20px 30px; /* Increase padding to create a wider and higher box */
-transition: background-color 0.3s, box-shadow 0.3s; /* Add transition properties */
+padding: 20px 30px; 
+transition: background-color 0.3s, box-shadow 0.3s; 
 }
 
 a:hover {
 background-color: rgba(255, 255, 255, 0.2); 
 box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5); 
 }
+*/
 
 #accept-button {
     color: green;
@@ -199,7 +201,7 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
 
 #my-games .cards {
     display: flex;
-    overflow-x: auto;
+    overflow-x:scroll;
  }
 
  #my-games .cards {
@@ -212,7 +214,7 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
  
  #my-games .card {
     flex: 0 0 33%;
-    height: 50vh;
+    height: 58vh;
     scroll-snap-align: start;
  }
 
@@ -220,10 +222,10 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
 
  @keyframes waveAnimation {
     0%, 100% {
-      transform: translateY(10px);
+      transform: translateY(12px);
     }
     50% {
-      transform: translateY(0);
+      transform: translateY(5px);
     } 
   }
   
@@ -244,9 +246,17 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
   }
   
 
-  #submitScoreButton:hover {
-    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5); 
+  #submitScoreButton {
+    background: linear-gradient(to right, var(--background-gradient-start), var(--background-dark-orange));
+    border: 1px solid white;
+    transition: 0.1s linear transform;
+    font-size: 1.5rem;
   }
+  #submitScoreButton:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+ }
+ 
 
 #create-button {
     transition: 0.1s linear scale;
@@ -268,3 +278,31 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
     transform: translateX(5px)
 }
 
+.opponentText {
+    font-size: 30px;
+    font-family: var(--font-bold-italic);
+}
+
+.addressText {
+    color: #adadad;
+    font-size: 16px;
+}
+
+#userScore, #opponentScore {
+    width: 35%;
+    height: 25px;
+    background: linear-gradient(to right, #000000, #3b3a3a);
+    border: 1px solid white;
+    color: white;
+    padding: 5px;
+}
+
+#userScore::placeholder, #opponentScore::placeholder {
+    color: #adadad;
+}
+
+.enterText {
+    font-family: var(--font-bold-italic);
+    font-size: 18px;
+    color: var(--background-gradient-start);
+}
