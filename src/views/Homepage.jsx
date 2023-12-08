@@ -43,6 +43,8 @@ const Homepage = ({setAuthenticationStatus}) => {
     /* Getting all user info from database */
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+
             try {
                 const usersData = await getDocs(usersCollectionRef);
                 const filteredUsersData = usersData.docs.map((doc) => ({...doc.data(), id: doc.id}));
@@ -146,7 +148,7 @@ const Homepage = ({setAuthenticationStatus}) => {
             currentUserID={currentUserID}
             setRefreshToken={setRefreshToken}
             refreshToken={refreshToken}
-            myConfirmedGamesRef={myConfirmedGames}
+            myConfirmedGamesRef={myConfirmedGamesRef}
             gamesCollectionRef={gamesCollectionRef}
             availableGames={availableGames}
         />
