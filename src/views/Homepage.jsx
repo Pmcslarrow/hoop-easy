@@ -38,7 +38,7 @@ const Homepage = ({setAuthenticationStatus}) => {
 
     // Loading
     const [refreshToken, setRefreshToken] = useState(0)
-    const [isLoading, setLoading] = useState(true)
+    const [isLoading, setLoading] = useState(true);
 
     /* Getting all user info from database */
     useEffect(() => {
@@ -84,14 +84,12 @@ const Homepage = ({setAuthenticationStatus}) => {
                 }).filter(game => game !== null);                
                 setAvailableGames(joinedGames);
 
-                // Pause for 3 seconds
-                setTimeout(function() {
-                    setLoading(false);
-                }, 1000);
-
             } catch(err) {
                 console.log(err);
-            }
+            }finally {
+                // Set loading to false regardless of success or failure
+                setLoading(false);
+              }
         }
 
         fetchData();
