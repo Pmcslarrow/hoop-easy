@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getDocs, collection } from 'firebase/firestore'
 import setGridStyle from '../setGridStyle';
 
-const History = ( { currentUser, currentUserID, db }) => {
-    const [gameHistory, setGameHistory] = useState([])
+const History = ( { currentUser, currentUserID, db}) => {
+    const [data, setData] = useState([])
 
     useEffect(() => {
         const fetchGameHistory = async () => {
@@ -13,17 +13,18 @@ const History = ( { currentUser, currentUserID, db }) => {
             const historySnapshot = await getDocs(historyRef);
      
             const gameHistory = historySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-            setGameHistory(gameHistory)
+
+            const data = gameHistory.map(obj => ({
+                when: obj.dateOfGame,
+                who: obj.opponent,
+                where: obj.addressString,
+                ratingDifference: (parseFloat(obj.ratingAfterGame) - parseFloat(obj.ratingBeforeGame)).toFixed(2)
+            }));
+
+            setData(data)
         }
         fetchGameHistory()
      }, [])
-     
-     const data = gameHistory.map(obj => ({
-        when: obj.dateOfGame,
-        who: obj.opponent,
-        where: obj.addressString,
-        ratingDifference: (parseFloat(obj.ratingAfterGame) - parseFloat(obj.ratingBeforeGame)).toFixed(2)
-     }));
      
         
     const gridStyle = {

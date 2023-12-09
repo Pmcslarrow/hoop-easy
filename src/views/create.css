@@ -201,6 +201,14 @@ font-family: var(--font-bold);
 cursor: pointer;
 }
 
+#here {
+    transition: opacity 100ms ease-in-out;
+}
+
+#here:hover {
+    opacity: 0.5; /* or any other value between 0 and 1 */
+}
+
 
 /* Sidebar */
 .sidebar {

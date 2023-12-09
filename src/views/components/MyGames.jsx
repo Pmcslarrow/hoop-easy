@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import setGridStyle from '../setGridStyle';
 import missingImage from '../../images/missingImage.jpg'
 
 const MyGames = ( props ) => {
     const { db, currentUser, currentUserID, setRefreshToken, refreshToken, myPendingGames, myConfirmedGames } = props 
+    const [verifiedGames, setVerifiedGames] = useState([])
+    const [pendingGames, setPendingGames] = useState([])
+    const [confirmedGames, setConfirmedGames] = useState([])
+
     
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
     const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
@@ -15,6 +19,28 @@ const MyGames = ( props ) => {
         gridTemplateRows: 'repeat(30, 1fr)',
         gap: '10px',
     };
+
+    // Finds the verified games, confirmed games, and pending games from the passed in prop. (sorts in that order for rendering below)
+    useEffect(() => {
+        const pendingGames = []
+        const confimedGames = []
+        const gamesThatAreInVerifcationStage = []
+        myConfirmedGames.forEach((game) => { 
+            if (!game.gameApprovalStatus && (game?.score?.playerScore || game?.score?.opponentScore)) {
+                gamesThatAreInVerifcationStage.push(game)
+            } else {
+                confimedGames.push(game)
+            }
+        })
+        myPendingGames.forEach((game) => { 
+            pendingGames.push(game )
+        })
+
+        setVerifiedGames(gamesThatAreInVerifcationStage)
+        setConfirmedGames(confimedGames)
+        setPendingGames(pendingGames)
+
+    }, [])
 
     const ScoreSubmissionComponent = ({ currentCard }) => {
         const [scoreData, setScoreData] = useState({
@@ -464,10 +490,13 @@ const MyGames = ( props ) => {
 
             <div id='myGamesContainer' style={myGamesLocation}>
             <ul className="cards" >
-                {myConfirmedGames.map((currentCard, i) => (
+                {verifiedGames.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
                 ))}
-                {myPendingGames.map((currentCard, i) => (
+                {confirmedGames.map((currentCard, i) => (
+                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
+                ))}
+                {pendingGames.map((currentCard, i) => (
                     <Card key={`pending-${i}`} currentCard={currentCard} type='pending' />  
                 ))}
             </ul>

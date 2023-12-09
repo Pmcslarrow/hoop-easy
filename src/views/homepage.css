@@ -98,33 +98,48 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
 
 #accept-button {
     color: green;
+    background-color: black;
+    border-radius: 12px;
+    transition: 100ms linear background-color, 200ms linear box-shadow, 100ms linear color, 100ms linear padding;
 }
 
-
+#accept-button:hover {
+    background-color: green;
+    box-shadow: 0 0 20px 10px rgb(1, 60, 1);
+    cursor: pointer;
+    color: white;
+    padding: 7.5px;
+}
 
 #deny-button {
     color: red;
+    background-color: black;
+    border-radius: 12px;
+    transition: 100ms linear background-color, 200ms linear box-shadow, 100ms linear color, 100ms linear padding;
+}
+
+#deny-button:hover {
+    background-color: darkred; 
+    box-shadow: 0 0 20px 10px rgb(60, 6, 1);
+    cursor: pointer;
+    color: white;
+    padding: 7.5px;
 }
 
 .cursor {
     transition: 0.2s linear background-color, 0.25s linear box-shadow;
  }
- 
     
-.cursor:hover, #accept-button:hover {
+.cursor:hover {
     color: white;
     cursor: pointer;
     background-color: green; 
+    padding: 10px;
     box-shadow: 0 0 20px 10px rgb(1, 60, 1);
+    border-radius: 15px;
 }
 
-#deny-button:hover {
-    color: white;
-    cursor: pointer;
-    background-color: darkred; 
-    box-shadow: 0 0 20px 10px rgb(60, 6, 1);
-    padding: 5px;
-}
+
 
 .carousel {
   position: relative;
@@ -251,6 +266,10 @@ box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5);
     border: 1px solid white;
     transition: 0.1s linear transform;
     font-size: 1.5rem;
+    font-family: var(--font-bold-italic);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
   }
   #submitScoreButton:hover {
     cursor: pointer;

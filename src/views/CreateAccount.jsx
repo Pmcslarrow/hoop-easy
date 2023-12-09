@@ -123,7 +123,7 @@ function CreateAccount({ setAuthenticationStatus }) {
             </div>
 
             <div>
-                <p onClick={navigateLogin} >already have an account? login <b className="bold">here</b>.</p>
+                <p onClick={navigateLogin} >already have an account? login <b id='here' className="bold">here</b>.</p>
             </div>
         </div>
       </div>

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getDocs, collection } from 'firebase/firestore'
 import setGridStyle from '../setGridStyle';
+import { Chart } from 'react-google-charts';
 
 
-
-const RatingsSection = ({ currentUser, currentUserID, db}) => {
-    const [gameHistory, setGameHistory] = useState([])
+const RatingsSection = ({ currentUser, currentUserID, db }) => {
+    const [data, setData] = useState([])
 
     useEffect(() => {
         const fetchGameHistory = async () => {
@@ -15,18 +15,24 @@ const RatingsSection = ({ currentUser, currentUserID, db}) => {
             const historySnapshot = await getDocs(historyRef);
      
             const gameHistory = historySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-            setGameHistory(gameHistory)
+
+            const data = gameHistory.map(obj => ({
+                when: obj.dateOfGame,
+                who: obj.opponent,
+                where: obj.addressString,
+                ratingDifference: (parseFloat(obj.ratingAfterGame) - parseFloat(obj.ratingBeforeGame)).toFixed(2),
+                ratingBefore: obj.ratingBeforeGame,
+                ratingAfter: obj.ratingAfterGame
+            }));
+            const sortedData = data.sort((a, b) => new Date(a.when) - new Date(b.when));
+            const simplifiedData = sortedData.map(({ when, ratingAfter }) => ({ when, ratingAfter }));
+            console.log(simplifiedData)
+            setData(simplifiedData)
         }
         fetchGameHistory()
      }, [])
      
-     const data = gameHistory.map(game => ({
-        x: new Date(game.dateOfGame),
-        y: parseFloat(game.ratingAfterGame)
-    }));
-       
-       
-        
+    
     const gridStyle = {
         display: 'grid',
         gridTemplateColumns: 'repeat(13, 1fr)',
@@ -40,7 +46,6 @@ const RatingsSection = ({ currentUser, currentUserID, db}) => {
     const paragraph = setGridStyle(5, 6, 10, 6, undefined, undefined, false);
     const graphGrid = setGridStyle(1, 8, 15, 30, undefined, undefined, false)
 
-
     return (
         <section id="history">
           <div id="history-container" style={gridStyle}>
@@ -48,12 +53,41 @@ const RatingsSection = ({ currentUser, currentUserID, db}) => {
             <div style={horizontalLine}></div>
             <p style={paragraph}>Courtside access to all your stats.</p>
             <div style={{ ...graphGrid, overflow: 'auto', backgroundColor: 'white' }}> 
-            ratings
-
+            { data.length > 0 ? <LineChart data={data} /> : <div style={{position: 'relative', color: 'black', top: '50%', transform: 'translateY(-50%)'}}>Play some games to visualize your data!</div>}
+            
             </div>
           </div>
         </section>
       );          
 }
+
+
+const LineChart = ({ data }) => {
+  // Assuming 'data' is the simplifiedData array
+
+  // Convert data to the format expected by Google Charts
+  const chartData = [['Date', 'Rating']].concat(
+    data.map(({ when, ratingAfter }) => [new Date(when), parseFloat(ratingAfter)])
+  );
+
+  return (
+    <Chart
+      width={'100%'}
+      height={'400px'}
+      chartType="LineChart"
+      loader={<div>Loading Chart</div>}
+      data={chartData}
+      options={{
+        hAxis: {
+          title: 'Date',
+          format: 'MMM d, yyyy',
+        },
+        vAxis: {
+          title: 'Rating',
+        },
+      }}
+    />
+  );
+};
 
 export { RatingsSection }
