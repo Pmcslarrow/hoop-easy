@@ -12,10 +12,13 @@ import { FaRegCircle } from "react-icons/fa6";
 import AnchorLink from 'react-anchor-link-smooth-scroll'
 
 
-import randomPhoto from '../images/missingImage.jpg'
-import randomPhoto2 from '../images/269dd16fa1f5ff51accd09e7e1602267.png'
-import randomPhoto3 from '../images/hoop-easy.png'
-import randomPhoto4 from '../images/icons8-male-user-48.png'
+import carouselImage1 from '../images/CAROUSEL IMAGES/1.png'
+import carouselImage2 from '../images/CAROUSEL IMAGES/2.png'
+import carouselImage3 from '../images/CAROUSEL IMAGES/3.png'
+import carouselImage4 from '../images/CAROUSEL IMAGES/4.png'
+import carouselImage5 from '../images/CAROUSEL IMAGES/5.png'
+
+
 
 import './create.css';
 
@@ -49,7 +52,8 @@ function CreateAccount({ setAuthenticationStatus }) {
 
 
   const LeftPanel = () => {
-    const images = [randomPhoto, randomPhoto2, randomPhoto3, randomPhoto4];
+    const images = [carouselImage1, carouselImage2, carouselImage3, carouselImage4, carouselImage5];
+    const imagesText = ["PICK UP 1v1 GAMES.\nANYIME, ANYWHERE.", "WITH LIKE-MINDING,\nPASSIONATE HOOPERS.", "PLAY AT YOUR SKILL\nLEVEL", "AND COMPETETE\nGLOBALLY USING OUR\nCUTTING-EDGE\nRANKING SYSTEM.", "JOIN YOUR LOCAL\nBASKETBALL\nCOMMUNITY"]
     const [prevSlideIndex, setPrev] = useState(0);
     const [currSlideIndex, setCurr] = useState(0);
     const circles = document.getElementsByClassName('circles');
@@ -85,13 +89,18 @@ function CreateAccount({ setAuthenticationStatus }) {
     return (
       <>
         <div className="left-panel">
-          <div className="sliderWrapper" ref={sliderRef}>
-            <div className="slider">
-              {images.map((img, i) => (
-                <img key={i} src={img} alt={`Slider img ${i}`} id={`slide-${i}`} />
-              ))}
+            <div className="sliderWrapper" ref={sliderRef}>
+                <div className="slider">
+                    {images.map((img, i) => (
+                    <div className="slider-item" key={i}>
+                        <img src={img} alt={`Slider img ${i}`} id={`slide-${i}`} />
+                        <div className="text-container">
+                            <p>{imagesText[i]}</p>
+                        </div>
+                    </div>
+                    ))}
+                </div>
             </div>
-          </div>
           <div className='slider-nav'>
             {images.map((_, i) => (
               <div key={i} >
@@ -154,7 +163,7 @@ function Header() {
   const Navbar = () => {
     return (
       <header>
-        <img src={hoopEasyLogo} alt="Logo" />
+        <img src={hoopEasyLogo} alt="Logo" style={{width: '200px', height: '100px'}}/>
         <div className="spacer"></div>
         <div className="logo">
           <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
@@ -175,8 +184,8 @@ function Header() {
         {isSidebarOpen && (
           <motion.div
             className="sidebar"
-            initial={{ width: '100%', height: '0%', zIndex: 1 }} // Add a higher z-index
-            animate={{ width: '100%', height: '88%', zIndex: 1 }} // Add a higher z-index
+            initial={{ width: '100%', height: '0%', zIndex: 2 }} // Add a higher z-index
+            animate={{ width: '100%', height: '88%', zIndex: 2 }} // Add a higher z-index
             exit={{
               width: '100%',
               height: '0%',

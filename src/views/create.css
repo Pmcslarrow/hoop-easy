@@ -1,4 +1,4 @@
-
+/* Global */
 @font-face {
 font-family: 'Montserrat-BoldItalic';
 src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-BoldItalic.ttf');
@@ -32,6 +32,7 @@ padding: 0;
 height: 100%;
 font-family: var(--font-family);
 scroll-behavior: smooth;
+overflow: hidden;
 }
 
 body {
@@ -47,8 +48,6 @@ justify-content: space-between;
 align-items: center;
 background: linear-gradient(90deg, var(--background-gradient-start), var(--background-dark-orange), black);
 }
-
-
 
 .brand {
 color: #fff; 
@@ -71,72 +70,83 @@ background-size: cover;
 }
 /*********************************************************************/
 
+
+/* Create an account -- Image Carousel */
 .left-panel {
-    width: 50%;
-    padding: 2rem;
+width: 100%;
+padding: 2rem;
 }
-
-
 .slider {
-    display: flex;
-    aspect-ratio: 16 / 9;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    box-shadow: 0 1.5rem 3rem -0.75rem hsla(0, 0%, 0%, 0.25);
-    border-radius: 75px;
+display: flex;
+aspect-ratio: 16 / 9;
+overflow-x: hidden;
+scroll-snap-type: x mandatory;
+scroll-behavior: smooth;
+box-shadow: 0 1.5rem 3rem -0.75rem hsla(0, 0%, 0%, 0.25);
+border-radius: 75px;
+}
+.slider-item {
+position: relative;
+display: flex;
+flex: 1 0 100%;
+scroll-snap-align: start;
 }
 
 .slider img {
-    flex: 1 0 100%;
-    scroll-snap-align: start;
-    object-fit: cover;
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+.text-container {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+text-align: center;
+color: white;
+}
+
+.text-container p {
+font-size: 2rem;
+font-family: var(--font-bold-italic);
+color: white; 
+text-shadow: 1px 1px 3px var(--background-gradient-start) 
 }
 .slider-nav {
-    display: flex;
-    justify-content: center;
-    column-gap: 0.25rem;
-    position: relative;
-    top: 20px;
-    z-index: 1;
+display: flex;
+justify-content: center;
+column-gap: 0.25rem;
+position: relative;
+top: 20px;
+z-index: 1;
 }
-
 .slider-nav li:last-child {
-    margin-right: 0; 
+margin-right: 0; 
 }
-
 .slider-nav li:hover {
-    opacity: 1;
+opacity: 1;
 }
-
 .active {
-    background-color: var(--background-gradient-start);
-    border-radius: 50%;
+background-color: var(--background-gradient-start);
+border-radius: 50%;
 }
-
 .slider-wrapper {
-    position: relative;
-    max-width: 48rem;
-    margin: 0 auto;
+position: relative;
+max-width: 48rem;
+margin: 0 auto;
+}
+.white-outline {
+color: white;  
+border: 1px solid white;  
+border-radius: 50%;  
+padding: 5px;  
 }
 
-.white-outline {
-    color: white;  
-    border: 1px solid white;  
-    border-radius: 50%;  
-    padding: 5px;  
-  }
-  
 
 
 
-   
-   
- 
 
-
-
-/* Right side of the flexbox */
+/* Create an account -- Right Panel ( Buttons for Creating an Account and logging in)  */
 .right-panel {
 background-color: transparent; 
 display: flex;
@@ -144,27 +154,22 @@ flex-direction: column;
 justify-content: space-between;
 width: 100%;
 }
-
 .right-panel h1 {
 font-family: var(--font-bold-italic);
 font-size: 3vw;
 color: white;
 text-align: left;
 }
-
 .right-panel p:nth-child(2), .right-panel p {
 color: white;
 }
-
 .flex {
 display: flex;
 flex-direction: row;
 }
 
 
-
-
-/* Create an account rectangle */ 
+/* Create an Account Rectangle */
 .rect {
 height: 150px;
 background: linear-gradient(90deg, transparent, var(--background-gradient-start), var(--background-gradient-start));
@@ -196,155 +201,146 @@ font-size: 3.2vw;
 .bold {
 font-family: var(--font-bold);
 }
-
 .bold:hover {
 cursor: pointer;
 }
-
 #here {
-    transition: opacity 100ms ease-in-out;
+transition: opacity 100ms ease-in-out;
 }
-
 #here:hover {
-    opacity: 0.5; /* or any other value between 0 and 1 */
+opacity: 0.5; 
 }
 
 
 /* Sidebar */
 .sidebar {
-      position: absolute; 
-      background: linear-gradient(90deg, var(--background-gradient-start), var(--background-dark-orange), black);
+position: absolute; 
+background: linear-gradient(90deg, var(--background-gradient-start), var(--background-dark-orange), black);
 }
-    
 .sidebar div {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      height: 100%;
+display: flex;
+flex-direction: column;
+justify-content: space-around;
+height: 100%;
 }
-
 .sidebar a {
-      color: white;
-      font-family: var(--font-bold);
-      font-size: 35px;
-      height: 100%;
-      text-decoration: none;
-      padding: 20px;
-      text-align: right;
+color: white;
+font-family: var(--font-bold);
+font-size: 35px;
+height: 100%;
+text-decoration: none;
+padding: 20px;
+text-align: right;
 }
-
 .sidebar-link:hover {
-      background-color: var(--background-gradient-start);
+background-color: var(--background-gradient-start);
 }
-
-
-
 
 
 /* Form */
 form {
-      width: 100%;
-      font-size: larger;
+width: 100%;
+font-size: larger;
 }
 
 input, label {
-      display: block;
+display: block;
 }
 
 .form-container {
-      display: flex;
-      justify-content: center;
-      gap: 50px;
-      color: white;
+display: flex;
+justify-content: center;
+gap: 50px;
+color: white;
 }
 
 
 input {
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
+border: none;
+border-radius: 5px;
+font-size: 16px;
 }
 
 label {
-      margin-bottom: 10px;
-      margin-top: 5px;
+margin-bottom: 10px;
+margin-top: 5px;
 }
 
 #firstName {
-      width: 26vw;
-      height: 35px;
+width: 26vw;
+height: 35px;
 } 
 
 #middleInitial {
-      width: 4.75vw;
-      height: 35px;
+width: 4.75vw;
+height: 35px;
 }
 
 #lastName, #email, #username, #password, #retypePassword {
-      width: 32vw;
-      height: 35px;
+width: 32vw;
+height: 35px;
 }
 
 #optional input {
-      height: 35px;
+height: 35px;
 }
 
 #heightInches, #heightFt {
-      width: 75px;
+width: 75px;
 }
 
 #file-selection {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
 }
 
 
-
+/* Specific Buttons and Classes */
 #submit-button {
-      width: 100%;
-      height: 35px;
-      border: none;
-      border-radius: 10px;
-      background-color: var(--background-gradient-start);
-      font-size: larger;
-      font-family: var(--font-bold);
-      color: white;
+width: 100%;
+height: 35px;
+border: none;
+border-radius: 10px;
+background-color: var(--background-gradient-start);
+font-size: larger;
+font-family: var(--font-bold);
+color: white;
 }
 
 #back-button {
-      width: 170.5px;
-      height: 35px;
-      border: none;
-      border-radius: 10px;
-      background-color: var(--background-gradient-start);
-      font-size: larger;
-      font-family: var(--font-bold);
-      color: white;
-      margin-left: 25px;
+width: 170.5px;
+height: 35px;
+border: none;
+border-radius: 10px;
+background-color: var(--background-gradient-start);
+font-size: larger;
+font-family: var(--font-bold);
+color: white;
+margin-left: 25px;
 }
 
 #submit-button:hover {
-      cursor: pointer;
-      background-color: var(--background-dark-orange);
+cursor: pointer;
+background-color: var(--background-dark-orange);
 }
 
 #error-message {
-      color: white;
-      text-align: center;
-      margin-right: 20px;
+color: white;
+text-align: center;
+margin-right: 20px;
 }
 
 .flex-row {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      gap: 10px;
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+gap: 10px;
 }
 
 .flex-col {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+height: 100%;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
 }
