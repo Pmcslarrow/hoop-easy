@@ -53,7 +53,7 @@ function CreateAccount({ setAuthenticationStatus }) {
 
   const LeftPanel = () => {
     const images = [carouselImage1, carouselImage2, carouselImage3, carouselImage4, carouselImage5];
-    const imagesText = ["PICK UP 1v1 GAMES.\nANYIME, ANYWHERE.", "WITH LIKE-MINDING,\nPASSIONATE HOOPERS.", "PLAY AT YOUR SKILL\nLEVEL", "AND COMPETETE\nGLOBALLY USING OUR\nCUTTING-EDGE\nRANKING SYSTEM.", "JOIN YOUR LOCAL\nBASKETBALL\nCOMMUNITY"]
+    const imagesText = ["PICK UP 1v1 GAMES.\nANYIME, ANYWHERE.", "WITH LIKE-MINDED,\nPASSIONATE HOOPERS.", "PLAY AT YOUR SKILL\nLEVEL", "AND COMPETETE\nGLOBALLY USING OUR\nCUTTING-EDGE\nRANKING SYSTEM.", "JOIN YOUR LOCAL\nBASKETBALL\nCOMMUNITY"]
     const [prevSlideIndex, setPrev] = useState(0);
     const [currSlideIndex, setCurr] = useState(0);
     const circles = document.getElementsByClassName('circles');
