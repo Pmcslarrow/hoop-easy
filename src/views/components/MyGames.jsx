@@ -467,45 +467,67 @@ const MyGames = ( props ) => {
 };
     
     const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
+    const PingCircle = ({ isVerified }) => {
+        const circle = {
+          position: 'absolute',
+          top: '0px',
+          right: '0px',
+          width: '25px',
+          height: '25px',
+          backgroundColor: '#ec432d',
+          borderRadius: '50%',
+          animation: isVerified ? 'ping 1.5s ease-in-out infinite' : 'none',
+        };
+      
+        if (isVerified) {
+          return <div className='verification-dot' style={circle} />;
+        } else {
+          return null; // Return null if not verified
+        }
+      };
 
     // If the game is confirmed, it will show pending, otherwise it will let you submit the scores
-    const Card = ({ currentCard, type }) => (
-        <li className='card' style={{padding: '20px'}}>
-                <div style={{display: "flex", justifyContent:'space-between', ...boldItalicStyle}}>
-                    <div>{currentCard.gameType}v{currentCard.gameType}</div>
-                    <div>
-                        <div>{currentCard.dateOfGame}</div>
-                        <div>{currentCard.time}</div>
-                    </div>
+    const Card = ({ currentCard, type, isVerified }) => (
+        <li className='card' style={{ padding: '20px', position: 'relative' }}>
+            <PingCircle isVerified={isVerified}/>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
+            <div>{currentCard.gameType}v{currentCard.gameType}</div>
+            <div>
+              <div>{currentCard.dateOfGame}</div>
+              <div>{currentCard.time}</div>
+            </div>
+          </div>
+          <div style={{ alignItems: 'center' }}>
+            <img
+              src={missingImage}
+              alt={'Profile img'}
+              style={{
+                boxShadow: '0 0 8px 3px var(--background-gradient-start)',
+                borderRadius: '5px',
+                overflow: 'hidden',
+              }}
+            />
+          </div>
+          <div className='opponentText'>{currentCard?.opponent}</div>
+          <div className='addressText'>{currentCard.addressString}</div>
+          {type === 'confirmed' ? (
+            <ScoreSubmissionComponent currentCard={currentCard} />
+          ) : (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                <div>Waiting for the game to be accepted by another user</div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px' }}>
+                  <div className='el'></div>
+                  <div className='el'></div>
+                  <div className='el'></div>
                 </div>
-                <div style={{ alignItems: 'center' }}>
-                    <img src={missingImage} alt={'Profile img'} style={{ boxShadow: '0 0 8px 3px var(--background-gradient-start)', borderRadius: '5px', overflow: 'hidden' }} />
-                </div>
-
-                <div className='opponentText'>
-                    {currentCard?.opponent}
-                </div>
-                <div className='addressText'>
-                    {currentCard.addressString}
-                </div>
-
-                {type === 'confirmed' ? (
-                    <ScoreSubmissionComponent currentCard={currentCard}/>
-                ) : (
-                    <>
-                    <div style={{display: 'flex', justifyContent: 'center', gap: '10px'} }>
-                        <div>Waiting for the game to be accepted by another user</div>
-
-                        <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
-                            <div className='el'></div>
-                            <div className='el'></div>
-                            <div className='el'></div>
-                        </div>
-                    </div>
-                    </>
-                )}
+              </div>
+            </>
+          )}
         </li>
-    );
+      );
+      
 
     const gamesAwaitingOpponentScoreVerification = []
     const gamesAwaitingUserInput = []
@@ -534,7 +556,7 @@ const MyGames = ( props ) => {
             <div id='myGamesContainer' style={myGamesLocation}>
             <ul className="cards" >
                 {verifiedGames.map((currentCard, i) => (
-                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
+                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed' isVerified={true}/>  
                 ))}
                 {gamesAwaitingUserInput.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  

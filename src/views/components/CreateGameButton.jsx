@@ -21,10 +21,12 @@ const CreateGameButton = ( { setCreateGameActive, isCreateGameActive } ) => {
         height: '125px',
         backgroundColor: 'black',
         border: '1px solid white',
+        borderRadius: '10px',
         bottom: '0',
         right: '0',
         marginRight: '25px',
         marginBottom: '25px',
+        fontFamily: 'var(--font-bold-italic)'
     };
 
     return (

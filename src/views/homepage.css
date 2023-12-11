@@ -40,6 +40,17 @@ section {
         height: 90%;
         margin: auto auto; 
 }
+
+#welcome-container a {
+    transition: 100ms linear transform, 100ms linear box-shadow;
+    display: inline-block; 
+}
+
+#welcome-container a:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 20px 10px rgba(238, 238, 238, 0.3); 
+}
+
         
 #my-games {
     background: url("/Users/pmcslarrow/Developer/hoop-easy/public/history-background.png") no-repeat center center;
@@ -180,9 +191,14 @@ section {
     transform: translateX(100%) translatey(-50%);
   }
 }
+#new-game {
+    transition: 100ms linear opacity, 100ms linear transform;
+}
 
 #new-game:hover {
     cursor: pointer;
+    opacity: 0.8; 
+    transform: scale(1.05); 
 }
 
 #my-games div, #my-games ul, #my-games li {
@@ -305,3 +321,23 @@ section {
     font-size: 18px;
     color: var(--background-gradient-start);
 }
+
+
+
+
+/* PingCircle.css */
+@keyframes ping {
+    0% {
+      transform: scale(0.5);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.5;
+    }
+    75%, 100% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+  }
+  
