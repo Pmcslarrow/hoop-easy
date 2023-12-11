@@ -132,7 +132,17 @@ const MyGames = ( props ) => {
 
     // self explanatory :)
     const PendingGameApproval = () => {
-        return <div>Waiting for opponent approval...</div>
+        return ( 
+            <div style={{display: 'flex', justifyContent: 'center', gap: '10px'} }>
+                <div>Waiting for the score to be approved by your opponent...</div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
+                    <div className='el'></div>
+                    <div className='el'></div>
+                    <div className='el'></div>
+                </div>
+            </div>
+        )        
     }
 
     // Accept and Deny handling
@@ -374,21 +384,34 @@ const MyGames = ( props ) => {
             console.log(opponentCard, currentUser)
         }
 
+        const center = { position: 'relative', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', ...boldItalicStyle}
+
         return (
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', gap: '10px'}}>
                 <div style={flexRow}>
-                    <div style={flexRow}>
-                        <div>Your Score:</div>
-                        <div>{currentCard.score.playerScore}</div>
+                    <div style={{...flexRow, ...boldItalicStyle, color: 'gray'}}>
+                        <div>YOU</div>
                     </div>
-                    <div style={flexRow}>
-                        <div>Opponent score:</div>
+                    <div style={{...flexRow, ...boldItalicStyle, fontSize: '36px'}}>
+                        <div>{currentCard.score.playerScore}</div>
+                        :
                         <div>{currentCard.score.opponentScore}</div>
+                    </div>
+                    <div style={{...flexRow, ...boldItalicStyle, color: 'gray'}}>
+                        <div>OPP</div>
                     </div>
                 </div>
                 <div style={flexRow}>
-                    <div id='accept-button' onClick={handleAccept}>Accept</div>
-                    <div id='deny-button' onClick={handleDeny}>Deny</div>
+                    <div id='accept-button' onClick={handleAccept}>
+                        <div style={center}>
+                            Accept
+                        </div>
+                    </div>
+                    <div id='deny-button' onClick={handleDeny}>
+                        <div style={center}>
+                            Deny
+                        </div>
+                    </div>
                 </div>
             </div>
         )
@@ -443,15 +466,16 @@ const MyGames = ( props ) => {
     );               
 };
     
+    const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
 
     // If the game is confirmed, it will show pending, otherwise it will let you submit the scores
     const Card = ({ currentCard, type }) => (
         <li className='card' style={{padding: '20px'}}>
-                <div style={{display: "flex", justifyContent:'space-between'}}>
+                <div style={{display: "flex", justifyContent:'space-between', ...boldItalicStyle}}>
                     <div>{currentCard.gameType}v{currentCard.gameType}</div>
                     <div>
                         <div>{currentCard.dateOfGame}</div>
-                        <div>Time: {currentCard.time}</div>
+                        <div>{currentCard.time}</div>
                     </div>
                 </div>
                 <div style={{ alignItems: 'center' }}>
@@ -470,7 +494,7 @@ const MyGames = ( props ) => {
                 ) : (
                     <>
                     <div style={{display: 'flex', justifyContent: 'center', gap: '10px'} }>
-                        <div>Pending</div>
+                        <div>Waiting for the game to be accepted by another user</div>
 
                         <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
                             <div className='el'></div>
@@ -483,6 +507,25 @@ const MyGames = ( props ) => {
         </li>
     );
 
+    const gamesAwaitingOpponentScoreVerification = []
+    const gamesAwaitingUserInput = []
+
+    confirmedGames.forEach((game) => {
+        if ( game?.score?.playerScore || game?.score?.opponentScore ) {
+            gamesAwaitingOpponentScoreVerification.push(game)
+        } else {
+            gamesAwaitingUserInput.push(game)
+        }
+    })
+
+    /*
+        Order of games appearing should be:
+            1) verified games --> Games that the opponent has submit a score for, and you the user need to verify the score on your end
+            2) gamesAwaitingUserInput --> Games that have been accepted but that either you or your opponent need to submit scores
+            3) gamesAwaitingOpponentScoreVerification --> Games that are awaiting opponent approval of the score
+            4) pendingGames --> Games that you created that have not been picked up by anyone yet
+    */
+
     return (
         <section id="my-games" style={gridStyle}>
             <h1 style={h1Style}>My Games</h1>
@@ -493,7 +536,10 @@ const MyGames = ( props ) => {
                 {verifiedGames.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
                 ))}
-                {confirmedGames.map((currentCard, i) => (
+                {gamesAwaitingUserInput.map((currentCard, i) => (
+                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
+                ))}
+                {gamesAwaitingOpponentScoreVerification.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
                 ))}
                 {pendingGames.map((currentCard, i) => (

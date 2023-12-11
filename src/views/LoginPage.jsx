@@ -95,7 +95,7 @@ function Header() {
   const Navbar = () => {
     return (
       <header>
-        <img src={hoopEasyLogo} alt="Logo" />
+        <img src={hoopEasyLogo} alt="Logo" style={{width: '200px', height: '100px'}}/>
         <div className="spacer"></div>
         <div className="logo">
           <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />

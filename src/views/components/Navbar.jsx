@@ -6,7 +6,7 @@ import profileImg from '../../images/icons8-male-user-48.png'
 const Navbar = () => {
     return (
       <header>
-        <img src={hoopEasyLogo} alt="Logo" />
+        <img src={hoopEasyLogo} alt="Logo" style={{width: '200px', height: '100px'}}/>
 
         <div className='flexbox-row'>
             <div className="search-container">

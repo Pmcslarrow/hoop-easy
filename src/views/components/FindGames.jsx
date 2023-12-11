@@ -77,7 +77,8 @@ const FindGames = ( props ) => {
     const buttonStyle = {
         height: '35px',
         width: '150px',
-        border: '2px solid green',
+        border: '1px solid gray',
+        backgroundColor: 'rgb(0, 95, 0)',
         borderRadius: '10px',
         margin: '0 auto'
     }
@@ -86,6 +87,8 @@ const FindGames = ( props ) => {
         justifyContent: 'center',
         alignItems: 'center'
     }     
+    const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
+
     // Carousel credit to: https://codepen.io/ykadosh/pen/ZEJLapj by Yoav Kadosh
     const Carousel = ({children}) => {
         const [active, setActive] = useState(0);
@@ -123,7 +126,7 @@ const FindGames = ( props ) => {
 
     const Card = ({ currentCard }) => (
         <div className='card'>
-                <div style={{display: "flex", justifyContent:'space-between'}}>
+                <div style={{display: "flex", justifyContent:'space-between', ...boldItalicStyle}}>
                     <div>~{currentCard.distance.toFixed(2)} miles</div>
                     <div>
                         <div>{currentCard.dateOfGame}</div>
@@ -131,26 +134,25 @@ const FindGames = ( props ) => {
                     </div>
                 </div>
                 <div style={{alignItems: 'center'}}>
-                    <img src={missingImage} alt={'Profile img'}></img>
+                    <img src={missingImage} alt={'Profile img'} style={{ boxShadow: '0 0 8px 3px var(--background-gradient-start)', borderRadius: '5px', overflow: 'hidden' }} />
                 </div>
-                <div style={{fontSize: '1.5em'}}>
+                <div style={{fontSize: '2em', ...boldItalicStyle}}>
                     {currentCard.username}
                 </div>
-                <div style={{display: "flex", justifyContent:'space-around'}}>
+                <div style={{display: "flex", justifyContent:'space-around', ...boldItalicStyle,color: 'gray'}}>
                     <div>{currentCard.heightFt}'{currentCard.heightInches}"</div>
                     <div>{currentCard.overall} ovr</div>
                 </div>
-                <div>
+                <div style={{ ...boldItalicStyle, color: 'gray' }}>
                     {currentCard.addressString}
                 </div>
                 <div 
                     className='cursor' 
-                    style={{ ...buttonStyle, ...center }} 
+                    style={{ ...buttonStyle, ...center, ...boldItalicStyle }} 
                     onClick={() => handleGameAcceptance(currentCard)} 
                 >
-                accept
+                ACCEPT GAME
                 </div>
-
         </div>
     );
 
