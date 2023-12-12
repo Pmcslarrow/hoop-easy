@@ -35,6 +35,18 @@ section {
         display: flex;
 }
 
+#history {
+    background: url("/Users/pmcslarrow/Developer/hoop-easy/public/history-background.png") no-repeat center center;
+    background-size: cover;
+    display: flex;
+}
+
+#find-game {
+    background: url("/Users/pmcslarrow/Developer/hoop-easy/public/find_games_background.png") no-repeat center center;
+    background-size: cover;
+    display: flex;
+}
+
 #welcome-container, #history-container {
         width: 80%;
         height: 90%;
@@ -95,8 +107,8 @@ section {
 
 #accept-button,
 #deny-button {
-    width: 100px; /* Adjust the width as needed */
-    height: 50px; /* Adjust the height as needed */
+    width: 100px; 
+    height: 50px; 
     padding: 50px;
     border-radius: 12px;
     border: 1px solid gray;

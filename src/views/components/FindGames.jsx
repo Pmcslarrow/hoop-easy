@@ -134,7 +134,7 @@ const FindGames = ( props ) => {
                     </div>
                 </div>
                 <div style={{alignItems: 'center'}}>
-                    <img src={missingImage} alt={'Profile img'} style={{ boxShadow: '0 0 8px 3px var(--background-gradient-start)', borderRadius: '5px', overflow: 'hidden' }} />
+                    <img src={missingImage} alt={'Profile img'} style={{ borderRadius: '5px', overflow: 'hidden', padding: '5px', background: `linear-gradient(135deg, rgba(250, 70, 47, 1) 0%, rgba(0, 0, 0, 0.55) 100%)` }} />
                 </div>
                 <div style={{fontSize: '2em', ...boldItalicStyle}}>
                     {currentCard.username}

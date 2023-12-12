@@ -503,9 +503,11 @@ const MyGames = ( props ) => {
               src={missingImage}
               alt={'Profile img'}
               style={{
-                boxShadow: '0 0 8px 3px var(--background-gradient-start)',
                 borderRadius: '5px',
                 overflow: 'hidden',
+                width: '50%',
+                padding: '5px',
+                background: `linear-gradient(135deg, rgba(250, 70, 47, 1) 0%, rgba(0, 0, 0, 0.55) 100%)`
               }}
             />
           </div>
