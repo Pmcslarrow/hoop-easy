@@ -304,7 +304,7 @@ const MyGames = ( props ) => {
                 opponentScore: opponentCard.score.playerScore,
                 ratingBeforeGame: opponentCard.overall,
                 ratingAfterGame: opponentNewOverallRating,
-                opponent: currentUser.email
+                opponent: currentUser.username
             }
             const dataForCurrentPlayerHistoryCollection = {
                 addressString,
@@ -315,7 +315,7 @@ const MyGames = ( props ) => {
                 opponentScore: opponentCard.score.opponentScore,
                 ratingBeforeGame: currentUser.overall,
                 ratingAfterGame: currentUserNewOverallRating,
-                opponent: opponentCard.email
+                opponent: opponentCard.username
             }
 
             // Update user data

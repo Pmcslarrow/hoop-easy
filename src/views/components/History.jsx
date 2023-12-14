@@ -14,6 +14,7 @@ const History = ( { currentUser, currentUserID, db}) => {
      
             const gameHistory = historySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
 
+            console.log(gameHistory)
             const data = gameHistory.map(obj => ({
                 when: obj.dateOfGame,
                 who: obj.opponent,

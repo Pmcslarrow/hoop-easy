@@ -327,6 +327,7 @@ function PlayerCustomizationForm({ formToggle }) {
         gamesAccepted: '0',
         gamesDenied: '0',
         gamesPlayed: '0',
+        overall: '60',
         date: currentDate
     });
   };

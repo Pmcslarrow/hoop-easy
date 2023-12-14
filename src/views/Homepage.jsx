@@ -30,7 +30,6 @@ const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
     const [isCreateGameActive, setCreateGameActive] = useState(false);
     //const [currentUser, setCurrentUser] = useState({})
 
-
     // Firestore collection references
     const usersCollectionRef = collection(db, "users");
     const gamesCollectionRef = collection(db, 'Games');

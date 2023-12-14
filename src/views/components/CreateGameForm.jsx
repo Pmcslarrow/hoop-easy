@@ -119,7 +119,8 @@ const CreateGameForm = ( props ) => {
                 playerID,
                 overall: currentPlayerOverall
             }
-            console.log("PAUL CHECK FOR OVERALL", DATA_UPLOAD)
+
+            console.log("Uploading new game: ", DATA_UPLOAD)
 
             try {
                 await addDoc(gamesCollectionRef, DATA_UPLOAD);
