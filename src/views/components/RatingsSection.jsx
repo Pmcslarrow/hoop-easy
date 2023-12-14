@@ -26,7 +26,6 @@ const RatingsSection = ({ currentUser, currentUserID, db }) => {
             }));
             const sortedData = data.sort((a, b) => new Date(a.when) - new Date(b.when));
             const simplifiedData = sortedData.map(({ when, ratingAfter }) => ({ when, ratingAfter }));
-            console.log(simplifiedData)
             setData(simplifiedData)
         }
         fetchGameHistory()
@@ -63,9 +62,7 @@ const RatingsSection = ({ currentUser, currentUserID, db }) => {
 
 
 const LineChart = ({ data }) => {
-  // Assuming 'data' is the simplifiedData array
 
-  // Convert data to the format expected by Google Charts
   const chartData = [['Date', 'Rating']].concat(
     data.map(({ when, ratingAfter }) => [new Date(when), parseFloat(ratingAfter)])
   );

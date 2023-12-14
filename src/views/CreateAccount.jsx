@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import hoopEasyLogo from '../images/hoop-easy.png';
 import navButtonImg from '../images/269dd16fa1f5ff51accd09e7e1602267.png';
 import { FaRegCircle } from "react-icons/fa6";
-import AnchorLink from 'react-anchor-link-smooth-scroll'
 
 
 import carouselImage1 from '../images/CAROUSEL IMAGES/1.png'
@@ -275,7 +274,9 @@ function PlayerCustomizationForm({ formToggle }) {
       formData.email.trim() === '' ||
       formData.username.trim() === '' ||
       formData.password.trim() === '' ||
-      formData.retypePassword.trim() === ''
+      formData.retypePassword.trim() === '' ||
+      formData.middleInitial.trim() === '' ||
+      formData.weight.trim() === ''
     ) {
       // Handle the incomplete form error
       handleError(setError, setMessage, {
@@ -313,13 +314,14 @@ function PlayerCustomizationForm({ formToggle }) {
 
   const addUserData = async () => {
     const currentDate = Timestamp.now();
-    const { firstName, lastName, username, heightFt, heightInches } = formData
+    const { firstName, lastName, username, heightFt, heightInches, middleInitial } = formData
 
     await addDoc(userCollectionRef, {
         username: username,
         email: auth?.currentUser?.email,
         firstName: firstName,
         lastName: lastName,
+        middleInitial: middleInitial,
         heightFt: heightFt,
         heightInches: heightInches,
         gamesAccepted: '0',

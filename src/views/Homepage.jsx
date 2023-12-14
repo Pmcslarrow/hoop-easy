@@ -1,9 +1,9 @@
 /* Packages */
 import React, { useEffect, useState } from 'react';
-import { auth } from '../config/firebase';
-import { db } from '../config/firebase';
-import { getDocs, collection, where, query } from 'firebase/firestore'
+import { auth, db } from '../config/firebase';
+import { getDocs, collection } from 'firebase/firestore'
 import { bouncyArc } from 'ldrs'
+
 
 /* Components */
 import { CreateGameForm } from './components/CreateGameForm'
@@ -19,16 +19,17 @@ import { RatingsSection } from './components/RatingsSection';
 import './homepage.css';
 bouncyArc.register()
 
-const Homepage = ({setAuthenticationStatus}) => {
+const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
 
     // State variables
     const [users, setUsers] = useState([]);
     const [currentUserID, setCurrentUserID] = useState(null);
-    const [currentUser, setCurrentUser] = useState({})
     const [availableGames, setAvailableGames] = useState([]);
     const [myPendingGames, setMyPendingGames] = useState([]);
     const [myConfirmedGames, setMyConfirmedGames] = useState([]);
     const [isCreateGameActive, setCreateGameActive] = useState(false);
+    //const [currentUser, setCurrentUser] = useState({})
+
 
     // Firestore collection references
     const usersCollectionRef = collection(db, "users");
@@ -69,21 +70,23 @@ const Homepage = ({setAuthenticationStatus}) => {
                     setMyConfirmedGames(confirmedGames);
                     setMyPendingGames(pendingGames);
                 }
-                 
-                const gamesData = await getDocs(gamesCollectionRef);
-                const filteredGamesData = gamesData.docs.map((doc) => ({...doc.data(), id: doc.id}));
-                let joinedGames = filteredGamesData.map(game => {
-                    let user = filteredUsersData.find(user => user.id === game.playerID);
-                    if (user && user.email !== auth?.currentUser?.email) {
-                       return {
-                           ...game,
-                           ...user
-                       }
-                    }
-                    return null
-                }).filter(game => game !== null);                
-                setAvailableGames(joinedGames);
 
+                if (auth?.currentUser) {
+                    const gamesData = await getDocs(gamesCollectionRef);
+                    const filteredGamesData = gamesData.docs.map((doc) => ({...doc.data(), id: doc.id}));
+                    let joinedGames = filteredGamesData.map(game => {
+                        let user = filteredUsersData.find(user => user.id === game.playerID);
+                        if (user && user.email !== auth?.currentUser?.email) {
+                           return {
+                               ...game,
+                               ...user
+                           }
+                        }
+                        return null
+                    }).filter(game => game !== null);                
+                    setAvailableGames(joinedGames);
+                }
+                 
             } catch(err) {
                 console.log(err);
             }finally {
@@ -94,7 +97,7 @@ const Homepage = ({setAuthenticationStatus}) => {
 
         fetchData();
      }, [refreshToken]);
-     
+
 
     /* Show loading animation if loading */
     if (isLoading) {
@@ -128,7 +131,7 @@ const Homepage = ({setAuthenticationStatus}) => {
         }
 
         <CreateGameButton setCreateGameActive={setCreateGameActive} isCreateGameActive={isCreateGameActive} />
-        <Navbar />
+        <Navbar searchBar={true} />
 
         <Welcome />
         <MyGames 

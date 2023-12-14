@@ -18,6 +18,19 @@ font-family: 'Montserrat-Bold';
 src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Bold.ttf');
 }
 
+@font-face {
+    font-family: 'Montserrat-LightItalic';
+    src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-LightItalic.ttf');
+}
+
+
+@font-face {
+    font-family: 'Montserrat-Light';
+    src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Light.ttf');
+}
+
+
+
 :root {
 --background-gradient-start: #FA642F;
 --background-dark-orange: #A22A1B;

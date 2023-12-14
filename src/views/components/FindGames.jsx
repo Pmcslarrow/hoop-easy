@@ -48,7 +48,6 @@ const FindGames = ( props ) => {
               return { ...game, distance };
             });
            
-            console.log(games)
             setSortedAvailableGames(games);
         }
            

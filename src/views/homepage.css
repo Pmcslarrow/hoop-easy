@@ -4,6 +4,7 @@
 --background-dark-orange: #A22A1B;
 --font-bold-italic: 'Montserrat-BoldItalic';
 --font-bold: 'Montserrat-Bold';
+--font-light-italic: 'Montserrat-LightItalic';
 --font-family: 'Montserrat';
 }
 
@@ -269,7 +270,7 @@ section {
   }
   
 
-  #submitScoreButton {
+  #submitScoreButton, .buttonStyle {
     background: linear-gradient(to right, var(--background-gradient-start), var(--background-dark-orange));
     border: 1px solid white;
     transition: 0.1s linear transform;
@@ -279,7 +280,7 @@ section {
     padding: 10px;
     border-radius: 10px;
   }
-  #submitScoreButton:hover {
+  #submitScoreButton:hover, .buttonStyle:hover {
     cursor: pointer;
     transform: scale(1.05);
  }
@@ -334,6 +335,14 @@ section {
     color: var(--background-gradient-start);
 }
 
+.profile-button {
+    transition: 100ms linear transform;
+}
+
+.profile-button:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
 
 
 
