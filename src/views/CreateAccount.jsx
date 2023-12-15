@@ -162,7 +162,7 @@ function Header() {
   const Navbar = () => {
     return (
       <header>
-        <img src={hoopEasyLogo} alt="Logo" style={{width: '200px', height: '100px'}}/>
+        <img src={hoopEasyLogo} alt="Logo" className='profile-button' style={{width: '200px', height: '100px', marginLeft: '10px'}}/>
         <div className="spacer"></div>
         <div className="logo">
           <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
@@ -183,7 +183,7 @@ function Header() {
         {isSidebarOpen && (
           <motion.div
             className="sidebar"
-            initial={{ width: '100%', height: '0%', zIndex: 2 }} // Add a higher z-index
+            initial={{ width: '100%', height: '0%', zIndex: 2  }} // Add a higher z-index
             animate={{ width: '100%', height: '88%', zIndex: 2 }} // Add a higher z-index
             exit={{
               width: '100%',
@@ -242,28 +242,7 @@ function PlayerCustomizationForm({ formToggle }) {
     });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-  
-    if (file) {
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; // Define the allowed image MIME types
-  
-      if (allowedTypes.includes(file.type)) {
-        setFormData({
-          ...formData,
-          profilePhoto: file,
-        });
-      } else {
-        alert('Please select a valid image file (JPEG, PNG, or GIF).');
-        e.target.value = '';
-      }
-    }
-  };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  }
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -274,9 +253,7 @@ function PlayerCustomizationForm({ formToggle }) {
       formData.email.trim() === '' ||
       formData.username.trim() === '' ||
       formData.password.trim() === '' ||
-      formData.retypePassword.trim() === '' ||
-      formData.middleInitial.trim() === '' ||
-      formData.weight.trim() === ''
+      formData.retypePassword.trim() === ''
     ) {
       // Handle the incomplete form error
       handleError(setError, setMessage, {

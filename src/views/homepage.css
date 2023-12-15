@@ -74,7 +74,7 @@ section {
  
 
 #ratings {
-    background-color: pink;
+    background-color: black;
 }
 
 .flexbox-row {
@@ -270,7 +270,7 @@ section {
   }
   
 
-  #submitScoreButton, .buttonStyle {
+  #submitScoreButton, .buttonStyle, #create-button {
     background: linear-gradient(to right, var(--background-gradient-start), var(--background-dark-orange));
     border: 1px solid white;
     transition: 0.1s linear transform;
@@ -280,20 +280,11 @@ section {
     padding: 10px;
     border-radius: 10px;
   }
-  #submitScoreButton:hover, .buttonStyle:hover {
+  #submitScoreButton:hover, .buttonStyle:hover, #create-button:hover {
     cursor: pointer;
     transform: scale(1.05);
  }
  
-
-#create-button {
-    transition: 0.1s linear scale;
-}
-
-#create-button:hover {
-    scale: 1.03;
-}
-
 .arrows {
     transition: transform 0.25s ease-in-out;
 }
@@ -346,7 +337,6 @@ section {
 
 
 
-/* PingCircle.css */
 @keyframes ping {
     0% {
       transform: scale(0.5);
@@ -361,4 +351,53 @@ section {
       opacity: 0;
     }
   }
+  
+
+  /* New game and Exit buttons */
+  .fade-in {
+    animation: fadeIn 1s linear forwards, 
+  }
+
+  .rotateIn {
+    animation: rotateIn 300ms linear forwards;
+  }
+  .fade-in:hover {
+    cursor: pointer;
+  }
+
+  .fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0s 0.35s, opacity 0.35s linear;
+ }
+ 
+   .fade-out.fade-out-active {
+    opacity: 0;
+   }
+
+   .display-none {
+    opacity: 1;
+    background: red;
+   }
+   
+  
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes rotateIn {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(90deg);
+    }
+  }
+  
   

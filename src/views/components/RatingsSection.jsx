@@ -46,7 +46,7 @@ const RatingsSection = ({ currentUser, currentUserID, db }) => {
     const graphGrid = setGridStyle(1, 8, 15, 30, undefined, undefined, false)
 
     return (
-        <section id="history">
+        <section id="ratings">
           <div id="history-container" style={gridStyle}>
             <h1 style={h1Style}>Your Ratings</h1>
             <div style={horizontalLine}></div>

@@ -2,39 +2,43 @@
 
 import React from 'react';
 import addButton from '../../images/add.png';
+import exitButton from '../../images/remove.png';
 
-const CreateGameButton = ( { setCreateGameActive, isCreateGameActive } ) => {
+const CreateGameButton = ({ setCreateGameActive, isCreateGameActive }) => {
 
-    function toggleCreateGame() {
-        setCreateGameActive(!isCreateGameActive)
+  function toggleCreateGame() {
+    setCreateGameActive(!isCreateGameActive);
+  }
+
+  const card = {
+    position: 'fixed',
+    width: '60px',
+    height: '60px',
+    bottom: '0',
+    right: '0',
+    marginRight: '25px',
+    marginBottom: '25px',
+};
+
+  const Button = () => {
+    if (isCreateGameActive) {
+      return (
+        <>
+          <img src={exitButton} alt='Add button' className='fade-in rotateIn' style={{ width: '50px', ...card }} onClick={toggleCreateGame}/>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <img src={addButton} alt='Add button' className='fade-in rotateIn' style={{ width: '50px', ...card }} onClick={toggleCreateGame}/>
+        </>
+      );
     }
+  };
 
-    const flexCol = {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-    };
-    const card = {
-        position: 'fixed',
-        width: '125px',
-        height: '125px',
-        backgroundColor: 'black',
-        border: '1px solid white',
-        borderRadius: '10px',
-        bottom: '0',
-        right: '0',
-        marginRight: '25px',
-        marginBottom: '25px',
-        fontFamily: 'var(--font-bold-italic)'
-    };
-
-    return (
-        <div id='new-game' style={{ ...flexCol, ...card }} onClick={toggleCreateGame}>
-            <img src={addButton} alt='Add button' style={{ width: '50px' }} />
-            <div>NEW GAME</div>
-        </div>
-    );
+  return (
+      <Button />
+  );
 };
 
 export { CreateGameButton };

@@ -127,10 +127,11 @@ const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
                 setCreateGameActive={setCreateGameActive} 
                 isCreateGameActive={isCreateGameActive} 
             />
+            
         }
 
         <CreateGameButton setCreateGameActive={setCreateGameActive} isCreateGameActive={isCreateGameActive} />
-        <Navbar searchBar={true} />
+        <Navbar setAuthenticationStatus={setAuthenticationStatus} searchBar={true} />
 
         <Welcome />
         <MyGames 

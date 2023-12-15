@@ -24,7 +24,8 @@ const Welcome = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      color: 'white'
+      color: 'white',
+      borderRadius: '15px'
     };
   
     return (
@@ -35,11 +36,11 @@ const Welcome = () => {
           <p style={paragraph}>
             It’s good to see you again. Here you’ll find everything you need to keep hooping easy.
           </p>
-  
-          <a style={{ ...linkStyle, ...myGamesStyle }} href="#my-games">My games</a>
-          <a style={{ ...linkStyle, ...findGamesStyle }} href="#find-game">Find a game</a>
-          <a style={{ ...linkStyle, ...historyStyle }} href="#history">My history</a>
-          <a style={{ ...linkStyle, ...ratingsStyle }} href="#ratings">My ratings</a>
+
+            <a style={{ ...linkStyle, ...myGamesStyle }} href="#my-games">My games</a>
+            <a style={{ ...linkStyle, ...findGamesStyle }} href="#find-game">Find a game</a>
+            <a style={{ ...linkStyle, ...historyStyle }} href="#history">My history</a>
+            <a style={{ ...linkStyle, ...ratingsStyle }} href="#ratings">My ratings</a>
 
         </div>
       </section>

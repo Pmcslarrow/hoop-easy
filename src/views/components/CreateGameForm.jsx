@@ -130,7 +130,7 @@ const CreateGameForm = ( props ) => {
                 console.error("Error adding document: ", error);
             }
         }
-    
+
         
         const styling = {
             position: 'fixed',
@@ -142,14 +142,15 @@ const CreateGameForm = ( props ) => {
             borderRadius: '30px',
             backgroundColor: 'black',
             border: '1px solid white',
+            transition: 'opacity 0.35s ease-in-out, transform 200s ease-in',
             opacity: isVisible ? 1 : 0,
-            transition: 'opacity 0.35s ease-in-out, transform 0.25s ease-in',
             padding: '50px',
             paddingTop: '100px',
             paddingBottom: '100px',
             boxShadow: '0px 0px 20px 10px rgba(250, 70, 47, 0.625)',
-            zIndex: '999'  
-        };
+            zIndex: '999',
+          };
+          
 
         const inputBoxStyling = {
             padding: '12px',
@@ -270,9 +271,8 @@ const CreateGameForm = ( props ) => {
                     </button>
                 </div>
             </div>
-
             </form>
-        );
+    );
 };
 
 export { CreateGameForm };

@@ -90,12 +90,17 @@ function LoginPage({ setAuthenticationStatus }) {
 
 { /* HEADER */}
 function Header() {
+  const navigate = useNavigate();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const navigateHome = () => {
+    navigate("/")
+  }
 
   const Navbar = () => {
     return (
       <header>
-        <img src={hoopEasyLogo} alt="Logo" style={{width: '200px', height: '100px'}}/>
+        <img src={hoopEasyLogo} alt="Logo" className='profile-button' style={{width: '200px', height: '100px', marginLeft: '10px'}} onClick={navigateHome}/>
         <div className="spacer"></div>
         <div className="logo">
           <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
@@ -107,6 +112,7 @@ function Header() {
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
+
 
   return (
     <>

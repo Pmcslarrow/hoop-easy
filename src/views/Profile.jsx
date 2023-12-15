@@ -15,8 +15,10 @@ import {Navbar} from './components/Navbar'
 import missingPhoto from '../images/missingImage.jpg'
 
 
-function Profile() {
+function Profile( props ) {
     const navigate = useNavigate();
+    
+    const { setAuthenticationStatus } = props
     const [errorStatus, setError] = useState(false);
     const [errorMessage, setMessage] = useState('');
     const [preview, setPreview] = useState("");
@@ -125,7 +127,7 @@ function Profile() {
 
     return (
     <>
-    <Navbar searchBar={false} />
+    <Navbar searchBar={false} setAuthenticationStatus={setAuthenticationStatus} />
     <div style={{...flexRow, height: '90vh'}}>
 
         <div style={flexCol}>

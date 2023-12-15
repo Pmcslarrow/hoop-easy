@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar = (props) => {
     const navigate = useNavigate()
-    const { searchBar } = props
+    const { setAuthenticationStatus, searchBar } = props
 
     const navigateProfile = () => {
-            navigate('/profile')
+        navigate('/profile')
     }
 
     const SearchBar = () => {
@@ -22,8 +22,16 @@ const Navbar = (props) => {
         )
     }
 
+    // If the user is not in the profile page, we want the click of the Logo to go back to the CreateAccount home screen. 
+    // If the user is inside of the profile page, we want the click of the Logo to go back to the Homepage (keeps the user logged in)
     const navigateHome = () => {
-        navigate("/")
+        if ( searchBar === true ) {
+            setAuthenticationStatus(false)
+            navigate("/")
+        } else {
+            navigate("/homepage")
+        }
+        
     }
 
     return (

@@ -264,8 +264,8 @@ const MyGames = ( props ) => {
             let currentUserScore = parseInt(opponentCard?.score?.playerScore)
 
             let newOverallRatings = ratingAlgorithm(currentUser, opponentCard, currentUserScore, opponentScore)
-            let currentUserNewOverallRating = newOverallRatings.new_R_A
-            let opponentNewOverallRating = newOverallRatings.new_R_B
+            let currentUserNewOverallRating = Math.max(60, Math.min(99, newOverallRatings.new_R_A));
+            let opponentNewOverallRating = Math.max(60, Math.min(99, newOverallRatings.new_R_B));
 
 
             /* CRUD data for handling accept */
