@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, createRef } from 'react';
 import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import setGridStyle from '../setGridStyle';
 import missingImage from '../../images/missingImage.jpg'
@@ -8,6 +8,8 @@ const MyGames = ( props ) => {
     const [verifiedGames, setVerifiedGames] = useState([])
     const [pendingGames, setPendingGames] = useState([])
     const [confirmedGames, setConfirmedGames] = useState([])
+    const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
+
 
     
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
@@ -33,7 +35,7 @@ const MyGames = ( props ) => {
             }
         })
         myPendingGames.forEach((game) => { 
-            pendingGames.push(game )
+            pendingGames.push(game)
         })
 
         setVerifiedGames(gamesThatAreInVerifcationStage)
@@ -42,95 +44,6 @@ const MyGames = ( props ) => {
 
     }, [])
 
-    const ScoreSubmissionComponent = ({ currentCard }) => {
-        const [scoreData, setScoreData] = useState({
-          userScore: '',
-          opponentScore: ''
-        });
-
-        const handleScoreChange = (event) => {
-          const { id, value } = event.target;
-          
-          try {
-            if ( value > 99 ) {
-                setScoreData((prevData) => ({
-                    ...prevData,
-                    [id]: 99,
-                  }));
-                  return
-            } else {
-                setScoreData((prevData) => ({
-                    ...prevData,
-                    [id]: value,
-                  }));
-            }
-          } catch (err) {
-            console.log(err)
-          }    
-
-    };
-
-    // self explanatory :)
-    const handleScoreSubmission = async () => {
-        const { userScore, opponentScore } = scoreData
-        if ( !userScore || !opponentScore ) {
-            console.log("Please fill out the game info.")
-            return
-        }
-
-        const dataForCurrentPlayerCollection = {
-            ...currentCard,
-            playerID: currentUser.id,
-            score: {
-                playerScore: userScore,
-                opponentScore: opponentScore
-            },
-            gameApprovalStatus: true,
-        };
-
-        const dataForOpponentCollection = {
-            ...currentUser,
-            opponentID: currentUser.id,
-            opponent: currentUser.username,
-            email: currentUser.email,
-            firstName: currentUser.firstName,
-            heightFt: currentUser.heightFt,
-            heightInches: currentUser.heightInches,
-            playerID: currentCard.playerID,
-            lastName: currentUser.lastName,
-            score: {
-                playerScore: opponentScore,
-                opponentScore: userScore
-            },
-            gameApprovalStatus: false
-        };
-
-        const playerDocID = currentCard.id;
-        const playerDocRef = doc(db, `users/${currentUserID}/confirmedGames`, playerDocID);
-        const opponentConfirmed = collection(db, `users/${currentCard.opponentID}/confirmedGames`);
-        const opponentConfirmedSnapshot = await getDocs(opponentConfirmed);
-
-        let opponentDoc = opponentConfirmedSnapshot.docs.find((doc) => {
-            const currDoc = doc.data();
-            
-            return currDoc.dateOfGame === currentCard.dateOfGame &&
-            currDoc.time === currentCard.time &&
-            currDoc.addressString === currentCard.addressString;
-        });
-            
-        
-        if (opponentDoc) {
-            await updateDoc(opponentDoc.ref, dataForOpponentCollection);
-            await updateDoc(playerDocRef, dataForCurrentPlayerCollection);
-            } else {
-            console.log("Something went wrong while submitting the game")
-            }     
-            
-            setRefreshToken(refreshToken + 1)
-
-    };
-
-    // self explanatory :)
     const PendingGameApproval = () => {
         return ( 
             <div style={{display: 'flex', justifyContent: 'center', gap: '10px'} }>
@@ -145,8 +58,7 @@ const MyGames = ( props ) => {
         )        
     }
 
-    // Accept and Deny handling
-    const VerifyGameComponent = () => {
+    const VerifyGameComponent = ({ currentCard }) => {
         const flexRow = {
             display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '5px'
         }
@@ -268,7 +180,6 @@ const MyGames = ( props ) => {
             let opponentNewOverallRating = Math.max(60, Math.min(99, newOverallRatings.new_R_B));
 
 
-            /* CRUD data for handling accept */
             const {
                 addressString,
                 coordinates,
@@ -417,17 +328,89 @@ const MyGames = ( props ) => {
         )
     }
 
-    // Lets user input the score of the game
-    const ScoreInputComponent = () => {
+    const handleScoreSubmission = async ( currentCard, scoreData ) => {
+
+        const { userScore, opponentScore } = scoreData
+        if ( !userScore || !opponentScore ) {
+            console.log("Please fill out the game info.")
+            return
+        }
+
+        const dataForCurrentPlayerCollection = {
+            ...currentCard,
+            playerID: currentUser.id,
+            score: {
+                playerScore: userScore,
+                opponentScore: opponentScore
+            },
+            gameApprovalStatus: true,
+        };
+
+        const dataForOpponentCollection = {
+            ...currentUser,
+            opponentID: currentUser.id,
+            opponent: currentUser.username,
+            email: currentUser.email,
+            firstName: currentUser.firstName,
+            heightFt: currentUser.heightFt,
+            heightInches: currentUser.heightInches,
+            playerID: currentCard.playerID,
+            lastName: currentUser.lastName,
+            score: {
+                playerScore: opponentScore,
+                opponentScore: userScore
+            },
+            gameApprovalStatus: false
+        };
+
+        const playerDocID = currentCard.id;
+        const playerDocRef = doc(db, `users/${currentUserID}/confirmedGames`, playerDocID);
+        const opponentConfirmed = collection(db, `users/${currentCard.opponentID}/confirmedGames`);
+        const opponentConfirmedSnapshot = await getDocs(opponentConfirmed);
+
+        let opponentDoc = opponentConfirmedSnapshot.docs.find((doc) => {
+            const currDoc = doc.data();
+            
+            return currDoc.dateOfGame === currentCard.dateOfGame &&
+            currDoc.time === currentCard.time &&
+            currDoc.addressString === currentCard.addressString;
+        });
+            
+        
+        if (opponentDoc) {
+            await updateDoc(opponentDoc.ref, dataForOpponentCollection);
+            await updateDoc(playerDocRef, dataForCurrentPlayerCollection);
+            } else {
+            console.log("Something went wrong while submitting the game")
+            }     
+            
+            setRefreshToken(refreshToken + 1)
+
+    };
+
+    const ScoreInputComponent = ({currentCard}) => {
+        const [scoreData, setScoreData] = useState({
+            userScore: '',
+            opponentScore: ''
+          });
+
+        const handleUserScoreChange = useCallback((event) => {
+            const { value } = event.target;
+            setScoreData((prevData) => ({ ...prevData, userScore: value }));
+        }, []);
+        const handleOpponentScoreChange = useCallback((event) => {
+            const { value } = event.target;
+            setScoreData((prevData) => ({ ...prevData, opponentScore: value }));
+        }, []);
+
         return (        
         <>
-   
             <div style={{ display: 'flex', justifyContent: 'space-around', gap: '10px'}}>
                 <input
                     id='userScore'
                     type='number'
                     placeholder='Your score'
-                    onChange={handleScoreChange}
+                    onChange={handleUserScoreChange}
                     value={scoreData.userScore}
                     min='0'
                     max='99'
@@ -438,7 +421,7 @@ const MyGames = ( props ) => {
                     id='opponentScore'
                     type='number'
                     placeholder='Opponent score'
-                    onChange={handleScoreChange}
+                    onChange={handleOpponentScoreChange}
                     value={scoreData.opponentScore}
                     min='0'
                     max='99'
@@ -446,90 +429,86 @@ const MyGames = ( props ) => {
                 />
             </div>
             <div>
-                <button onClick={handleScoreSubmission} id='submitScoreButton'>Submit Score</button>
+            <button onClick={() => handleScoreSubmission(currentCard, scoreData)} id='submitScoreButton'>Submit Score</button>
             </div>
         </>
         )
     }
-        
-    /*
-        If the game is waiting approval by both parties, show pending
-        If the game has been approved and you have the scores submitted, allow the user to verify the game
-        If the game has been approved and you don't have the scores, let the user input the game score
-    */
-    return (
-        <>
-            {currentCard.gameApprovalStatus && <PendingGameApproval />}
-            {(!currentCard.gameApprovalStatus && (currentCard?.score?.playerScore || currentCard?.score?.opponentScore)) && <VerifyGameComponent />}
-            {(!currentCard.gameApprovalStatus && !(currentCard?.score?.playerScore || currentCard?.score?.opponentScore)) && <ScoreInputComponent />}
-        </>
-    );               
-};
     
-    const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
-    const PingCircle = ({ isVerified }) => {
-        const circle = {
-          position: 'absolute',
-          top: '0px',
-          right: '0px',
-          width: '25px',
-          height: '25px',
-          backgroundColor: '#ec432d',
-          borderRadius: '50%',
-          animation: isVerified ? 'ping 1.5s ease-in-out infinite' : 'none',
+    // If the game is confirmed, it will show pending, otherwise it will let you submit the scores
+    const Card = ({ currentCard, type, isVerified }) => {
+
+        const PingCircle = ({ isVerified }) => {
+            const circle = {
+              position: 'absolute',
+              top: '0px',
+              right: '0px',
+              width: '25px',
+              height: '25px',
+              backgroundColor: '#ec432d',
+              borderRadius: '50%',
+              animation: isVerified ? 'ping 1.5s ease-in-out infinite' : 'none',
+            };
+          
+            if (isVerified) {
+              return <div className='verification-dot' style={circle} />;
+            } else {
+              return null; // Return null if not verified
+            }
+        };
+    
+        const renderScoreSubmission = () => {
+          if (type === 'confirmed') {
+            return (
+              <>
+                {currentCard.gameApprovalStatus && <PendingGameApproval />}
+                {!currentCard.gameApprovalStatus && (currentCard?.score?.playerScore || currentCard?.score?.opponentScore) && <VerifyGameComponent currentCard={currentCard}/>}
+                {!currentCard.gameApprovalStatus && !(currentCard?.score?.playerScore || currentCard?.score?.opponentScore) && <ScoreInputComponent currentCard={currentCard}/>}
+              </>
+            );
+          }
+          return (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <div>Waiting for the game to be accepted by another user</div>
+              <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px' }}>
+                <div className='el'></div>
+                <div className='el'></div>
+                <div className='el'></div>
+              </div>
+            </div>
+          );
         };
       
-        if (isVerified) {
-          return <div className='verification-dot' style={circle} />;
-        } else {
-          return null; // Return null if not verified
-        }
-      };
-
-    // If the game is confirmed, it will show pending, otherwise it will let you submit the scores
-    const Card = ({ currentCard, type, isVerified }) => (
-        <li className='card' style={{ padding: '20px', position: 'relative' }}>
+        return (
+          <li className='card' style={{ padding: '20px', position: 'relative' }}>
             <PingCircle isVerified={isVerified}/>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
-            <div>{currentCard.gameType}v{currentCard.gameType}</div>
-            <div>
-              <div>{currentCard.dateOfGame}</div>
-              <div>{currentCard.time}</div>
-            </div>
-          </div>
-          <div style={{ alignItems: 'center' }}>
-            <img
-              src={missingImage}
-              alt={'Profile img'}
-              style={{
-                borderRadius: '5px',
-                overflow: 'hidden',
-                width: '50%',
-                padding: '5px',
-                background: `linear-gradient(135deg, rgba(250, 70, 47, 1) 0%, rgba(0, 0, 0, 0.55) 100%)`
-              }}
-            />
-          </div>
-          <div className='opponentText'>{currentCard?.opponent}</div>
-          <div className='addressText'>{currentCard.addressString}</div>
-          {type === 'confirmed' ? (
-            <ScoreSubmissionComponent currentCard={currentCard} />
-          ) : (
-            <>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                <div>Waiting for the game to be accepted by another user</div>
-                <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px' }}>
-                  <div className='el'></div>
-                  <div className='el'></div>
-                  <div className='el'></div>
-                </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
+              <div>{currentCard.gameType}v{currentCard.gameType}</div>
+              <div>
+                <div>{currentCard.dateOfGame}</div>
+                <div>{currentCard.time}</div>
               </div>
-            </>
-          )}
-        </li>
-      );
-      
+            </div>
+            <div style={{ alignItems: 'center' }}>
+              <img
+                src={missingImage}
+                alt={'Profile img'}
+                style={{
+                  borderRadius: '5px',
+                  overflow: 'hidden',
+                  width: '50%',
+                  padding: '5px',
+                  background: `linear-gradient(135deg, rgba(250, 70, 47, 1) 0%, rgba(0, 0, 0, 0.55) 100%)`
+                }}
+              />
+            </div>
+            <div className='opponentText'>{currentCard?.opponent}</div>
+            <div className='addressText'>{currentCard.addressString}</div>
+            {renderScoreSubmission()}
+          </li>
+        );
+    };
+            
 
     const gamesAwaitingOpponentScoreVerification = []
     const gamesAwaitingUserInput = []
@@ -549,7 +528,6 @@ const MyGames = ( props ) => {
             3) gamesAwaitingOpponentScoreVerification --> Games that are awaiting opponent approval of the score
             4) pendingGames --> Games that you created that have not been picked up by anyone yet
     */
-
     return (
         <section id="my-games" style={gridStyle}>
             <h1 style={h1Style}>My Games</h1>
