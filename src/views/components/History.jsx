@@ -5,23 +5,32 @@ import setGridStyle from '../setGridStyle';
 const History = ( { currentUser, currentUserID, db}) => {
     const [data, setData] = useState([])
 
+
+    function convertToLocalTime( storedUtcDateTime ) {
+        const userLocalDateTime = new Date(storedUtcDateTime);
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const userDateTimeString = userLocalDateTime.toLocaleString('en-US', { timeZone: userTimeZone });
+        return userDateTimeString
+    }
+
     useEffect(() => {
         const fetchGameHistory = async () => {
             const historyCollectionPath = `users/${currentUserID}/history/`
             const historyRef = collection(db, historyCollectionPath)
-     
             const historySnapshot = await getDocs(historyRef);
-     
             const gameHistory = historySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
 
-            console.log(gameHistory)
             const data = gameHistory.map(obj => ({
-                when: obj.dateOfGame,
+                when: convertToLocalTime(obj.time),
                 who: obj.opponent,
                 where: obj.addressString,
+                what: `You: ${obj.yourScore} Opp: ${obj.opponentScore}`,
                 ratingDifference: (parseFloat(obj.ratingAfterGame) - parseFloat(obj.ratingBeforeGame)).toFixed(2)
             }));
 
+            data.sort((a, b) => new Date(b.when) - new Date(a.when));
+
+            console.log(data)
             setData(data)
         }
         fetchGameHistory()
@@ -62,6 +71,7 @@ const History = ( { currentUser, currentUserID, db}) => {
                     <th style={{ ...tableCellStyle, height: '50px' }}>When</th>
                     <th style={ tableCellStyle }>Who</th>
                     <th style={ tableCellStyle }>Where</th>
+                    <th style={ tableCellStyle }>What</th>
                     <th style={ tableCellStyle }>Rating</th>
                   </tr>
                 </thead>
@@ -73,6 +83,7 @@ const History = ( { currentUser, currentUserID, db}) => {
                         </td>
                         <td style={{ ...tableCellStyle, height: '50px' }}>{row.who}</td>
                         <td style={tableCellStyle}>{row.where}</td>
+                        <td style={tableCellStyle}>{row.what}</td>
                         <td style={{
                             ...tableCellStyle,
                             color: row.ratingDifference > 0.0 ? 'green' : 'red',
@@ -80,7 +91,6 @@ const History = ( { currentUser, currentUserID, db}) => {
                             }}>
                             {row.ratingDifference > 0.0 ? `+${row.ratingDifference}` : `-${Math.abs(row.ratingDifference)}`}
                         </td>
-
                     </tr>
                   ))}
                 </tbody>

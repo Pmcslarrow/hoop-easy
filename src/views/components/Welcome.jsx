@@ -34,7 +34,7 @@ const Welcome = () => {
           <h1 style={h1Style}>Welcome</h1>
           <div style={horizontalLine}></div>
           <p style={paragraph}>
-            It’s good to see you again. Here you’ll find everything you need to keep hooping easy.
+            Here you’ll find everything you need to keep hooping easy.
           </p>
 
             <a style={{ ...linkStyle, ...myGamesStyle }} href="#my-games">My games</a>
