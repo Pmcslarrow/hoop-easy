@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from "../config/firebase";
 import { handleError } from './ErrorHandler';
 import { db } from '../config/firebase';
-import { updateDoc, collection, Timestamp, doc} from 'firebase/firestore';
+import { updateDoc, collection, Timestamp, doc, getDoc} from 'firebase/firestore';
 import {
     ref,
     uploadBytesResumable,
@@ -22,8 +22,12 @@ function Profile( props ) {
     const [errorStatus, setError] = useState(false);
     const [errorMessage, setMessage] = useState('');
     const [preview, setPreview] = useState("");
+    const [profileInformation, setProfileInformation] = useState({})
     const currentUser = useContext(UserContext);
-    const userProfileRef = doc(db, `users/${currentUser.id}`);
+    const userProfileRef = doc(db, `users/${currentUser.id}`);  
+
+    const [refreshData, setRefresh] = useState(0)
+    
 
     useEffect(() => {
         const storageRef = ref(storage,`/files/${currentUser.id}/profilePic`);
@@ -36,7 +40,27 @@ function Profile( props ) {
           });
     }, []);
 
-    console.log(preview)
+    useEffect(() => {
+
+        const updateProfileInformation = async () => {
+            getDoc(userProfileRef)
+                .then((profileSnapshot) => {
+                    if (profileSnapshot.exists()) {
+                    const profileInformation = profileSnapshot.data();
+                    setProfileInformation(profileInformation)
+                    } else {
+                    console.log('Document does not exist');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error getting document:', error);
+                });
+        }
+
+        updateProfileInformation()
+
+    }, [refreshData])
+
        
 
     const [formData, setFormData] = useState({
@@ -108,6 +132,7 @@ function Profile( props ) {
               ...updatedFields,
               date: currentDate
             });
+            setRefresh(refreshData + 1)
             alert("Success");
           }
         } catch (error) {
@@ -139,6 +164,7 @@ function Profile( props ) {
                 borderRadius: '5px',
                 overflow: 'hidden',
                 width: '275px',
+                height: '275px',
                 padding: '5px',
                 background: `linear-gradient(135deg, rgba(250, 70, 47, 1) 0%, rgba(0, 0, 0, 0.55) 100%)`
               }}
@@ -149,119 +175,119 @@ function Profile( props ) {
             </div>
 
             <div>
-                <h1 style={{fontFamily: 'var(--font-bold-italic)', fontSize: '4vw', margin: '0', marginTop: '50px'}}>{formData.firstName} {currentUser.lastName}</h1>
-                <h3 style={{fontFamily: 'var(--font-light-italic)', fontSize: '3vw', margin: '0'}}>{currentUser.heightFt}'{currentUser.heightInches}" {currentUser.weight}</h3>
+                <h1 style={{fontFamily: 'var(--font-bold-italic)', fontSize: '4vw', margin: '0', marginTop: '50px'}}>{profileInformation.firstName} {profileInformation.lastName}</h1>
+                <h3 style={{fontFamily: 'var(--font-light-italic)', fontSize: '3vw', margin: '0'}}>{currentUser.heightFt}'{profileInformation.heightInches}" {profileInformation.weight}lbs</h3>
             </div>
         </div>
 
         
         <div>
         <form>
-        <div className="form-container">
-        <div id="user-input">
-            <span className='flex-row'>
-            <label>
-                First Name
-                <input
-                type="text"
-                name="firstName"
-                id="firstName"
-                value={formData.firstName || ''}
-                onChange={handleInputChange}
-                placeholder={currentUser.firstName || ''}
-                maxLength={50}
-                />
-            </label>
-            <label>
-                MI
-                <input
-                type="text"
-                name="middleInitial"
-                id="middleInitial"
-                value={formData.middleInitial || ''}
-                onChange={handleInputChange}
-                placeholder={currentUser.middleInitial || ''}
-                maxLength={1} 
-                />
-            </label>
-            </span>
-            <label>
-            Last Name
-            <input
-                type="text"
-                name="lastName"
-                id="lastName"
-                value={formData.lastName || ''}
-                onChange={handleInputChange}
-                placeholder={currentUser.lastName || ''}
-                maxLength={50} 
-            />
-            </label>
-            <label>
-            Username
-            <input
-                type="text"
-                name="username"
-                id="username"
-                value={formData.username || ''}
-                onChange={handleInputChange}
-                placeholder={currentUser.username || ''}
-                maxLength={20} 
-            />
-            </label>
-        </div> {/* user-input */}
-
-        <div id='optional'>
-            <span className='flex-col'>
-            <div>
-                <label>
-                Height
-                <span className='flex-row'>
+                <div className="form-container">
+                <div id="user-input">
+                    <span className='flex-row'>
                     <label>
+                        First Name
+                        <input
+                        type="text"
+                        name="firstName"
+                        id="firstName"
+                        value={formData.firstName || ''}
+                        onChange={handleInputChange}
+                        placeholder={currentUser.firstName || ''}
+                        maxLength={50}
+                        />
+                    </label>
+                    <label>
+                        MI
+                        <input
+                        type="text"
+                        name="middleInitial"
+                        id="middleInitial"
+                        value={formData.middleInitial || ''}
+                        onChange={handleInputChange}
+                        placeholder={currentUser.middleInitial || ''}
+                        maxLength={1} 
+                        />
+                    </label>
+                    </span>
+                    <label>
+                    Last Name
                     <input
                         type="text"
-                        name="heightFt"
-                        id="heightFt"
-                        value={formData.heightFt || ''}
+                        name="lastName"
+                        id="lastName"
+                        value={formData.lastName || ''}
                         onChange={handleInputChange}
-                        placeholder={currentUser.heightFt || ''}
-                        maxLength={1} 
+                        placeholder={currentUser.lastName || ''}
+                        maxLength={50} 
                     />
                     </label>
                     <label>
+                    Username
                     <input
                         type="text"
-                        name="heightInches"
-                        id="heightInches"
-                        value={formData.heightInches || ''}
+                        name="username"
+                        id="username"
+                        value={formData.username || ''}
                         onChange={handleInputChange}
-                        placeholder={currentUser.heightInches || ''}
-                        maxLength={1} 
+                        placeholder={currentUser.username || ''}
+                        maxLength={20} 
                     />
                     </label>
-                </span>
-                </label>
-                <label>
-                Weight
-                <input
-                    type="text"
-                    name="weight"
-                    id="weight"
-                    value={formData.weight ? formData.weight : ''}
-                    onChange={handleInputChange}
-                    placeholder={currentUser.weight || ''}
-                    maxLength={4}
-                />
-                </label>
-            </div>
-            <button type="submit" onClick={handleSubmit} className='buttonStyle'>
-                Update
-            </button>
-            </span>
-        </div> { /* Optional */}
-        </div> { /* form-container */}
+                </div> {/* user-input */}
 
-        <p id='error-message'>{errorStatus ? errorMessage : ""}</p>
+                <div id='optional'>
+                    <span className='flex-col'>
+                    <div>
+                        <label>
+                        Height
+                        <span className='flex-row'>
+                            <label>
+                            <input
+                                type="text"
+                                name="heightFt"
+                                id="heightFt"
+                                value={formData.heightFt || ''}
+                                onChange={handleInputChange}
+                                placeholder={currentUser.heightFt || ''}
+                                maxLength={1} 
+                            />
+                            </label>
+                            <label>
+                            <input
+                                type="text"
+                                name="heightInches"
+                                id="heightInches"
+                                value={formData.heightInches || ''}
+                                onChange={handleInputChange}
+                                placeholder={currentUser.heightInches || ''}
+                                maxLength={1} 
+                            />
+                            </label>
+                        </span>
+                        </label>
+                        <label>
+                        Weight
+                        <input
+                            type="text"
+                            name="weight"
+                            id="weight"
+                            value={formData.weight ? formData.weight : ''}
+                            onChange={handleInputChange}
+                            placeholder={currentUser.weight || ''}
+                            maxLength={4}
+                        />
+                        </label>
+                    </div>
+                    <button type="submit" onClick={handleSubmit} className='buttonStyle'>
+                        Update
+                    </button>
+                    </span>
+                </div> { /* Optional */}
+                </div> { /* form-container */}
+
+                <p id='error-message'>{errorStatus ? errorMessage : ""}</p>
       </form>
         </div>
      
