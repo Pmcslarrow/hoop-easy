@@ -29,6 +29,13 @@ const FindGames = ( props ) => {
      function deg2rad(deg) {
         return deg * (Math.PI/180)
      }
+
+     function convertToLocalTime( storedUtcDateTime ) {
+        const userLocalDateTime = new Date(storedUtcDateTime);
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const userDateTimeString = userLocalDateTime.toLocaleString('en-US', { timeZone: userTimeZone });
+        return userDateTimeString
+    }
      
 
      
@@ -47,7 +54,11 @@ const FindGames = ( props ) => {
               const distance = getDistanceFromLatLonInMiles(userLat, userLon, game.coordinates._lat, game.coordinates._long);
               return { ...game, distance };
             });
-           
+            
+            games.forEach((game) => {
+                game.time = convertToLocalTime(game.dateOfGame)
+            })
+
             setSortedAvailableGames(games);
         }
            
@@ -123,13 +134,19 @@ const FindGames = ( props ) => {
         );
     };
 
-    const Card = ({ currentCard }) => (
+
+    const Card = ({ currentCard }) => {
+        const [dateOfGame, timeOfGame] = currentCard.time.split(',');
+        const trimmedDateOfGame = dateOfGame.trim();
+        const trimmedTimeOfGame = timeOfGame.trim();
+
+        return (
         <div className='card'>
                 <div style={{display: "flex", justifyContent:'space-between', ...boldItalicStyle}}>
                     <div>~{currentCard.distance.toFixed(2)} miles</div>
                     <div>
-                        <div>{currentCard.dateOfGame}</div>
-                        <div>{currentCard.time}</div>
+                        <div>{trimmedDateOfGame}</div>
+                        <div>{trimmedTimeOfGame}</div>
                     </div>
                 </div>
                 <div style={{alignItems: 'center'}}>
@@ -153,7 +170,7 @@ const FindGames = ( props ) => {
                 ACCEPT GAME
                 </div>
         </div>
-    );
+    )};
 
     async function handleGameAcceptance ( opponentCard ) {
         const opponentID = opponentCard.playerID
@@ -173,15 +190,15 @@ const FindGames = ( props ) => {
             gameType: '1'
         }
         const dataForOpponent = {
-            ...currentUser, // same
-            addressString: opponentCard.addressString, // ibid
-            coordinates: opponentCard.coordinates, // ibid
-            date: opponentCard.date, // ibid
-            dateOfGame: opponentCard.dateOfGame, // ibid
-            time: opponentCard.time, // ibid
-            opponent: currentUser.username, // Should your username
-            opponentID: currentUserID, // Should show your ID
-            playerID: opponentCard.id, // Should show their ID
+            ...currentUser,
+            addressString: opponentCard.addressString,
+            coordinates: opponentCard.coordinates, 
+            date: opponentCard.date, 
+            dateOfGame: opponentCard.dateOfGame, 
+            time: opponentCard.time, 
+            opponent: currentUser.username, 
+            opponentID: currentUserID, 
+            playerID: opponentCard.id, 
             gameType: '1'
         }
     

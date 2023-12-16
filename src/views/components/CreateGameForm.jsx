@@ -105,19 +105,28 @@ const CreateGameForm = ( props ) => {
 
             const coordinates = new GeoPoint(Number(latitude), Number(longitude));
             const addressString = formData.streetAddress
-            const dateOfGame = formData.dateOfGame
+            const date = formData.dateOfGame
             const time = formData.timeOfGame
             const gameType = '1'
             const playerID = currentPlayerDocumentID
+            const userDateTime = new Date(`${date}T${time}`);
+            const utcDateTime = userDateTime.toUTCString();     
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+            if (userDateTime < new Date()) {
+                console.log("Cannot add game in the past");
+                return;
+            }
+        
             const DATA_UPLOAD = {
                 coordinates, 
                 addressString, 
-                dateOfGame, 
-                time, 
+                dateOfGame: utcDateTime, 
+                userTimeZone, 
                 gameType, 
                 playerID,
-                overall: currentPlayerOverall
+                overall: currentPlayerOverall,
+                time: time
             }
 
             console.log("Uploading new game: ", DATA_UPLOAD)

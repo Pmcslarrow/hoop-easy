@@ -8,10 +8,8 @@ const MyGames = ( props ) => {
     const [verifiedGames, setVerifiedGames] = useState([])
     const [pendingGames, setPendingGames] = useState([])
     const [confirmedGames, setConfirmedGames] = useState([])
+
     const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
-
-
-    
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
     const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
     const myGamesLocation = setGridStyle(2, 6, 12, 30, undefined, undefined, undefined)
@@ -22,6 +20,13 @@ const MyGames = ( props ) => {
         gap: '10px',
     };
 
+    function convertToLocalTime( storedUtcDateTime ) {
+        const userLocalDateTime = new Date(storedUtcDateTime);
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const userDateTimeString = userLocalDateTime.toLocaleString('en-US', { timeZone: userTimeZone });
+        return userDateTimeString
+    }
+
     // Finds the verified games, confirmed games, and pending games from the passed in prop. (sorts in that order for rendering below)
     useEffect(() => {
         const pendingGames = []
@@ -29,12 +34,15 @@ const MyGames = ( props ) => {
         const gamesThatAreInVerifcationStage = []
         myConfirmedGames.forEach((game) => { 
             if (!game.gameApprovalStatus && (game?.score?.playerScore || game?.score?.opponentScore)) {
+                game.time = convertToLocalTime(game.dateOfGame)
                 gamesThatAreInVerifcationStage.push(game)
             } else {
+                game.time = convertToLocalTime(game.dateOfGame)
                 confimedGames.push(game)
             }
         })
         myPendingGames.forEach((game) => { 
+            game.time = convertToLocalTime(game.dateOfGame)
             pendingGames.push(game)
         })
 
@@ -394,14 +402,20 @@ const MyGames = ( props ) => {
             opponentScore: ''
           });
 
-        const handleUserScoreChange = useCallback((event) => {
-            const { value } = event.target;
+          const handleUserScoreChange = useCallback((event) => {
+            let { value } = event.target;
+            value = parseInt(value, 10);
+            value = Math.min(Math.max(value, 0), 99);
             setScoreData((prevData) => ({ ...prevData, userScore: value }));
-        }, []);
-        const handleOpponentScoreChange = useCallback((event) => {
-            const { value } = event.target;
+          }, []);
+          
+          const handleOpponentScoreChange = useCallback((event) => {
+            let { value } = event.target;
+            value = parseInt(value, 10);
+            value = Math.min(Math.max(value, 0), 99);
             setScoreData((prevData) => ({ ...prevData, opponentScore: value }));
-        }, []);
+          }, []);
+          
 
         return (        
         <>
@@ -478,15 +492,20 @@ const MyGames = ( props ) => {
             </div>
           );
         };
-      
+
+
+        const [dateOfGame, timeOfGame] = currentCard.time.split(',');
+        const trimmedDateOfGame = dateOfGame.trim();
+        const trimmedTimeOfGame = timeOfGame.trim();
+        
         return (
           <li className='card' style={{ padding: '20px', position: 'relative' }}>
             <PingCircle isVerified={isVerified}/>
             <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
               <div>{currentCard.gameType}v{currentCard.gameType}</div>
               <div>
-                <div>{currentCard.dateOfGame}</div>
-                <div>{currentCard.time}</div>
+                <div>{trimmedDateOfGame}</div>
+                <div>{trimmedTimeOfGame}</div>
               </div>
             </div>
             <div style={{ alignItems: 'center' }}>
