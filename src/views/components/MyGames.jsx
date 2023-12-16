@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo, createRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import setGridStyle from '../setGridStyle';
 import missingImage from '../../images/missingImage.jpg'
@@ -390,9 +390,9 @@ const MyGames = ( props ) => {
             await updateDoc(playerDocRef, dataForCurrentPlayerCollection);
             } else {
             console.log("Something went wrong while submitting the game")
-            }     
+         }     
             
-            setRefreshToken(refreshToken + 1)
+        setRefreshToken(refreshToken + 1)
 
     };
 
@@ -453,7 +453,7 @@ const MyGames = ( props ) => {
     const Card = ({ currentCard, type, isVerified }) => {
 
         const PingCircle = ({ isVerified }) => {
-            const circle = {
+            const circleStyle = {
               position: 'absolute',
               top: '0px',
               right: '0px',
@@ -461,15 +461,15 @@ const MyGames = ( props ) => {
               height: '25px',
               backgroundColor: '#ec432d',
               borderRadius: '50%',
-              animation: isVerified ? 'ping 1.5s ease-in-out infinite' : 'none',
+              willChange: 'transform', // Hint to the browser for animation optimization
+              transition: isVerified ? 'transform 1.5s ease-in-out infinite' : 'none',
             };
           
-            if (isVerified) {
-              return <div className='verification-dot' style={circle} />;
-            } else {
-              return null; // Return null if not verified
-            }
+            return (
+              <div className={`verification-dot ${isVerified ? 'ping' : ''}`} style={circleStyle} />
+            );
         };
+          
     
         const renderScoreSubmission = () => {
           if (type === 'confirmed') {
@@ -500,7 +500,7 @@ const MyGames = ( props ) => {
         
         return (
           <li className='card' style={{ padding: '20px', position: 'relative' }}>
-            <PingCircle isVerified={isVerified}/>
+            {/*<PingCircle isVerified={isVerified}/>*/}
             <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
               <div>{currentCard.gameType}v{currentCard.gameType}</div>
               <div>

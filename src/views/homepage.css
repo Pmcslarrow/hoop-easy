@@ -351,6 +351,10 @@ section {
       opacity: 0;
     }
   }
+
+  .ping {
+    animation: ping 1.5s ease-in-out infinite;
+  }
   
 
   /* New game and Exit buttons */

@@ -202,15 +202,19 @@ const FindGames = ( props ) => {
             gameType: '1'
         }
     
+        // These next few variables take the clicked card and compare it to the cards that exist in the opponent's pendingGames and the Games collection
+        // We then go through and remove the instance (doc.ref) of the opponent's pendingGame and the Game that is available from the collections
         const matchingPendingDocs = pendingQuerySnapshot.docs.filter(doc => {
-         const data = doc.data();
-         return data.dateOfGame === opponentCard.dateOfGame && data.time === opponentCard.time;
+            const data = doc.data();
+            console.log(data, opponentCard)
+            return data.dateOfGame === opponentCard.dateOfGame;
         });
 
         const matchingAvailableGamesDocs = availableGamesQuerySnapshot.docs.filter(doc => {
             const data = doc.data();
-            return data.dateOfGame === opponentCard.dateOfGame && data.time === opponentCard.time;
-           });
+            console.log(data, opponentCard)
+            return data.dateOfGame === opponentCard.dateOfGame;
+        });
 
         matchingPendingDocs.forEach(async (doc) => {
             await deleteDoc(doc.ref);
