@@ -144,8 +144,9 @@ const MyGames = ( props ) => {
             new_R_B = Number.parseFloat(new_R_B).toFixed(2)
 
             return { new_R_A, new_R_B }
-        }
+        } /* ratingAlgorithm() */
 
+        // How to call: const _ = await findConfirmedGameID(opponentConfirmedGamesRef, { coordinates, dateOfGame, time, opponentID });
         async function findConfirmedGameID(ref, dataToMatchOn) {
             try {
                 const confirmedGames = await getDocs(ref);
@@ -163,13 +164,31 @@ const MyGames = ( props ) => {
                     }
                 }
         
-                // If no match is found, you might want to return something, e.g., null
                 return null;
             } catch (error) {
                 console.error("Error in findConfirmedGameID:", error);
-                throw error; // Re-throw the error to indicate that something went wrong
+                throw error; 
             }
-        }                
+        }       
+        
+        const deletingConfirmedGames = async ( opponentCard, currentUserConfirmedGamesRef, opponentConfirmedGamesRef, coordinates, dateOfGame, time, opponentID ) => {
+            try {
+                const confirmedGameID = await findConfirmedGameID(opponentConfirmedGamesRef, { coordinates, dateOfGame, time, opponentID });
+            
+                if (confirmedGameID) {
+                    const opponentConfirmedGameDocRef = doc(opponentConfirmedGamesRef, confirmedGameID);
+                    const currentUserConfirmedGameDocRef = doc(currentUserConfirmedGamesRef, opponentCard.id)
+
+                    await deleteDoc(opponentConfirmedGameDocRef);
+                    await deleteDoc(currentUserConfirmedGameDocRef)
+                    console.log(`Confirmed Game Successfully Deleted.`);
+                } else {
+                    console.log("No matching document found to delete.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
 
         const handleAccept = async () => {
             let opponentCard = currentCard
@@ -194,12 +213,6 @@ const MyGames = ( props ) => {
                 dateOfGame,
                 time,
                 opponentID,
-                //score,
-                //opponent,
-                //gameApprovalStatus,
-                //username,
-                //gameType,
-                //...restOpponentCard
             } = opponentCard;
 
             const dataForOpponentCollection = {
@@ -251,7 +264,6 @@ const MyGames = ( props ) => {
         
             // Add entry into history collection
             const addingHistory = async () => {
-
                 try {
                     await addDoc(opponentHistoryRef, dataForOpponentHistoryCollection);
                     await addDoc(currentUserHistoryRef, dataForCurrentPlayerHistoryCollection);
@@ -262,29 +274,10 @@ const MyGames = ( props ) => {
                 }
             };
             
-            // Remove the confirmed game from both
-            const deletingConfirmedGames = async () => {
-                try {
-                    const confirmedGameID = await findConfirmedGameID(opponentConfirmedGamesRef, { coordinates, dateOfGame, time, opponentID });
-                
-                    if (confirmedGameID) {
-                        const opponentConfirmedGameDocRef = doc(opponentConfirmedGamesRef, confirmedGameID);
-                        const currentUserConfirmedGameDocRef = doc(currentUserConfirmedGamesRef, opponentCard.id)
-                        console.log(`Trying to delete opponent confirmedGame with ${confirmedGameID}`)
-                        console.log(`Trying to delete jrae confirmedGame with ${opponentCard.id}`)
-
-                        await deleteDoc(opponentConfirmedGameDocRef);
-                        await deleteDoc(currentUserConfirmedGameDocRef)
-                        console.log(`Confirmed Game Successfully Deleted.`);
-                    } else {
-                        console.log("No matching document found to delete.");
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                }
-            }
-
-            Promise.all([updatingUserData(), addingHistory(), deletingConfirmedGames()])
+            Promise.all([
+                updatingUserData(), 
+                addingHistory(), 
+                deletingConfirmedGames(opponentCard, currentUserConfirmedGamesRef, opponentConfirmedGamesRef, coordinates, dateOfGame, time, opponentID)])
             .then(() => {
                 setRefreshToken(refreshToken + 1);
             })
@@ -292,16 +285,52 @@ const MyGames = ( props ) => {
                 console.error("Error in one or more async functions:", error);
             });   
 
-        }
-        const handleDeny = () => {
-            console.log(`
-            Handle score denial --> 
-            Remove from the confirmedGames collection for both users,
-            Has no effect on either player's elo.
-            update gamesDenied`)
+        } /* handleAccept() */
+
+        const handleDeny = async () => {
             let opponentCard = currentCard
-            console.log(opponentCard, currentUser)
-        }
+            const opponentDocRef = doc(db, `users/${opponentCard.playerID}`);
+            const currentUserDocRef = doc(db, `users/${currentUser.id}`);
+            const opponentConfirmedGamesRef = collection(db, `users/${opponentCard.opponentID}/confirmedGames`)
+            const currentUserConfirmedGamesRef = collection(db,  `users/${currentUser.id}/confirmedGames`)
+
+            const dataForOpponentCollection = {
+                gamesDenied : String(parseInt(opponentCard.gamesDenied) + 1)
+            }
+            
+            const dataForCurrentUserCollection = {
+                gamesDenied : String(parseInt(currentCard.gamesDenied) + 1)
+            }
+
+            const {
+                coordinates,
+                dateOfGame,
+                time,
+                opponentID,
+            } = opponentCard;
+
+
+            const updatingUserData = async () => {
+                try {
+                    await updateDoc(opponentDocRef, dataForOpponentCollection);
+                    await updateDoc(currentUserDocRef, dataForCurrentUserCollection);
+                    console.log("Data updated successfully");
+                } catch (error) {
+                    console.error("Error updating user data:", error);
+                }
+            };
+
+            Promise.all([
+                updatingUserData(), 
+                deletingConfirmedGames(opponentCard, currentUserConfirmedGamesRef, opponentConfirmedGamesRef, coordinates, dateOfGame, time, opponentID)
+            ])
+            .then(() => {
+                setRefreshToken(refreshToken + 1);
+            })
+            .catch((error) => {
+                console.error("Error in one or more async functions:", error);
+            }); 
+        } /* handleDeny() */
 
         const center = { position: 'relative', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', ...boldItalicStyle}
 
@@ -353,7 +382,6 @@ const MyGames = ( props ) => {
             },
             gameApprovalStatus: true,
         };
-
         const dataForOpponentCollection = {
             ...currentUser,
             opponentID: currentUser.id,
