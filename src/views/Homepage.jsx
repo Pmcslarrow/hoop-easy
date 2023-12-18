@@ -8,6 +8,7 @@ import { bouncyArc } from 'ldrs'
 /* Components */
 import { CreateGameForm } from './components/CreateGameForm'
 import { CreateGameButton}  from './components/CreateGameButton';
+import { PlayerOverallRating } from './components/PlayerOverallRating';
 import { Navbar } from './components/Navbar';
 import { Welcome } from './components/Welcome';
 import { MyGames } from './components/MyGames';
@@ -131,6 +132,7 @@ const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
         }
 
         <CreateGameButton setCreateGameActive={setCreateGameActive} isCreateGameActive={isCreateGameActive} />
+        <PlayerOverallRating overallRating={currentUser.overall}/>
         <Navbar setAuthenticationStatus={setAuthenticationStatus} searchBar={true} />
 
         <Welcome />
