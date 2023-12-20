@@ -69,10 +69,10 @@ const History = ( { currentUser, currentUserID, db}) => {
                 <thead style={tableHeaderStyle}>
                   <tr>
                     <th style={{ ...tableCellStyle, height: '50px' }}>When</th>
-                    <th style={ tableCellStyle }>Who</th>
-                    <th style={ tableCellStyle }>Where</th>
-                    <th style={ tableCellStyle }>What</th>
-                    <th style={ tableCellStyle }>Rating</th>
+                    <th style={ tableCellStyle } className='hide'>Who</th>
+                    <th style={ tableCellStyle } className='hide'>Where</th>
+                    <th style={ tableCellStyle }>What</th> 
+                    <th style={ tableCellStyle } className='hide'>Rating</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -81,14 +81,10 @@ const History = ( { currentUser, currentUserID, db}) => {
                         <td style={index === 0 ? { ...tableCellStyle, borderTop: '1px solid white' } : tableCellStyle}>
                          {row.when}
                         </td>
-                        <td style={{ ...tableCellStyle, height: '50px' }}>{row.who}</td>
-                        <td style={tableCellStyle}>{row.where}</td>
+                        <td style={{ ...tableCellStyle, height: '50px' }} className='hide'>{row.who}</td>
+                        <td style={tableCellStyle} className='hide'>{row.where}</td>
                         <td style={tableCellStyle}>{row.what}</td>
-                        <td style={{
-                            ...tableCellStyle,
-                            color: row.ratingDifference > 0.0 ? 'green' : 'red',
-                            fontSize: '20px'
-                            }}>
+                        <td style={{...tableCellStyle, color: row.ratingDifference > 0.0 ? 'green' : 'red', fontSize: '20px'}} className='hide'>
                             {row.ratingDifference > 0.0 ? `+${row.ratingDifference}` : `-${Math.abs(row.ratingDifference)}`}
                         </td>
                     </tr>

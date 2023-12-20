@@ -141,3 +141,18 @@ body { height: 100vh; margin: 0; color: white;}
     transform: scale(1.03);
   }
 
+
+
+
+
+
+
+
+  @media screen and (max-width: 767px) {
+
+    .col {
+        min-width: 300px;
+        min-height: 250px;
+    }
+
+  }

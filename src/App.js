@@ -8,6 +8,9 @@ import Homepage from './views/Homepage';
 import CreateAccount from './views/CreateAccount';
 import ResetPassword from './views/ResetPassword';
 import Profile from './views/Profile';
+import PlayerRankings from './views/components/PlayerRankings';
+
+/* Context */
 export const UserContext = React.createContext();
 export const UserIDContext = React.createContext()
 
@@ -33,7 +36,7 @@ function App() {
             <Route path="/resetPassword" element={<ResetPassword setAuthenticationStatus={setAuthenticationStatus} />} />
             <Route path="/homepage" element={isAuthenticated ? <Homepage setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} setCurrentUser={setCurrentUser} /> : <Navigate to="/" />} />
             <Route path="/profile" element={isAuthenticated ? <Profile setAuthenticationStatus={setAuthenticationStatus} /> : <Navigate to="/" />} />
-
+            <Route path='/rankings' element={isAuthenticated ? <PlayerRankings setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} /> : <Navigate to="/" />} />
         </Routes>
         </Router>
     </UserContext.Provider>

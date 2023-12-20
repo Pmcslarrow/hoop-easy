@@ -72,7 +72,6 @@ background-size: cover;
 
 /*********************************************************************/
 
-
 /* Create an account -- Image Carousel */
 .left-panel {
 width: 100%;
@@ -334,4 +333,47 @@ height: 100%;
 display: flex;
 flex-direction: column;
 justify-content: space-between;
+}
+
+
+
+
+
+
+
+@media screen and (max-width: 767px) {
+
+    main {
+        background: black;
+    }
+    .left-panel, .hide {
+        display: none;
+    }
+
+    .right-panel {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .center {
+        position: relative;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .rect {
+        height: 100px;
+        width: 50%;
+        text-align: center;
+        background: var(--background-gradient-start);
+        color: white;
+        font-size: 3vw;
+        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        border: 1px solid black;
+    }    
 }

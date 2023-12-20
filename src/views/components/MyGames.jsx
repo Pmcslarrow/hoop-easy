@@ -527,7 +527,7 @@ const MyGames = ( props ) => {
         const trimmedTimeOfGame = timeOfGame.trim();
         
         return (
-          <li className='card' style={{ padding: '20px', position: 'relative' }}>
+          <li className='card'>
             {/*<PingCircle isVerified={isVerified}/>*/}
             <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
               <div>{currentCard.gameType}v{currentCard.gameType}</div>

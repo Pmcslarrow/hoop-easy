@@ -10,6 +10,9 @@ import getUserCoordinates from '../../locationServices';
 const FindGames = ( props ) => {
     const { db, currentUser, currentUserID, setRefreshToken, refreshToken, myConfirmedGamesRef, gamesCollectionRef, availableGames } = props 
     const [sortedAvailableGames, setSortedAvailableGames] = useState([])
+    const [carouselStyle, setStyle] = useState({}); 
+    const [arrowStyle, setArrowStyle] = useState({})
+
 
     function getDistanceFromLatLonInMiles(lat1, lon1, lat2, lon2) {
         var R = 6371; // Radius of the earth in km
@@ -36,7 +39,6 @@ const FindGames = ( props ) => {
         const userDateTimeString = userLocalDateTime.toLocaleString('en-US', { timeZone: userTimeZone });
         return userDateTimeString
     }
-     
 
      
     useEffect(() => {
@@ -61,16 +63,32 @@ const FindGames = ( props ) => {
 
             setSortedAvailableGames(games);
         }
-           
-           
 
+        const handleResize = () => {
+            if (window.innerWidth < 767) {
+              setStyle({ ...mobileCarouselLocation });
+              setArrowStyle({ left: '150px' })
+            } else {
+              setStyle({ ...carouselLocation });
+              setArrowStyle({ left: '65px' })
+            }
+        };
+
+        handleResize();
         sortGamesByLocationDistance()
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+        window.removeEventListener('resize', handleResize);
+        };
     }, [])
 
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
     const horizontalLine = setGridStyle(6, 4, 9, 6, "#da3c28", undefined, false);
     const paragraph = setGridStyle(5, 8, 10, 8, undefined, undefined, false);
     const carouselLocation = setGridStyle(6, 5, 11, 52, undefined, undefined, undefined)
+    const mobileCarouselLocation = setGridStyle(3, 5, 11, 52, undefined, undefined, undefined)
 
     const gridStyle = {
         display: 'grid',
@@ -108,7 +126,7 @@ const FindGames = ( props ) => {
           <div className='carousel' style={{...carouselLocation, ...flexboxRow}}>
             {active > 0 && 
                 <button className='nav left' onClick={() => setActive(i => i - 1)}>
-                    <img className='arrows' id='left-arrow' src={leftArrow} alt='Left arrow' style={{width: '50px'}}/>
+                    <img className='arrows' id='left-arrow' src={leftArrow} alt='Left arrow' />
                 </button>
             }
             {
@@ -127,7 +145,7 @@ const FindGames = ( props ) => {
             }
             {active < count - 1 && 
                 <button className='nav right' onClick={() => setActive(i => i + 1)}>
-                    <img className='arrows' id='right-arrow' src={rightArrow} alt='Right arrow' style={{position: 'relative', width: '50px', left: '60px'}}/>
+                    <img className='arrows' id='right-arrow' src={rightArrow} alt='Right arrow' style={arrowStyle}/>
                 </button>
             }
           </div>
@@ -235,7 +253,7 @@ const FindGames = ( props ) => {
             <h1 style={h1Style}>Find a game</h1>
             <div style={horizontalLine}></div>
             <p style={paragraph}></p>
-            <div style={{ ...carouselLocation, ...flexboxRow }}>
+            <div style={{ ...carouselStyle, ...flexboxRow }}>
 
                 <Carousel>
                 {sortedAvailableGames.map((index, i) => (

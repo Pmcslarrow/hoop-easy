@@ -33,7 +33,7 @@ const Welcome = () => {
         <div id="welcome-container" style={gridStyle}>
           <h1 style={h1Style}>Welcome</h1>
           <div style={horizontalLine}></div>
-          <p style={paragraph}>
+          <p style={paragraph} className='hide'>
             Here you’ll find everything you need to keep hooping easy.
           </p>
 

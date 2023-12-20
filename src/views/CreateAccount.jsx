@@ -119,12 +119,12 @@ function CreateAccount({ setAuthenticationStatus }) {
   function RightPanel() {
     return (
       <div className="right-panel">
-        <h1>Join the fastest growing community in basketball</h1>
+        <h1 className='hide'>Join the fastest growing community in basketball</h1>
         
         <div>
             <div>
-                <div onClick={toggleCustomizationForm}>
-                    <span className="rect">
+                <div onClick={toggleCustomizationForm} >
+                    <span className="rect center" >
                         <h1>Create An Account</h1>
                     </span>
                 </div>

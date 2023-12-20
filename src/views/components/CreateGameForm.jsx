@@ -153,35 +153,24 @@ const CreateGameForm = ( props ) => {
             border: '1px solid white',
             transition: 'opacity 0.35s ease-in-out, transform 200s ease-in',
             opacity: isVisible ? 1 : 0,
-            padding: '50px',
-            paddingTop: '100px',
-            paddingBottom: '100px',
-            boxShadow: '0px 0px 20px 10px rgba(250, 70, 47, 0.625)',
             zIndex: '999',
+            padding: '50px'
           };
           
 
         const inputBoxStyling = {
-            padding: '12px',
             border: '1px solid #ccc',
             boxSizing: 'border-box',
-            fontSize: '16px',
             marginBottom: '10px',
             width: '100%'
         };
 
-        const gridStyling = {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gridGap: '10px'
-        };
-           
-               
+
         const states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
        
         return (
-            <form style={styling} onSubmit={handleNewGameSubmission}>
-            <div style={gridStyling}>
+            <form style={styling} onSubmit={handleNewGameSubmission} id='createGameForm'>
+            <div  className='gridContainer'>
               <div>
                 <label htmlFor="streetAddress">Street Address:</label>
                 <input
@@ -205,7 +194,7 @@ const CreateGameForm = ( props ) => {
                 />
               </div>
             </div>
-            <div style={gridStyling}>
+            <div  className='gridContainer'>
               <div>
                 <label htmlFor="state">State:</label>
                 <select
@@ -234,7 +223,7 @@ const CreateGameForm = ( props ) => {
                 />
               </div>
             </div>
-            <div style={gridStyling}>
+            <div  className='gridContainer'>
               <div>
                 <label htmlFor="dateOfGame">Date of game:</label>
                 <input
@@ -260,24 +249,9 @@ const CreateGameForm = ( props ) => {
                 />
               </div>
             </div>
-            <div style={{...gridStyling}}>
+            <div className='gridContainer'>
                 <div style={{gridColumn: 'span 2', justifySelf: 'center', alignSelf: 'center'}}>
-                    <button
-                        style={{
-                            padding: '25px',
-                            fontSize: '40px',
-                            textAlign: 'center',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%',
-                            background: 'linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625))',
-                            border: '1px solid white'
-                        }}
-                        id='create-button'
-                    >
-                        Create
-                    </button>
+                    <button id='create-button'>Create</button>
                 </div>
             </div>
             </form>
