@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { Navbar } from "./Navbar";
 import { getDocs, collection } from 'firebase/firestore'
 import { auth, db } from '../../config/firebase';
-
+import '../homepage.css'
 
 const Leaderboard = ({ currentUser }) => {
     const [data, setData] = useState([]);
+    const [sortOrder, setSortOrder] = useState(false)
 
     useEffect(() => {
         const fetchGameHistory = async () => {
@@ -29,53 +30,89 @@ const Leaderboard = ({ currentUser }) => {
         }
         fetchGameHistory()
      }, [])
-     
-    const tableHeaderStyle = {
-        fontSize: '25px',
-        textAlign: 'left',
-    };
-    const tableCellStyle = {
-        border: '1px solid rgba(255, 255, 255, 0.5)',
-        padding: '10px',
-        fontSize: '18px',
+
+     const handleSort = () => {
+        setSortOrder(!sortOrder)
+     }
+
+     const tableStyle = {
+        width: '100%',
+        borderCollapse: 'collapse',
+        tableLayout: 'fixed' 
     };
 
+    const tableHeaderStyle = {
+        fontSize: '18px',
+        textAlign: 'left',
+        width: '25%',
+        fontFamily: 'var(--font-bold-italic)'
+    };
+
+    const tableCellStyle = {
+        paddingTop: '10px',
+        paddingBottom: '10px',
+        fontSize: '18px',
+        width: '25%'
+    };
+     
     const container = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh', 
+        height: '80vh', 
         paddingLeft: '10%',
         paddingRight: '10%',
     }
 
+    const captionStyling = {
+        textAlign: 'left', 
+        fontSize: '2rem', 
+        fontFamily: 'var(--font-bold-italic)',
+        paddingBottom: '50px'
+    }
 
+    const upArrow = '▲'
+    const downArrow = '▼'
+
+    
     return (
         <div style={container}>
-            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <table style={tableStyle}>
+                <caption style={captionStyling}>Rankings</caption>
                 <thead style={tableHeaderStyle}>
                     <tr>
-                        <th>Rank</th>
-                        <th>Username</th>
+                        <th onClick={handleSort} id='rank'>Rank {sortOrder ? downArrow : upArrow }</th>
                         <th>Overall</th>
+                        <th>Username</th>
                         <th>Games Played</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((row, index) => ( 
-                        <tr key={index} style={{ border: '1px solid rgba(255, 255, 255, 0.5)' }}>
-                            <td style={tableCellStyle}>
-                                {index + 1}
-                            </td>
-                            <td style={{ ...tableCellStyle, height: '50px' }}>{row.username}</td>
-                            <td style={tableCellStyle}>{row.overall}</td>
-                            <td style={tableCellStyle}>{row.gamesPlayed}</td>
-                        </tr>
-                    ))}
+                    {sortOrder 
+                        ? data.slice(0).reverse().map((row, index) => ( 
+                            <tr key={index}>
+                                <td style={tableCellStyle}>
+                                    {data.length - index}
+                                </td>
+                                <td style={tableCellStyle}>{row.overall}</td>
+                                <td style={tableCellStyle}>{row.username}</td>
+                                <td style={tableCellStyle}>{row.gamesPlayed}</td>
+                            </tr>
+                        ))
+                        : data.map((row, index) => (
+                            <tr key={index}>
+                                <td style={tableCellStyle}>
+                                    {index + 1}
+                                </td>
+                                <td style={tableCellStyle}>{row.overall}</td>
+                                <td style={tableCellStyle}>{row.username}</td>
+                                <td style={tableCellStyle}>{row.gamesPlayed}</td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </div>
-    )
+    );
 }
 
 function PlayerRankings(props) {
@@ -84,6 +121,7 @@ function PlayerRankings(props) {
     return (
         <>
             <Navbar />
+
             <Leaderboard currentUser={currentUser}/>
         </>
     )

@@ -20,7 +20,7 @@ const PlayerOverallRating = ({ overallRating }) => {
         const normalizedRating = (rating - 60) / (99 - 60);
        
         return `linear-gradient(to right, red ${100 - normalizedRating * 100}%, yellow ${100 - normalizedRating * 100}%, green ${100 - normalizedRating * 100}%)`;
-       };
+    };
        
      
      

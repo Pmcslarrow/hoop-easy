@@ -449,6 +449,10 @@ section {
     width: 50px;
 }
 
+#rank:hover {
+    cursor: pointer;
+}
+
 
 
 
