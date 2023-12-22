@@ -1,0 +1,94 @@
+
+:root {
+    --background-gradient-start: #FA642F;
+    --background-dark-orange: #A22A1B;
+    --font-bold-italic: 'Montserrat-BoldItalic';
+    --font-bold: 'Montserrat-Bold';
+    --font-light-italic: 'Montserrat-LightItalic';
+    --font-family: 'Montserrat';
+}
+
+@font-face {
+font-family: 'Montserrat-BoldItalic';
+src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-BoldItalic.ttf');
+font-weight: bold;
+font-style: italic;
+}
+@font-face {
+font-family: 'Montserrat';
+src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Regular.ttf');
+font-weight: bold;
+font-style: italic;
+}
+@font-face {
+font-family: 'Montserrat-Bold';
+src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Bold.ttf');
+}
+@font-face {
+font-family: 'Montserrat-LightItalic';
+src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-LightItalic.ttf');
+}
+@font-face {
+font-family: 'Montserrat-Light';
+src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Light.ttf');
+}
+
+#card-container {
+    height: 90%;
+    padding: 25px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 25px; 
+}
+
+#card-outer {
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    height: 200px;
+}
+
+#subtext {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+#subtext-left h4,
+#subtext-right h4 {
+    font-family: var(--font-bold)
+}
+
+#subtext-left h4,
+#subtext-right h4,
+#subtext-left p,
+#subtext-right p {
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.2rem;
+}
+
+#card-outer:hover {
+    cursor: pointer;
+    transform: translateY(-5px);
+}
+
+@media screen and (max-width: 950px) {
+    #card-container {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
+@media screen and (max-width: 550px) {
+    #card-container {
+        grid-template-columns: repeat(1, 1fr); 
+    }
+
+    #card-outer {
+        height: 400px;
+    }
+}

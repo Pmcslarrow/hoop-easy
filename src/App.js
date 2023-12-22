@@ -9,6 +9,7 @@ import CreateAccount from './views/components/CreateAccount';
 import ResetPassword from './views/components/ResetPassword';
 import Profile from './views/components/Profile';
 import PlayerRankings from './views/components/PlayerRankings';
+import FindGamePage from './views/components/FindGamePage';
 
 /* Context */
 export const UserContext = React.createContext();
@@ -37,6 +38,7 @@ function App() {
             <Route path="/homepage" element={isAuthenticated ? <Homepage setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} setCurrentUser={setCurrentUser} /> : <Navigate to="/" />} />
             <Route path="/profile" element={isAuthenticated ? <Profile setAuthenticationStatus={setAuthenticationStatus} /> : <Navigate to="/" />} />
             <Route path='/rankings' element={isAuthenticated ? <PlayerRankings setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} /> : <Navigate to="/" />} />
+            <Route path='/findGame' element={isAuthenticated ? <FindGamePage setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} /> : <Navigate to="/" />} />
         </Routes>
         </Router>
     </UserContext.Provider>
