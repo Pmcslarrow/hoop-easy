@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navbar } from "./Navbar";
 import { getDocs, collection } from 'firebase/firestore'
 import { auth, db } from '../../config/firebase';
-import '../homepage.css'
+import '../styling/homepage.css'
 
 const Leaderboard = ({ currentUser }) => {
     const [data, setData] = useState([]);

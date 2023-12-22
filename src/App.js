@@ -3,11 +3,11 @@ import { Navigate, Route, Routes, BrowserRouter as Router } from 'react-router-d
 
 
 /* Routes */
-import LoginPage from './views/LoginPage';
-import Homepage from './views/Homepage';
-import CreateAccount from './views/CreateAccount';
-import ResetPassword from './views/ResetPassword';
-import Profile from './views/Profile';
+import LoginPage from './views/components/LoginPage';
+import Homepage from './views/components/Homepage';
+import CreateAccount from './views/components/CreateAccount';
+import ResetPassword from './views/components/ResetPassword';
+import Profile from './views/components/Profile';
 import PlayerRankings from './views/components/PlayerRankings';
 
 /* Context */

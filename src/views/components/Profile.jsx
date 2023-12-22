@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from "../config/firebase";
-import { handleError } from './ErrorHandler';
-import { db } from '../config/firebase';
+import { auth } from "../../config/firebase.js";
+import { handleError } from '../functions/ErrorHandler';
+import { db } from '../../config/firebase.js';
 import { updateDoc, collection, Timestamp, doc, getDoc} from 'firebase/firestore';
 import {
     ref,
     uploadBytesResumable,
     getDownloadURL 
 } from "firebase/storage";
-import { storage } from '../config/firebase';
-import { UserContext } from '../App.js'; 
-import {Navbar} from './components/Navbar'
-import missingPhoto from '../images/missingImage.jpg'
+import { storage } from '../../config/firebase.js';
+import { UserContext } from '../../App.js'; 
+import {Navbar} from './Navbar.jsx'
+import missingPhoto from '../../images/missingImage.jpg'
 
 
 function Profile( props ) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
-import setGridStyle from '../setGridStyle';
+import setGridStyle from '../functions/setGridStyle';
 import missingImage from '../../images/missingImage.jpg'
 
 const MyGames = ( props ) => {

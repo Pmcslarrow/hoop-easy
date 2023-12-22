@@ -1,23 +1,23 @@
 /* Packages */
 import React, { useEffect, useState } from 'react';
-import { auth, db } from '../config/firebase';
+import { auth, db } from '../../config/firebase';
 import { getDocs, collection } from 'firebase/firestore'
 import { bouncyArc } from 'ldrs'
 
 
 /* Components */
-import { CreateGameForm } from './components/CreateGameForm'
-import { CreateGameButton}  from './components/CreateGameButton';
-import { PlayerOverallRating } from './components/PlayerOverallRating';
-import { Navbar } from './components/Navbar';
-import { Welcome } from './components/Welcome';
-import { MyGames } from './components/MyGames';
-import { FindGames } from './components/FindGames';
-import { History } from './components/History';
-import { RatingsSection } from './components/RatingsSection';
+import { CreateGameForm } from './CreateGameForm'
+import { CreateGameButton}  from './CreateGameButton';
+import { PlayerOverallRating } from './PlayerOverallRating';
+import { Navbar } from './Navbar';
+import { Welcome } from './Welcome';
+import { MyGames } from './MyGames';
+import { FindGames } from './FindGames';
+import { History } from './History';
+import { RatingsSection } from './RatingsSection';
 
 /* Styling */
-import './homepage.css';
+import '../styling/homepage.css';
 bouncyArc.register()
 
 const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {

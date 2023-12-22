@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from "../config/firebase"
+import { auth } from "../../config/firebase"
 import { signOut, signInWithEmailAndPassword } from 'firebase/auth'
-import { handleError } from './ErrorHandler';
+import { handleError } from '../functions/ErrorHandler';
 import { motion, AnimatePresence } from 'framer-motion';
-import hoopEasyLogo from '../images/hoop-easy.png';
-import navButtonImg from '../images/269dd16fa1f5ff51accd09e7e1602267.png';
-import './login.css';
+import hoopEasyLogo from '../../images/hoop-easy.png';
+import navButtonImg from '../../images/269dd16fa1f5ff51accd09e7e1602267.png';
+import '../../views/styling/login.css';
 
 // Utlizes firebases' authentication processes such that the user cannot get into the dashboard without
 // having an account, or having their email verified. 

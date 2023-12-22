@@ -235,15 +235,21 @@ section {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     gap: 25px;
+    list-style-type: none;
 
  }
  
  #my-games .card {
+    display: flex;
+    flex-direction: column;
     flex: 0 0 33%;
-    height: 58vh;
+    justify-content: space-around;
+    height: 50vh;
     scroll-snap-align: start;
     padding: 20px;
     position: relative;
+    background: linear-gradient(to right, #000000, #3b3a3a);
+    border-radius: 20px;
  }
 
 
@@ -456,7 +462,7 @@ section {
 
 
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 1000px) {
 
     #search-bar, .hide {
         display: none;
@@ -495,19 +501,6 @@ section {
         background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
         border: 1px solid white;
     }
-
-    #my-games .cards {
-        display: flex;
-        overflow-x:scroll;
-     }
-    
-     #my-games .cards {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        gap: 25px;
-    
-     }
      
      #my-games .card {
         font-size: 16px;

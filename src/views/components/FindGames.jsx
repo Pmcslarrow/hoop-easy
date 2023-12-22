@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
-import setGridStyle from '../setGridStyle';
+import setGridStyle from '../functions/setGridStyle';
 import missingImage from '../../images/missingImage.jpg'
 import leftArrow from '../../images/left_arrow.png'
 import rightArrow from '../../images/right_arrow.png'
-import getUserCoordinates from '../../locationServices';
+import getUserCoordinates from '../functions/locationServices';
 
 
 const FindGames = ( props ) => {
