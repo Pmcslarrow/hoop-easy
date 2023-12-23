@@ -49,7 +49,40 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
     height: 200px;
+    display: flex;
+    justify-content: center;  
+    align-items: center; 
+    position: relative; 
+    background: var(--background-gradient-start);
 }
+
+#card-outer:hover {
+    cursor: pointer;
+    transform: translateY(-5px);
+}
+
+.card-text {
+    background: url('../../images/missingImage.jpg');
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 10px;
+}
+
+.accept-text {
+    font-family: var(--font-bold-italic);
+    font-size: 3rem;
+}
+
+.accept-text, .card-text {
+    position: absolute;
+    top: 50%;           
+    left: 50%;          
+    transform: translate(-50%, -50%);
+    transition: opacity 400ms ease;
+}
+
 
 #subtext {
     display: flex;
@@ -72,10 +105,6 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
     line-height: 1.2rem;
 }
 
-#card-outer:hover {
-    cursor: pointer;
-    transform: translateY(-5px);
-}
 
 @media screen and (max-width: 950px) {
     #card-container {

@@ -1,4 +1,5 @@
 import { Navbar } from './Navbar'
+import { useState } from 'react'
 import '../styling/FindGamePage.css'
 
 const generateFakeData = () => {
@@ -31,11 +32,25 @@ const generateFakeData = () => {
 };
 
 const Card = ({ item }) => {
-    console.log(item)
+    const [opacity, setOpacity] = useState(0)
+
+    const hover = () => {
+        if ( opacity === 0 ) {
+            setOpacity(1)
+        } else {
+            setOpacity(0)
+        }
+    }
+
+
+    console.log(item);
     return (
         <div>
-            <div id='card-outer'>
-                Card
+            <div id='card-outer' onMouseEnter={hover} onMouseLeave={hover}>
+                <div>
+                    <span className="card-text" style={{opacity: opacity === 0 ? 1 : 0}}></span>
+                    <span className='accept-text' style={{opacity: opacity === 0 ? 0 : 1}}>ACCEPT</span>
+                </div>
             </div>
             <div id='subtext'>
                 <div id='subtext-left'>
@@ -50,9 +65,10 @@ const Card = ({ item }) => {
                 </div>
             </div>
         </div>
+    );
+};
 
-    )
-}
+
 
 function FindGamePage() {
 
