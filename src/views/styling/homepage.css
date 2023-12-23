@@ -473,8 +473,9 @@ section {
     }
 
     #createGameForm {
+        font-size: small;
         min-width: 60%;
-        min-height: 65%;
+        min-height: 75%;
         padding: '100px';
         padding-top: '10px';
         padding-bottom: '10px';

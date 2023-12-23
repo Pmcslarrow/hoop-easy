@@ -17,6 +17,7 @@ const CreateGameForm = ( props ) => {
             zipcode: '',
             dateOfGame: '',
             timeOfGame: '',
+            gameType: '' // 1v1, 2v2, 3v3, 4v4, 5v5
           });      
 
         useEffect(() => {
@@ -104,10 +105,10 @@ const CreateGameForm = ( props ) => {
         const addGameToPlayersConfirmedGames = async ( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID, currentPlayerOverall ) => {
 
             const coordinates = new GeoPoint(Number(latitude), Number(longitude));
-            const addressString = formData.streetAddress
-            const date = formData.dateOfGame
-            const time = formData.timeOfGame
-            const gameType = '1'
+            const addressString = formData.streetAddress;
+            const date = formData.dateOfGame;
+            const time = formData.timeOfGame;
+            const gameType = formData.gameType;
             const playerID = currentPlayerDocumentID
             const userDateTime = new Date(`${date}T${time}`);
             const utcDateTime = userDateTime.toUTCString();     
@@ -123,12 +124,11 @@ const CreateGameForm = ( props ) => {
                 addressString, 
                 dateOfGame: utcDateTime, 
                 userTimeZone, 
-                gameType, 
+                gameType, // This field should be functioning now, but you need to adjust the UI to handle games that accept more than one player. 
                 playerID,
                 overall: currentPlayerOverall,
                 time: time
             }
-
             console.log("Uploading new game: ", DATA_UPLOAD)
 
             try {
@@ -167,7 +167,8 @@ const CreateGameForm = ( props ) => {
 
 
         const states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
-       
+        const gameTypes = ['1v1', '2v2', '3v3', '4v4', '5v5']
+
         return (
             <form style={styling} onSubmit={handleNewGameSubmission} id='createGameForm'>
             <div  className='gridContainer'>
@@ -248,6 +249,37 @@ const CreateGameForm = ( props ) => {
                   required
                 />
               </div>
+            </div>
+            <div className='gridContainer'>
+                <div>
+                    <label htmlFor="gameType">Game Type</label>
+                    <select
+                        style={inputBoxStyling}
+                        id="gameType"
+                        value={formData.gameType}
+                        onChange={handleFormChange}
+                        required
+                        >
+                        {gameTypes.map((game) => (
+                            <option value={game[0]}>
+                            {game}
+                            </option>
+                        ))}
+                    </select>
+                    {
+                    /*
+                    <input
+                        style={inputBoxStyling}
+                        id="gameType"
+                        placeholder=""
+                        type="time"
+                        value={formData.timeOfGame}
+                        onChange={handleFormChange}
+                        required
+                    />
+                    */
+                    }
+                </div>
             </div>
             <div className='gridContainer'>
                 <div style={{gridColumn: 'span 2', justifySelf: 'center', alignSelf: 'center'}}>
