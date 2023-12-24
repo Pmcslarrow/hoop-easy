@@ -81,6 +81,7 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
     left: 50%;          
     transform: translate(-50%, -50%);
     transition: opacity 400ms ease;
+    text-align: center;
 }
 
 
@@ -89,6 +90,7 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
     flex-direction: row;
     justify-content: space-between;
     margin-top: 10px;
+    gap:10px;
 }
 
 #subtext-left h4,
@@ -102,9 +104,28 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
 #subtext-right p {
     font-size: 16px;
     margin: 0;
-    line-height: 1.2rem;
+    line-height: 1.35rem;
 }
 
+.slots {
+    display: flex;
+    gap: 5px;
+
+}
+
+.taken, .open {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+}
+
+.taken {
+    background-color: black;
+}
+
+.open {
+    background-color: white
+}
 
 @media screen and (max-width: 950px) {
     #card-container {

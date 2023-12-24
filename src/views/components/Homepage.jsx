@@ -20,12 +20,11 @@ import { RatingsSection } from './RatingsSection';
 import '../styling/homepage.css';
 bouncyArc.register()
 
-const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
+const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames, globalRefresh, setGlobalRefresh }) => {
 
     // State variables
     const [users, setUsers] = useState([]);
     const [currentUserID, setCurrentUserID] = useState(null);
-    const [availableGames, setAvailableGames] = useState([]);
     const [myPendingGames, setMyPendingGames] = useState([]);
     const [myConfirmedGames, setMyConfirmedGames] = useState([]);
     const [isCreateGameActive, setCreateGameActive] = useState(false);
@@ -73,7 +72,7 @@ const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
 
                 if (auth?.currentUser) {
                     const gamesData = await getDocs(gamesCollectionRef);
-                    const filteredGamesData = gamesData.docs.map((doc) => ({...doc.data(), id: doc.id}));
+                    const filteredGamesData = gamesData.docs.map((doc) => ({...doc.data(), id: doc.id, gamesID: doc.id}));
                     let joinedGames = filteredGamesData.map(game => {
                         let user = filteredUsersData.find(user => user.id === game.playerID);
                         if (user && user.email !== auth?.currentUser?.email) {
@@ -96,7 +95,7 @@ const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
         }
 
         fetchData();
-     }, [refreshToken]);
+     }, [refreshToken, globalRefresh]);
 
 
     /* Show loading animation if loading */
@@ -136,7 +135,8 @@ const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
         <Navbar setAuthenticationStatus={setAuthenticationStatus} searchBar={true} profilePic={true} />
 
         <Welcome />
-        <MyGames 
+        {/*
+                <MyGames 
             db={db}
             currentUser={currentUser}
             currentUserID={currentUserID}
@@ -155,6 +155,8 @@ const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser }) => {
             gamesCollectionRef={gamesCollectionRef}
             availableGames={availableGames}
         />
+        */}
+
         <History currentUser={currentUser} currentUserID={currentUserID} db={db} />
 
         <RatingsSection currentUser={currentUser} currentUserID={currentUserID} db={db} />

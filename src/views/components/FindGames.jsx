@@ -205,7 +205,7 @@ const FindGames = ( props ) => {
             opponent: opponentCard.username,
             opponentID: opponentCard.playerID,
             playerID: currentUserID,
-            gameType: '1'
+            gameType: opponentCard.gameType
         }
         const dataForOpponent = {
             ...currentUser,
@@ -217,7 +217,7 @@ const FindGames = ( props ) => {
             opponent: currentUser.username, 
             opponentID: currentUserID, 
             playerID: opponentCard.id, 
-            gameType: '1'
+            gameType: opponentCard.gameType
         }
     
         // These next few variables take the clicked card and compare it to the cards that exist in the opponent's pendingGames and the Games collection

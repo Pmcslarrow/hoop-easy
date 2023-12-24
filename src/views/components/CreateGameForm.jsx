@@ -17,7 +17,7 @@ const CreateGameForm = ( props ) => {
             zipcode: '',
             dateOfGame: '',
             timeOfGame: '',
-            gameType: '' // 1v1, 2v2, 3v3, 4v4, 5v5
+            gameType: '1' // 1v1, 2v2, 3v3, 4v4, 5v5
           });      
 
         useEffect(() => {
@@ -119,22 +119,33 @@ const CreateGameForm = ( props ) => {
                 return;
             }
         
-            const DATA_UPLOAD = {
-                coordinates, 
-                addressString, 
-                dateOfGame: utcDateTime, 
-                userTimeZone, 
-                gameType, // This field should be functioning now, but you need to adjust the UI to handle games that accept more than one player. 
-                playerID,
-                overall: currentPlayerOverall,
-                time: time
-            }
-            console.log("Uploading new game: ", DATA_UPLOAD)
+            const addTeammatesToGame = async (gameCollectionRef, playerID) => {
+                try {
+                    await addDoc(gameCollectionRef, {
+                        coordinates, 
+                        addressString, 
+                        dateOfGame: utcDateTime, 
+                        userTimeZone, 
+                        gameType,
+                        playerID,
+                        overall: currentPlayerOverall,
+                        time: time,
+                        maxSpotsAvailable: gameType,
+                        numSpotsTaken: 1,
+                        teammates: [ playerID ]
+                    });
+            
+                    // const teammatesCollectionRef = collection(mainDocRef, 'teammates');
+                    //await addDoc(teammatesCollectionRef, { username: playerID });
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                }
+            };
 
             try {
-                await addDoc(gamesCollectionRef, DATA_UPLOAD);
-                await addDoc(pendingGamesCollectionRef, DATA_UPLOAD)
-                setRefreshToken(refreshToken + 1)
+                await addTeammatesToGame(gamesCollectionRef, playerID);
+                await addTeammatesToGame(pendingGamesCollectionRef, playerID);
+                setRefreshToken(refreshToken + 1);    
             } catch (error) {
                 console.error("Error adding document: ", error);
             }

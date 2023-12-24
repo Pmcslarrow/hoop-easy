@@ -21,6 +21,7 @@ function App() {
   const [isAuthenticated, setAuthenticationStatus] = useState(false);
   const [currentUser, setCurrentUser] = useState({})
   const [currentUserID, setCurrentUserID] = useState(null);
+  const [availableGames, setAvailableGames] = useState([]);
 
 
   useEffect(() => {
@@ -35,10 +36,10 @@ function App() {
             <Route path="/createAccount" element={<CreateAccount setAuthenticationStatus={setAuthenticationStatus} />} />
             <Route path="/login" element={<LoginPage setAuthenticationStatus={setAuthenticationStatus} />} />
             <Route path="/resetPassword" element={<ResetPassword setAuthenticationStatus={setAuthenticationStatus} />} />
-            <Route path="/homepage" element={isAuthenticated ? <Homepage setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} setCurrentUser={setCurrentUser} /> : <Navigate to="/" />} />
+            <Route path="/homepage" element={isAuthenticated ? <Homepage setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} setCurrentUser={setCurrentUser} availableGames={availableGames} setAvailableGames={setAvailableGames} /> : <Navigate to="/" />} />
             <Route path="/profile" element={isAuthenticated ? <Profile setAuthenticationStatus={setAuthenticationStatus} /> : <Navigate to="/" />} />
             <Route path='/rankings' element={isAuthenticated ? <PlayerRankings setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} /> : <Navigate to="/" />} />
-            <Route path='/findGame' element={isAuthenticated ? <FindGamePage setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} /> : <Navigate to="/" />} />
+            <Route path='/findGame' element={isAuthenticated ? <FindGamePage setAuthenticationStatus={setAuthenticationStatus} currentUser={currentUser} setCurrentUser={setCurrentUser} availableGames={availableGames} setAvailableGames={setAvailableGames} /> : <Navigate to="/" />} />
         </Routes>
         </Router>
     </UserContext.Provider>
