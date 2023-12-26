@@ -20,7 +20,8 @@ import { RatingsSection } from './RatingsSection';
 import '../styling/homepage.css';
 bouncyArc.register()
 
-const Homepage = ({setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames, globalRefresh, setGlobalRefresh }) => {
+const Homepage = ({ props }) => {
+    const {setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames, globalRefresh, setGlobalRefresh } = props
 
     // State variables
     const [users, setUsers] = useState([]);

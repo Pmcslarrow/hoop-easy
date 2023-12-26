@@ -27,6 +27,7 @@ class FirebaseQuery {
             const teammates = await this.getTeammateIdArray()
             teammates.push(this.currentuser.id)
             this.teammatesIdArray = teammates
+            this.currentNumberOfPlayers++
 
             await updateDoc(docRef, { teammates : teammates })
 
@@ -44,6 +45,7 @@ class FirebaseQuery {
             const teammatesData = docSnapshot.data().teammates;    
             const updatedTeammatesData = teammatesData.filter(teammate => teammate !== this.currentuser.id); 
             this.teammatesIdArray = updatedTeammatesData;  
+            this.currentNumberOfPlayers--
 
             await updateDoc(docRef, { teammates: updatedTeammatesData });
             console.log("Successfully removed current user from teammate collection")

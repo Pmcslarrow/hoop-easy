@@ -15,7 +15,7 @@ import {Navbar} from './Navbar.jsx'
 import missingPhoto from '../../images/missingImage.jpg'
 
 
-function Profile( props ) {
+function Profile({ props }) {
     const navigate = useNavigate();
     
     const { setAuthenticationStatus } = props

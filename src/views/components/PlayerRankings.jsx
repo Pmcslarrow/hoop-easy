@@ -115,7 +115,7 @@ const Leaderboard = ({ currentUser }) => {
     );
 }
 
-function PlayerRankings(props) {
+function PlayerRankings({ props }) {
     const { currentUser } = props
 
     return (

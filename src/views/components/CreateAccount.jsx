@@ -22,7 +22,8 @@ import '../../views/styling/create.css';
 
 
 { /* CREATE ACCOUNT */}
-function CreateAccount({ setAuthenticationStatus }) {
+function CreateAccount({ props }) {
+  const { setAuthenticationStatus } = props
   const navigate = useNavigate()
   const [showCustomizationForm, setShowCustomizationForm] = useState(false);
 

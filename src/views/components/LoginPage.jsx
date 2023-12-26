@@ -11,7 +11,8 @@ import '../../views/styling/login.css';
 // Utlizes firebases' authentication processes such that the user cannot get into the dashboard without
 // having an account, or having their email verified. 
 
-function LoginPage({ setAuthenticationStatus }) {
+function LoginPage({ props }) {
+    const { setAuthenticationStatus } = props
       const navigate = useNavigate();
       const [email, setEmail] = useState('');
       const [password, setPassword] = useState('');
