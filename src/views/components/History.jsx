@@ -30,7 +30,6 @@ const History = ( { currentUser, currentUserID, db}) => {
 
             data.sort((a, b) => new Date(b.when) - new Date(a.when));
 
-            console.log(data)
             setData(data)
         }
         fetchGameHistory()

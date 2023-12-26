@@ -76,19 +76,21 @@ const CreateGameForm = ( props ) => {
                 city: formData.city,
                 state: formData.state,
                 postalcode: formData.zipcode,
-                country: 'US'
+                country: 'US',
+                api_key: '658aebd0c64fa653030796mdh9457e3'
             };
             const API_START = 'https://geocode.maps.co/search'
-
-        
+         
+            console.log(params)
+         
             return axios.get(API_START, { params: params })
                 .then((response) => {
                     const data = response.data;
-        
+         
                     if (data.length > 0) {
                         const coordinates = {
-                            longitude: data[0].lon,
-                            latitude: data[0].lat
+                           longitude: data[0].lon,
+                           latitude: data[0].lat
                         };
                         return coordinates;
                     } else {
@@ -99,7 +101,8 @@ const CreateGameForm = ( props ) => {
                     console.error(error);
                     throw error; 
                 });
-        }
+         }
+         
 
 
         const addGameToPlayersConfirmedGames = async ( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID, currentPlayerOverall ) => {

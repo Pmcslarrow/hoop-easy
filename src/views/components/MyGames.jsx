@@ -3,8 +3,8 @@ import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase
 import setGridStyle from '../functions/setGridStyle';
 import missingImage from '../../images/missingImage.jpg'
 
-const MyGames = ( props ) => {
-    const { db, currentUser, currentUserID, setRefreshToken, refreshToken, myPendingGames, myConfirmedGames } = props 
+const MyGames = ({ props }) => {
+    const { db, currentUser, currentUserID, setRefreshToken, refreshToken, myPendingGames, myConfirmedGames } = props;
     const [verifiedGames, setVerifiedGames] = useState([])
     const [pendingGames, setPendingGames] = useState([])
     const [confirmedGames, setConfirmedGames] = useState([])
@@ -30,15 +30,15 @@ const MyGames = ( props ) => {
     // Finds the verified games, confirmed games, and pending games from the passed in prop. (sorts in that order for rendering below)
     useEffect(() => {
         const pendingGames = []
-        const confimedGames = []
-        const gamesThatAreInVerifcationStage = []
+        const confimedGamesAwaitingUserInput = []
+        const confirmedGamesAwaitingScoreVerification = []
         myConfirmedGames.forEach((game) => { 
             if (!game.gameApprovalStatus && (game?.score?.playerScore || game?.score?.opponentScore)) {
                 game.time = convertToLocalTime(game.dateOfGame)
-                gamesThatAreInVerifcationStage.push(game)
+                confirmedGamesAwaitingScoreVerification.push(game)
             } else {
                 game.time = convertToLocalTime(game.dateOfGame)
-                confimedGames.push(game)
+                confimedGamesAwaitingUserInput.push(game)
             }
         })
         myPendingGames.forEach((game) => { 
@@ -46,8 +46,8 @@ const MyGames = ( props ) => {
             pendingGames.push(game)
         })
 
-        setVerifiedGames(gamesThatAreInVerifcationStage)
-        setConfirmedGames(confimedGames)
+        setVerifiedGames(confirmedGamesAwaitingScoreVerification)
+        setConfirmedGames(confimedGamesAwaitingUserInput)
         setPendingGames(pendingGames)
 
     }, [])
@@ -557,6 +557,7 @@ const MyGames = ( props ) => {
     };
             
 
+    /*
     const gamesAwaitingOpponentScoreVerification = []
     const gamesAwaitingUserInput = []
 
@@ -567,6 +568,7 @@ const MyGames = ( props ) => {
             gamesAwaitingUserInput.push(game)
         }
     })
+    */
 
     /*
         Order of games appearing should be:
@@ -575,6 +577,14 @@ const MyGames = ( props ) => {
             3) gamesAwaitingOpponentScoreVerification --> Games that are awaiting opponent approval of the score
             4) pendingGames --> Games that you created that have not been picked up by anyone yet
     */
+
+
+    
+    console.log("pendingGames, ", pendingGames)
+    console.log("confirmedGames, ", confirmedGames)
+    console.log("verifiedGames, ", verifiedGames)
+    
+
     return (
         <section id="my-games" style={gridStyle}>
             <h1 style={h1Style}>My Games</h1>
@@ -582,6 +592,8 @@ const MyGames = ( props ) => {
 
             <div id='myGamesContainer' style={myGamesLocation}>
             <ul className="cards" >
+                Cards
+            {/*
                 {verifiedGames.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed' isVerified={true}/>  
                 ))}
@@ -594,6 +606,7 @@ const MyGames = ( props ) => {
                 {pendingGames.map((currentCard, i) => (
                     <Card key={`pending-${i}`} currentCard={currentCard} type='pending' />  
                 ))}
+            */}
             </ul>
 
             </div>

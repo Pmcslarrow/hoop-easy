@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../config/firebase';
 import { getDocs, collection } from 'firebase/firestore'
 import { bouncyArc } from 'ldrs'
-
+import { FirebaseQuery } from '../functions/FirebaseQuery'
 
 /* Components */
 import { CreateGameForm } from './CreateGameForm'
@@ -20,8 +20,11 @@ import { RatingsSection } from './RatingsSection';
 import '../styling/homepage.css';
 bouncyArc.register()
 
+
+
 const Homepage = ({ props }) => {
     const {setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames, globalRefresh, setGlobalRefresh } = props
+    const query = new FirebaseQuery( auth, db, null, currentUser)
 
     // State variables
     const [users, setUsers] = useState([]);
@@ -41,51 +44,27 @@ const Homepage = ({ props }) => {
     const [refreshToken, setRefreshToken] = useState(0)
     const [isLoading, setLoading] = useState(true);
 
+
     /* Getting all user info from database */
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
 
             try {
-                const usersData = await getDocs(usersCollectionRef);
-                const filteredUsersData = usersData.docs.map((doc) => ({...doc.data(), id: doc.id}));
-                setUsers(filteredUsersData);
-     
-                const currentUser = filteredUsersData.find((user) => user.email === auth?.currentUser?.email);
-                if (currentUser) {
-                    setCurrentUserID(currentUser.id);
-                    setCurrentUser(currentUser)
-                    setMyConfirmedGamesRef(`users/${currentUser.id}/confirmedGames`);
-                    setMyPendingGamesRef(`users/${currentUser.id}/pendingGames`);
-                 
-                    const fetchAndMapData = async (path) => {
-                        const collectionRef = collection(db, path);
-                        const docs = await getDocs(collectionRef);
-                        return docs.docs.map((doc) => ({...doc.data(), id: doc.id}));
-                    }
-                 
-                    const confirmedGames = await fetchAndMapData(`users/${currentUser.id}/confirmedGames`);
-                    const pendingGames = await fetchAndMapData(`users/${currentUser.id}/pendingGames`);
-                 
-                    setMyConfirmedGames(confirmedGames);
-                    setMyPendingGames(pendingGames);
-                }
 
-                if (auth?.currentUser) {
-                    const gamesData = await getDocs(gamesCollectionRef);
-                    const filteredGamesData = gamesData.docs.map((doc) => ({...doc.data(), id: doc.id, gamesID: doc.id}));
-                    let joinedGames = filteredGamesData.map(game => {
-                        let user = filteredUsersData.find(user => user.id === game.playerID);
-                        if (user && user.email !== auth?.currentUser?.email) {
-                           return {
-                               ...game,
-                               ...user
-                           }
-                        }
-                        return null
-                    }).filter(game => game !== null);                
-                    setAvailableGames(joinedGames);
-                }
+                const users = await query.getAllUsers();
+                const currentUser = await query.getCurrentUserData( users );
+                const currentUserID = currentUser.id
+                const confirmedGames = await query.getConfirmedGames( currentUserID )
+                const pendingGames = await query.getPendingGames( currentUserID )
+                const availableGames = await query.getAvailableGames()
+
+
+                setUsers(users)
+                setCurrentUser(currentUser)
+                setMyConfirmedGames(confirmedGames)
+                setMyPendingGames(pendingGames)
+                setAvailableGames(availableGames)
                  
             } catch(err) {
                 console.log(err);
@@ -98,6 +77,7 @@ const Homepage = ({ props }) => {
         fetchData();
      }, [refreshToken, globalRefresh]);
 
+     
 
     /* Show loading animation if loading */
     if (isLoading) {
@@ -136,16 +116,21 @@ const Homepage = ({ props }) => {
         <Navbar setAuthenticationStatus={setAuthenticationStatus} searchBar={true} profilePic={true} />
 
         <Welcome />
-        {/*
-                <MyGames 
-            db={db}
-            currentUser={currentUser}
-            currentUserID={currentUserID}
-            setRefreshToken={setRefreshToken}
-            refreshToken={refreshToken}
-            myPendingGames={myPendingGames}
-            myConfirmedGames={myConfirmedGames}
+        
+        <MyGames 
+            props={{
+                db,
+                currentUser,
+                //currentUserID,
+                setRefreshToken,
+                refreshToken,
+                myPendingGames,
+                myConfirmedGames
+            }}
         />
+
+
+        {/*
         <FindGames 
             db={db}
             currentUser={currentUser}

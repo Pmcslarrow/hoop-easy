@@ -1,13 +1,14 @@
 // PlayerOverallRating.jsx
 import React from 'react';
 import { FirebaseQuery } from '../functions/FirebaseQuery'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { db } from '../../config/firebase';
+import { UserContext } from '../../App.js'; 
 
 
 const Card = ({ props }) => {
     const { game, currentUser, refreshToken, setRefreshToken } = props;
-    const query = new FirebaseQuery(db, game, currentUser);
+    const query = new FirebaseQuery(null, db, game, currentUser)
     const [opacity, setOpacity] = useState(0)
     const [teammatesIdArray, setTeammatesIdArray] = useState([]);
     const MAX_PLAYERS = parseInt(game.gameType) * 2
@@ -68,6 +69,8 @@ const Card = ({ props }) => {
         const className = index < CURRENT_NUMBER_TEAMMATES ? 'taken' : 'open';        
         return <div key={index} className={className}></div>;
     });
+
+    // We disable the player's ability to join a game if they are already a teammate of the game -- So they can leave the game instead
     const disablePlayerAbilityToJoinGame = teammatesIdArray ? teammatesIdArray.some((player) => player === currentUser.id) : false;
 
     

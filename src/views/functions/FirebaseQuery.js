@@ -5,12 +5,16 @@ import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc, getDoc } from '
 
 
 class FirebaseQuery {
-    constructor( db, game, currentuser ) {
+    constructor( auth, db, game, currentuser ) {
+        this.auth = auth
         this.db = db;
         this.game = game;
         this.currentuser = currentuser;
         this.teammatesIdArray = [];
-        this.MAX = parseInt(game.gameType) * 2
+
+        if (game) {
+            this.MAX = parseInt(game.gameType) * 2;
+        }
     }
 
     async joinGame() {
@@ -24,10 +28,9 @@ class FirebaseQuery {
     async addCurrentUserToTeammateCollection() {
         const docRef = doc(this.db, `Games/${this.game.gamesID}`);
         try {
-            const teammates = await this.getTeammateIdArray()
+            let teammates = await this.getTeammateIdArray()
             teammates.push(this.currentuser.id)
             this.teammatesIdArray = teammates
-            this.currentNumberOfPlayers++
 
             await updateDoc(docRef, { teammates : teammates })
 
@@ -45,7 +48,6 @@ class FirebaseQuery {
             const teammatesData = docSnapshot.data().teammates;    
             const updatedTeammatesData = teammatesData.filter(teammate => teammate !== this.currentuser.id); 
             this.teammatesIdArray = updatedTeammatesData;  
-            this.currentNumberOfPlayers--
 
             await updateDoc(docRef, { teammates: updatedTeammatesData });
             console.log("Successfully removed current user from teammate collection")
@@ -138,6 +140,54 @@ class FirebaseQuery {
     async handleEmptyGame() {
         this.deletePendingGameInstance()
         this.deleteGameInstance()
+    }
+
+    async getDataFrom( path, flag ) {
+        const collectionRef = collection(this.db, path);
+        const docs = await getDocs(collectionRef);
+
+        if ( flag === 0 ) {
+            return docs.docs.map((doc) => ({...doc.data(), id: doc.id}));
+        } else {
+            return docs.docs.map((doc) => ({...doc.data(), id: doc.id, gamesID: doc.id}));
+        }
+    }
+
+    async getAllUsers() {
+        return await this.getDataFrom('users', 0)
+    }
+
+    async getCurrentUserData( users ) {
+        const currentUser = users.find((user) => user.email === this.auth?.currentUser?.email);
+        return currentUser
+    }
+
+    async getConfirmedGames( currentUserID ) {
+        return await this.getDataFrom(`users/${currentUserID}/confirmedGames`, 0)
+    }
+
+    async getPendingGames( currentUserID ) {
+        return await this.getDataFrom(`users/${currentUserID}/pendingGames`, 0)
+    }
+
+    async getAvailableGames() {
+        if (this.auth?.currentUser) {
+            const gamesData = await this.getDataFrom('Games', 1)
+
+            let joinedGames = gamesData.map(game => {
+                let user = gamesData.find(user => user.id === game.playerID);
+                if (user && user.email !== this.auth?.currentUser?.email) {
+                    return {
+                        ...game,
+                        ...user
+                    }
+                }
+                return null
+            }).filter(game => game !== null);   
+            
+            return joinedGames
+        }
+        return []
     }
 
 }
