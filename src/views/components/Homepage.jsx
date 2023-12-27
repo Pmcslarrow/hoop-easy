@@ -121,7 +121,6 @@ const Homepage = ({ props }) => {
             props={{
                 db,
                 currentUser,
-                //currentUserID,
                 setRefreshToken,
                 refreshToken,
                 myPendingGames,
