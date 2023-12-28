@@ -1,4 +1,6 @@
 
+@import '@fontsource/inter';
+
 @font-face {
 font-family: 'Montserrat-BoldItalic';
 src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-BoldItalic.ttf');
@@ -28,7 +30,6 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
     font-family: 'Montserrat-Light';
     src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Light.ttf');
 }
-
 
 
 :root {

@@ -8,7 +8,7 @@ import { UserContext } from '../../App.js';
 
 const Card = ({ props }) => {
     const { game, currentUser, refreshToken, setRefreshToken } = props;
-    const query = new FirebaseQuery(null, db, game, currentUser)
+    const query = new FirebaseQuery(game, currentUser)
     const [opacity, setOpacity] = useState(0)
     const [teammatesIdArray, setTeammatesIdArray] = useState([]);
     const MAX_PLAYERS = parseInt(game.gameType) * 2
