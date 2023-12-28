@@ -7,6 +7,8 @@ import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Select from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
 import Teammates from './Teammates';
 import { FirebaseQuery } from '../functions/FirebaseQuery'
 import { getDocs, collection, updateDoc, doc } from 'firebase/firestore'
@@ -34,9 +36,9 @@ export default function ScoreDrawer({props}) {
   
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Button variant="outlined" color="neutral" onClick={toggleDrawer(true)}>
-        Open drawer
+    <Box sx={{ display: 'flex', justifyContent: 'center' }} >
+      <Button variant="outlined" color="neutral" onClick={toggleDrawer(true)} id='submitScoreButton'>
+        Submit Score
       </Button>
       <Drawer open={open} onClose={toggleDrawer(false)} anchor="bottom" size="lg">
         <Box
@@ -64,6 +66,14 @@ function ScoreInput({props}) {
     const [profiles, setProfiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(0); 
     const [selectedObjects, setSelectedObjects] = useState([]);
+    const [teamOneCaptain, setTeamOneCaptain] = useState({
+        username: '',
+        userID: ''
+    });     
+    const [teamTwoCaptain, setTeamTwoCaptain] = useState({
+        username: '',
+        userID: ''
+      });      
     const [scoreData, setScoreData] = useState({
         teamOneScore: '',
         teamTwoScore: ''
@@ -95,6 +105,7 @@ function ScoreInput({props}) {
     }
   };
 
+
     const handleTeamOneScoreChange = useCallback((event) => {
         let { value } = event.target;
         value = parseInt(value, 10);
@@ -109,7 +120,7 @@ function ScoreInput({props}) {
         setScoreData((prevData) => ({ ...prevData, teamTwoScore: value }));
     }, []);
   
-    const renderProfilesForCurrentPage = () => {
+    const renderProfilesForCurrentPage = ( callback ) => {
         return profiles.map((obj) => (
             <ListItem key={obj.userID}>
                 <Checkbox
@@ -118,32 +129,112 @@ function ScoreInput({props}) {
                     size="md"
                     variant="outlined"
                     checked={selectedObjects.some(o => o.username === obj.username)}
-                    onChange={() => handleCheckboxChange(obj)}
+                    onChange={() => callback(obj)}
                 />
             </ListItem>
         ));
     };
 
-  const renderTeamSelectionTab = () => {
+    function selectCaptainFromTeamOne( teamOne ) {
+        const handleChange = (event, newValue) => {
+            const selectedUser = teamOne.find((user) => user.username === newValue);
+          
+            if (selectedUser) {
+              setTeamOneCaptain({
+                username: selectedUser.username,
+                userID: selectedUser.id
+              });
+            }
+        };
+
+        const handleClick = (event) => {
+            event.stopPropagation()
+        }
+      
+        const options = teamOne.map((obj) => (
+          <Option value={obj.username} onChange={handleChange} onClick={handleClick}>
+            {obj.username}
+          </Option>
+        ));
+      
+        return (
+          <Select defaultValue={teamOneCaptain} onChange={handleChange} onClick={handleClick}>
+            {options}
+          </Select>
+        );
+    }
+
+    function selectCaptainFromTeamTwo( teamTwo ) {
+        const handleChange = (event, newValue) => {
+            const selectedUser = teamTwo.find((user) => user.username === newValue);
+          
+            if (selectedUser) {
+              setTeamTwoCaptain({
+                username: selectedUser.username,
+                userID: selectedUser.id
+              });
+            }
+        };
+
+        const handleClick = (event) => {
+            event.stopPropagation()
+        }
+        
+          const options = teamTwo.map((obj) => (
+            <Option value={obj.username} onChange={handleChange} onClick={handleClick}>
+              {obj.username}
+            </Option>
+          ));
+        
+          return (
+            <Select defaultValue={teamTwoCaptain} onChange={handleChange} onClick={handleClick}>
+              {options}
+            </Select>
+          );
+    }
+      
+  const teamSelectionTab = () => {
     return (
         <>
-            <div>Select the players who played on team 1</div>
+            <h2>Select the players who played on team 1</h2>
             <br />
             <List>
-                {renderProfilesForCurrentPage()}
+                {renderProfilesForCurrentPage(handleCheckboxChange)}
             </List>
         </>
     )
   }
 
-  const renderScoreSubmissionTab = () => {
+  const captainSelectionTab = () => {
+    const team1 = selectedObjects
+    const team2 = profiles.filter((profile) => {
+        return !selectedObjects.some(obj => obj.username === profile.username);
+    });
+
+    if ( team1.length !== team2.length ) {
+        return <div>Please make sure that the teams have equal number of players</div>
+    }
+
+    return (
+      <>
+        <h2>Select Team 1 Captain</h2>
+        {selectCaptainFromTeamOne(team1)}
+  
+        <br />
+        <h2>Select Team 2 Captain</h2>
+        {selectCaptainFromTeamTwo(team2)}
+      </>
+    );
+  }
+
+  const scoreSubmissionTab = () => {
     const team1 = selectedObjects
     const team2 = profiles.filter((profile) => {
         return !selectedObjects.some(obj => obj.username === profile.username);
     });
     
-    if ( team1.length !== team2.length ) {
-        return <div>Please make sure that the teams have equal number of players</div>
+    if ( team1.length !== team2.length || teamOneCaptain.username === '' || teamTwoCaptain.username === '' ) {
+        return <div>Please make sure you complete step 1 and step 2</div>
     }
 
     const renderTeamOne = team1.map((player) => {
@@ -161,15 +252,27 @@ function ScoreInput({props}) {
             return
         }
 
-        console.log(teamOneScore, teamTwoScore)
-        console.log("I forgot. Also make sure that you create a checkbox step that selects two team captains")
-        console.log("Start working here to implement algorithm for teams")
+        const teamOneObject = {
+            captain: teamOneCaptain.userID,
+            team: team1,
+            thisTeamScore: teamOneScore,
+            opponentTeamScore: teamTwoScore
+        }
+
+        const teamTwoObject = {
+            captain: teamTwoCaptain.userID,
+            team: team2,
+            thisTeamScore: teamTwoScore,
+            opponentTeamScore: teamOneScore
+        }
+
+        console.log(teamOneObject)
+        console.log(teamTwoObject)
         setRefreshToken(refreshToken + 1)
 
         return
 
         /**
-         * 
          * Need to rename the variables and think about it for n number of players on two teams instead of 1v1. 
          * dataForCurrentPlayerCollection should become dataForTeamOnePlayers
          * dataForOpponentCollection should become dataForTeamTwoPlayers
@@ -252,7 +355,7 @@ function ScoreInput({props}) {
                     {renderTeamTwo}
                 </List>
                 <input
-                    id='teamtwoScore'
+                    id='teamTwoScore'
                     type='number'
                     placeholder='Team 2 Score'
                     onChange={handleTeamTwoScoreChange}
@@ -263,7 +366,8 @@ function ScoreInput({props}) {
                 />
 
             </div>
-            <button onClick={() => handleScoreSubmission(currentCard, scoreData)}>Submit Scores</button>
+            <br />
+            <button onClick={() => handleScoreSubmission(currentCard, scoreData)} >Submit Scores</button>
         </div>
     )
   }
@@ -280,8 +384,11 @@ function ScoreInput({props}) {
       >
         <Tab label="Step 1" />
         <Tab label="Step 2" />
+        <Tab label="Step 3" />
       </Tabs>
-      {currentPage === 0 ? renderTeamSelectionTab() : renderScoreSubmissionTab()}
+      {currentPage === 0 ? teamSelectionTab() : ''}
+      {currentPage === 1 ? captainSelectionTab() : ''}
+      {currentPage === 2 ? scoreSubmissionTab() : ''}
     </div>
   );
 }

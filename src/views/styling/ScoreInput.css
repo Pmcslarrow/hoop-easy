@@ -64,11 +64,11 @@
 }
 
 #teamOneScore, #teamTwoScore {
-    width: 35%;
+    width: 25%;
     height: 25px;
-    background: gray;
-    border: 1px solid white;
-    color: white;
+    background: white;
+    border: 1px solid black;
+    color: black;
     padding: 5px;
 }
 
