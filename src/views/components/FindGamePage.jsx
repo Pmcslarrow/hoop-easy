@@ -7,15 +7,29 @@ import { db } from '../../config/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { getDocs, collection } from 'firebase/firestore'
 import { Card } from './Card'
-
+import { FirebaseQuery } from '../functions/FirebaseQuery'
 
 function FindGamePage({ props }) {
     const { setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames } = props
     const [ games, setGames ] = useState([])
     const [refreshToken, setRefreshToken] = useState(0)
     const [isLoading, setLoading] = useState(true);
+    const query = new FirebaseQuery(null, currentUser)
 
     useEffect(() => {
+        const fetchAvailableGames = async () => {
+            setLoading(true);
+    
+            try {
+                const games = await query.getAvailableGamesWithCurrentUser()
+                const sortedGames = await sortGamesByLocationDistance(games);
+                setGames(sortedGames);
+            } catch(err) {
+                console.log(err);
+            } finally {
+                setLoading(false);
+            }
+        };
         const sortGamesByLocationDistance = async (games) => {
             const userCoordinates = await getUserCoordinates();
             const { latitude: userLat, longitude: userLon } = userCoordinates;
@@ -33,23 +47,7 @@ function FindGamePage({ props }) {
     
             return sortedGames;
         };
-        const fetchAvailableGames = async () => {
-            setLoading(true);
-    
-            try {
-                const gamesCollectionRef = collection(db, 'Games');
-                const snapshot = await getDocs(gamesCollectionRef);
-                const fetchedGames = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id, gamesID: doc.id}));
-                
-                const sortedGames = await sortGamesByLocationDistance(fetchedGames);
-                setGames(sortedGames);
-            } catch(err) {
-                console.log(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-    
+
         fetchAvailableGames();
     }, [refreshToken]);
     

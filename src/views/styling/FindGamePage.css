@@ -60,14 +60,13 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
     cursor: pointer;
     transform: translateY(-5px);
 }
-
 .card-text {
-    background: url('../../images/missingImage.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
     width: 100%;
     height: 100%;
-    background-repeat: no-repeat;
-    background-size: cover;
-    border-radius: 10px;
 }
 
 .accept-text {

@@ -4,16 +4,17 @@ import { FirebaseQuery } from '../functions/FirebaseQuery'
 import { useState, useEffect, useContext } from 'react'
 import { db } from '../../config/firebase';
 import { UserContext } from '../../App.js'; 
+import missingImage from '../../images/missingImage.jpg'
 
 
 const Card = ({ props }) => {
     const { game, currentUser, refreshToken, setRefreshToken } = props;
     const query = new FirebaseQuery(game, currentUser)
-    const [opacity, setOpacity] = useState(0)
     const [teammatesIdArray, setTeammatesIdArray] = useState([]);
     const MAX_PLAYERS = parseInt(game.gameType) * 2
     const CURRENT_NUMBER_TEAMMATES = teammatesIdArray && teammatesIdArray.length > 0 ? teammatesIdArray.length : 0;
-
+    const [opacity, setOpacity] = useState(0)
+    const [profilePic, setProfilePic] = useState([])
 
 
     useEffect(() => {
@@ -25,8 +26,18 @@ const Card = ({ props }) => {
                 console.log(error);
             }
         };
+
+        const getGameCreatorImage = async () => {
+            const profileUrl = await query.getProfilePictureFrom(currentUser.id)
+            if ( profileUrl !== null ) {
+                setProfilePic(profileUrl)
+            } else {
+                setProfilePic(missingImage)
+            }
+        }
     
         getTeammatesIdArray()
+        getGameCreatorImage()
     }, [refreshToken]);
 
 
@@ -55,7 +66,6 @@ const Card = ({ props }) => {
             console.log("Error handling leave game:", error);
         }
     }
-    
   
     const hover = () => {
         if ( opacity === 0 ) {
@@ -73,14 +83,24 @@ const Card = ({ props }) => {
     // We disable the player's ability to join a game if they are already a teammate of the game -- So they can leave the game instead
     const disablePlayerAbilityToJoinGame = teammatesIdArray ? teammatesIdArray.some((player) => player === currentUser.id) : false;
 
-    
     if ( CURRENT_NUMBER_TEAMMATES <= 0 ) {
         return <div style={{display: 'none'}}></div>
     }
+
+    console.log(profilePic)
     
     return (
         <div>
-            <div id='card-outer' onMouseEnter={hover} onMouseLeave={hover} onClick={disablePlayerAbilityToJoinGame? handleLeaveGame : handleJoinGame}>
+            <div 
+                id='card-outer' onMouseEnter={hover} onMouseLeave={hover} onClick={disablePlayerAbilityToJoinGame? handleLeaveGame : handleJoinGame} 
+                style={{ 
+                    backgroundImage: `url(${profilePic})`,
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    borderRadius: '10px'
+                }}              
+            >
                 <div>
                     <span className="card-text" style={{opacity: opacity === 0 ? 1 : 0}}></span>
                     <span className='accept-text' style={{opacity: opacity === 0 ? 0 : 1}}>

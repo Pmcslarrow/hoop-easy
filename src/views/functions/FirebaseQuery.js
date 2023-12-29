@@ -1,7 +1,12 @@
 // FirebaseQuery.js
 // Instead of reusing the same long ugly lines of firebase queries, I will write all the helper functions here so it is more readable
 import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc, getDoc } from 'firebase/firestore'
-import { auth, db } from '../../config/firebase'
+import {
+    ref,
+    uploadBytesResumable,
+    getDownloadURL 
+} from "firebase/storage";
+import { auth, db, storage } from '../../config/firebase'
 
 class FirebaseQuery {
     constructor(game, currentuser) {
@@ -185,6 +190,14 @@ class FirebaseQuery {
         return []
     }
 
+    async getAvailableGamesWithCurrentUser() {
+        if (this.isUserLoggedIn()) {
+            const gamesData = await this.getDataFromCollection('Games');
+            return gamesData
+        }
+        return []
+    }
+
     async getTeammateProfiles(teammateIDArray) {
         const profiles = [];
         for (const userID of teammateIDArray) {
@@ -192,7 +205,20 @@ class FirebaseQuery {
           profiles.push(profile);
         }
         return profiles;
-      }
+    }
+
+    async getProfilePictureFrom(userID) {
+        const storageRef = ref(storage, `/files/${userID}/profilePic`);
+        
+        try {
+            const url = await getDownloadURL(storageRef);       
+            return url             
+        } catch (error) {
+            console.error("Error fetching image for userID:", userID, error);
+            return null
+        }
+        
+    }
 
     isUserLoggedIn() {
         return this.auth?.currentUser
