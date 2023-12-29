@@ -36,7 +36,7 @@
 
     - images/
       - 269dd16fa1f5ff51accd09e7e1602267.png
-      - ... (other image files)
+      - more image files...
 
     - styling/
       - FindGamePage.css
