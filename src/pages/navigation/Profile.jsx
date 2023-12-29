@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from "../../config/firebase.js";
-import { handleError } from '../functions/ErrorHandler';
+import { auth, storage } from "../../config/firebase.js";
+import { handleError } from '../../utils/ErrorHandler.js';
 import { db } from '../../config/firebase.js';
 import { updateDoc, collection, Timestamp, doc, getDoc} from 'firebase/firestore';
 import {
@@ -9,10 +9,9 @@ import {
     uploadBytesResumable,
     getDownloadURL 
 } from "firebase/storage";
-import { storage } from '../../config/firebase.js';
 import { UserContext } from '../../App.js'; 
-import {Navbar} from './Navbar.jsx'
-import missingPhoto from '../../images/missingImage.jpg'
+import {Navbar} from '../../components/ui/Navbar.jsx'
+import missingPhoto from '../../assets/images/missingImage.jpg'
 
 
 function Profile({ props }) {

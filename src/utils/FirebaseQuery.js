@@ -6,7 +6,7 @@ import {
     uploadBytesResumable,
     getDownloadURL 
 } from "firebase/storage";
-import { auth, db, storage } from '../../config/firebase'
+import { auth, db, storage } from '../config/firebase'
 
 class FirebaseQuery {
     constructor(game, currentuser) {

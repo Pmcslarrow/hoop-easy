@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
-import setGridStyle from '../functions/setGridStyle';
-import missingImage from '../../images/missingImage.jpg'
-import { FirebaseQuery } from '../functions/FirebaseQuery'
+import setGridStyle from '../../utils/setGridStyle';
+import missingImage from '../../assets/images/missingImage.jpg'
+import { FirebaseQuery } from '../../utils/FirebaseQuery'
 import { auth } from '../../config/firebase'
 
 /* Components */
-import Teammates  from './Teammates'
+import Teammates  from '../../components/ui/Teammates'
 import VerifyGameComponent from './VerifyGameComponent';
 import ScoreInputComponent from './ScoreInputComponent';
 

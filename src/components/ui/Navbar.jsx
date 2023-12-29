@@ -1,7 +1,7 @@
 import React from 'react';
-import hoopEasyLogo from '../../images/hoop-easy.png';
-import profileImg from '../../images/icons8-male-user-48.png'
-import navButtonImg from '../../images/269dd16fa1f5ff51accd09e7e1602267.png';
+import hoopEasyLogo from '../../assets/images/hoop-easy.png';
+import profileImg from '../../assets/images/icons8-male-user-48.png'
+import navButtonImg from '../../assets/images/269dd16fa1f5ff51accd09e7e1602267.png';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';

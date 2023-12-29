@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDocs, collection } from 'firebase/firestore'
-import setGridStyle from '../functions/setGridStyle';
+import setGridStyle from '../../utils/setGridStyle';
 import { Chart } from 'react-google-charts';
 
 

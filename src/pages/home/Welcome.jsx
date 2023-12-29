@@ -1,5 +1,5 @@
 import React from 'react';
-import setGridStyle from '../functions/setGridStyle';
+import setGridStyle from '../../utils/setGridStyle';
 
 const Welcome = () => {
         

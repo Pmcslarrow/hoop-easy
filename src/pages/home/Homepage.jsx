@@ -3,21 +3,22 @@ import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../config/firebase';
 import { getDocs, collection } from 'firebase/firestore'
 import { bouncyArc } from 'ldrs'
-import { FirebaseQuery } from '../functions/FirebaseQuery'
+import { FirebaseQuery } from '../../utils/FirebaseQuery'
 
 /* Components */
-import { CreateGameForm } from './CreateGameForm'
-import { CreateGameButton}  from './CreateGameButton';
-import { PlayerOverallRating } from './PlayerOverallRating';
-import { Navbar } from './Navbar';
+import { CreateGameForm } from '../../components/form/CreateGameForm'
+import { CreateGameButton}  from '../../components/ui/CreateGameButton';
+import { PlayerOverallRating } from '../../components/ui/PlayerOverallRating';
+import { Navbar } from '../../components/ui/Navbar';
 import { Welcome } from './Welcome';
 import { MyGames } from './MyGames';
-import { FindGames } from './FindGames';
 import { History } from './History';
 import { RatingsSection } from './RatingsSection';
+//import { FindGames } from '../../views/components/FindGames';
+
 
 /* Styling */
-import '../styling/homepage.css';
+import '../../assets/styling/homepage.css';
 bouncyArc.register()
 
 

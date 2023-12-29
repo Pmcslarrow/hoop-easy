@@ -2,23 +2,22 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from "../../config/firebase";
 import { createUserWithEmailAndPassword, signOut, sendEmailVerification } from 'firebase/auth';
-import { handleError } from '../functions/ErrorHandler';
+import { handleError } from '../../utils/ErrorHandler.js';
 import { db } from '../../config/firebase';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
-import hoopEasyLogo from '../../images/hoop-easy.png';
-import navButtonImg from '../../images/269dd16fa1f5ff51accd09e7e1602267.png';
 import { FaRegCircle } from "react-icons/fa6";
+import hoopEasyLogo from '../../assets/images/hoop-easy.png';
+import navButtonImg from '../../assets/images/269dd16fa1f5ff51accd09e7e1602267.png';
+
+import carouselImage1 from '../../assets/images/CAROUSEL IMAGES/1.png'
+import carouselImage2 from '../../assets/images/CAROUSEL IMAGES/2.png'
+import carouselImage3 from '../../assets/images/CAROUSEL IMAGES/3.png'
+import carouselImage4 from '../../assets/images/CAROUSEL IMAGES/4.png'
+import carouselImage5 from '../../assets/images/CAROUSEL IMAGES/5.png'
 
 
-import carouselImage1 from '../../images/CAROUSEL IMAGES/1.png'
-import carouselImage2 from '../../images/CAROUSEL IMAGES/2.png'
-import carouselImage3 from '../../images/CAROUSEL IMAGES/3.png'
-import carouselImage4 from '../../images/CAROUSEL IMAGES/4.png'
-import carouselImage5 from '../../images/CAROUSEL IMAGES/5.png'
-
-
-import '../../views/styling/create.css';
+import '../../assets/styling/create.css';
 
 
 { /* CREATE ACCOUNT */}

@@ -1,8 +1,8 @@
 // CreateGameButton.js
 
 import React from 'react';
-import addButton from '../../images/add.png';
-import exitButton from '../../images/remove.png';
+import addButton from '../../assets/images/add.png';
+import exitButton from '../../assets/images/remove.png';
 
 const CreateGameButton = ({ setCreateGameActive, isCreateGameActive }) => {
 

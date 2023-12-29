@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDocs, collection } from 'firebase/firestore'
-import setGridStyle from '../functions/setGridStyle';
+import setGridStyle from '../../utils/setGridStyle';
 
 const History = ( { currentUser, currentUserID, db}) => {
     const [data, setData] = useState([])

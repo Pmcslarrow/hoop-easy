@@ -1,13 +1,14 @@
-import { Navbar } from './Navbar'
+import { Navbar } from '../../components/ui/Navbar'
 import { useState, useEffect } from 'react'
-import '../styling/FindGamePage.css'
-import { getDistanceFromLatLonInMiles, convertToLocalTime } from '../functions/locationTimeFunctions';
-import getUserCoordinates from '../functions/locationServices';
+import { getDistanceFromLatLonInMiles, convertToLocalTime } from '../../utils/locationTimeFunctions';
+import getUserCoordinates from '../../utils/locationServices';
 import { db } from '../../config/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { getDocs, collection } from 'firebase/firestore'
 import { Card } from './Card'
-import { FirebaseQuery } from '../functions/FirebaseQuery'
+import { FirebaseQuery } from '../../utils/FirebaseQuery'
+
+import '../../assets/styling/FindGamePage.css'
 
 function FindGamePage({ props }) {
     const { setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames } = props

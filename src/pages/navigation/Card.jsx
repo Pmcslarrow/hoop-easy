@@ -1,10 +1,10 @@
 // PlayerOverallRating.jsx
 import React from 'react';
-import { FirebaseQuery } from '../functions/FirebaseQuery'
+import { FirebaseQuery } from '../../utils/FirebaseQuery.js'
 import { useState, useEffect, useContext } from 'react'
-import { db } from '../../config/firebase';
+import { db } from '../../config/firebase.js';
 import { UserContext } from '../../App.js'; 
-import missingImage from '../../images/missingImage.jpg'
+import missingImage from '../../assets/images/missingImage.jpg'
 
 
 const Card = ({ props }) => {

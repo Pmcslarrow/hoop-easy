@@ -1,14 +1,13 @@
 import React from 'react';
-import { FirebaseQuery } from '../functions/FirebaseQuery'
+import { FirebaseQuery } from '../../utils/FirebaseQuery.js'
 import { useState, useEffect, useContext } from 'react'
-import { db } from '../../config/firebase';
+import { db, storage } from '../../config/firebase.js';
 import {
     ref,
     uploadBytesResumable,
     getDownloadURL 
 } from "firebase/storage";
-import { storage } from '../../config/firebase.js';
-import missingProfilePic from '../../images/missingImage.jpg'
+import missingProfilePic from '../../assets/images/missingImage.jpg'
 
 
 
