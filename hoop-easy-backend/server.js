@@ -80,9 +80,9 @@ app.post('/api/newUser', (req, res) => {
     try {
         const user = req.body;
         const { username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall } = user;
-        const sql = `INSERT INTO users (username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO users (username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall, profilePic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-        connection.query(sql, [username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall], (err, result) => {
+        connection.query(sql, [username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall, 'nullstring'], (err, result) => {
             if (err) {
                 console.error('Error inserting user:', err);
                 res.status(500).json({ message: 'Failed to create user' });
@@ -105,8 +105,9 @@ app.post('/api/newGame', async (req, res) => {
         const { userID, address, latitude, longitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone } = game;
 
         const addNewGameToGamesTable = async () => {
-            const sql = `INSERT INTO games (userID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            connection.query(sql, [userID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone], (err, result) => {
+            const sql = `INSERT INTO games (userID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone, status, teammates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            const teammates = `{"teammate0" : "${userID}"}`
+            connection.query(sql, [userID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone, 'pending', teammates], (err, result) => {
                 if (err) {
                     console.error('Error inserting new game:', err);
                     return res.status(500).json({ message: 'Failed to create new game', error: err.message });
@@ -115,47 +116,8 @@ app.post('/api/newGame', async (req, res) => {
             });
         }
 
-        const addNewGameToTeammatesAndPendingGames = async () => {
-            const getGameID = async () => {
-                const sql = `SELECT * FROM games WHERE address = '${address}' AND userID = ${userID} AND dateOfGame = '${dateOfGame}' AND timeOfGame = '${timeOfGame}'`;
-                return new Promise((resolve, reject) => {
-                    connection.query(sql, (err, res, fields) => {
-                        if (err) {
-                            console.error('Error fetching game ID:', err);
-                            reject(err);
-                        } else {
-                            resolve(res[0].gameID);
-                        }
-                    });
-                });
-            }
-            const gameID = await getGameID();
-
-            const sqlInsert = `INSERT INTO teammates (gameID, userID) VALUES (?, ?)`;
-            connection.query(sqlInsert, [gameID, userID], (err, result) => {
-                if (err) {
-                    console.error('Error inserting new teammate:', err);
-                    return res.status(500).json({ message: 'Failed to insert new teammate', error: err.message });
-                }
-                console.log('New teammate inserted successfully:', result);
-            });
-
-
-            const sqlInsertToPendingGames = `INSERT INTO pendingGames (userID, gameID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            connection.query(sqlInsertToPendingGames, [userID, gameID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone], (err, result) => {
-                if (err) {
-                    console.error('Error inserting into pendingGames:', err);
-                    return res.status(500).json({ message: 'Failed to insert into pendingGames', error: err.message });
-                }
-                console.log('New game added to pendingGames:', result);
-            });
-        }
-
         await addNewGameToGamesTable();
-        await addNewGameToTeammatesAndPendingGames()
-
         res.send('All operations completed successfully');
-
     } catch (err) {
         console.error('Error handling request:', err);
         res.status(500).json({ message: 'Internal server error', error: err.message });
