@@ -4,9 +4,10 @@ import { auth } from "../../config/firebase";
 import { createUserWithEmailAndPassword, signOut, sendEmailVerification } from 'firebase/auth';
 import { handleError } from '../../utils/ErrorHandler.js';
 import { db } from '../../config/firebase';
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { collection, Timestamp } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaRegCircle } from "react-icons/fa6";
+import axios from 'axios';
 import hoopEasyLogo from '../../assets/images/hoop-easy.png';
 import navButtonImg from '../../assets/images/269dd16fa1f5ff51accd09e7e1602267.png';
 
@@ -241,40 +242,46 @@ function PlayerCustomizationForm({ formToggle }) {
     });
   };
 
+  const isEmpty = () => {
+    if (
+        formData.firstName.trim() === '' ||
+        formData.lastName.trim() === '' ||
+        formData.email.trim() === '' ||
+        formData.username.trim() === '' ||
+        formData.password.trim() === '' ||
+        formData.retypePassword.trim() === ''
+      ) {
+        handleError(setError, setMessage, {
+          code: 'auth/incomplete-form-error',
+          message: 'Please fill in all required fields.',
+        });
+        return true;
+      }
+  }
+
+  const passwordsDontMatch = () => {
+    if ( formData.password !== formData.retypePassword ) {
+        handleError(setError, setMessage, {
+          code: 'auth/password-and-retype-password-error',
+          message: 'Your password and retyped password do not match.',
+        });
+        return true
+      }
+  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Check if any of the required fields are empty
-    if (
-      formData.firstName.trim() === '' ||
-      formData.lastName.trim() === '' ||
-      formData.email.trim() === '' ||
-      formData.username.trim() === '' ||
-      formData.password.trim() === '' ||
-      formData.retypePassword.trim() === ''
-    ) {
-      // Handle the incomplete form error
-      handleError(setError, setMessage, {
-        code: 'auth/incomplete-form-error',
-        message: 'Please fill in all required fields.',
-      });
-      return;
+    if (isEmpty()) {
+        return
     }
-
-    if ( formData.password !== formData.retypePassword ) {
-      handleError(setError, setMessage, {
-        code: 'auth/password-and-retype-password-error',
-        message: 'Your password and retyped password do not match.',
-      });
-      return
+    if ( passwordsDontMatch() ) {
+        return
     }
-  
+    
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-  
-      addUserData();
-  
+      addNewUser();
       await sendEmailVerification(userCredential.user);
       setMessage("Please verify your email.");
       setError(true);
@@ -288,11 +295,10 @@ function PlayerCustomizationForm({ formToggle }) {
   };
   
 
-  const addUserData = async () => {
+  const addNewUser = async () => {
     const currentDate = Timestamp.now();
     const { firstName, lastName, username, heightFt, heightInches, middleInitial } = formData
-
-    await addDoc(userCollectionRef, {
+    const request = {
         username: username,
         email: auth?.currentUser?.email,
         firstName: firstName,
@@ -305,7 +311,8 @@ function PlayerCustomizationForm({ formToggle }) {
         gamesPlayed: '0',
         overall: '60',
         date: currentDate
-    });
+    }
+    axios.post('http://localhost:5001/api/newUser', request)
   };
 
   return (

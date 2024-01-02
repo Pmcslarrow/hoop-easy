@@ -24,7 +24,6 @@ const CreateGameForm = ( props ) => {
           setIsVisible(true);
         }, []);
 
-
         const handleFormChange = (event) => {
             const { id, value } = event.target;
             setFormData((prevData) => ({
@@ -33,14 +32,21 @@ const CreateGameForm = ( props ) => {
             }));
         };
 
-        
         const handleNewGameSubmission = async (event) => {
             event.preventDefault();  
-            const dateTimeString = `${formData.dateOfGame} ${formData.timeOfGame}`;
-            const dateTime = new Date(dateTimeString);
             let userLoggedIn = auth?.currentUser;
 
             if (userLoggedIn) {
+                const loggedInUser = await axios.get(`http://localhost:5001/api/getUser?email=${userLoggedIn?.email}`);
+                fetchLocationCoordinates()
+                    .then(({ longitude, latitude }) => {
+                        createNewGameInstance( longitude, latitude, loggedInUser )
+                        toggleCreateGame()
+                })
+                    .catch((error) => {
+                        console.error(error.message);
+                });
+                /*
                 const userCollection = await getDocs(usersCollectionRef);
                 userCollection.forEach(async (doc) => {
                     const currentPlayerData = doc.data();
@@ -63,12 +69,12 @@ const CreateGameForm = ( props ) => {
 
                     }
                 });
+                */
 
             } else {
                 console.log("No user signed in");
             }
         };    
-
 
         const fetchLocationCoordinates = () => {
             const params = {
@@ -102,9 +108,44 @@ const CreateGameForm = ( props ) => {
                     throw error; 
                 });
          }
+
+         const createNewGameInstance = async (longitude, latitude, loggedInUser) => {
+            const addressString = formData.streetAddress;
+            const date = formData.dateOfGame;
+            const time = formData.timeOfGame;
+            const gameType = formData.gameType;
+            const playerID = loggedInUser.data.id;
+            const userDateTime = new Date(`${date}T${time}`);
+            const utcDateTime = userDateTime.toUTCString();
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const teammates = { playerID };
+
+            if (userDateTime < new Date()) {
+                console.log("Cannot add game in the past");
+                return;
+            }
+            
+            const data = {
+                userID: playerID,
+                address: addressString,
+                longitude,
+                latitude,
+                dateOfGame: date,
+                timeOfGame: time,
+                gameType,
+                playerCreatedID: playerID,
+                utcDateTime,
+                userTimeZone,
+            };
+
+            axios.post('http://localhost:5001/api/newGame', data)
+        };
+        
+
+
+        
          
-
-
+        /*
         const addGameToPlayersConfirmedGames = async ( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID, currentPlayerOverall ) => {
 
             const coordinates = new GeoPoint(Number(latitude), Number(longitude));
@@ -153,8 +194,9 @@ const CreateGameForm = ( props ) => {
                 console.error("Error adding document: ", error);
             }
         }
+        */
 
-        
+
         const styling = {
             position: 'fixed',
             top: '50%',
@@ -169,17 +211,13 @@ const CreateGameForm = ( props ) => {
             opacity: isVisible ? 1 : 0,
             zIndex: '999',
             padding: '50px'
-          };
-          
-
+        } ;
         const inputBoxStyling = {
             border: '1px solid #ccc',
             boxSizing: 'border-box',
             marginBottom: '10px',
             width: '100%'
         };
-
-
         const states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
         const gameTypes = ['1v1', '2v2', '3v3', '4v4', '5v5']
 
@@ -280,19 +318,6 @@ const CreateGameForm = ( props ) => {
                             </option>
                         ))}
                     </select>
-                    {
-                    /*
-                    <input
-                        style={inputBoxStyling}
-                        id="gameType"
-                        placeholder=""
-                        type="time"
-                        value={formData.timeOfGame}
-                        onChange={handleFormChange}
-                        required
-                    />
-                    */
-                    }
                 </div>
             </div>
             <div className='gridContainer'>
