@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDocs, collection } from 'firebase/firestore'
 import { Card } from './Card'
 import { FirebaseQuery } from '../../utils/FirebaseQuery'
+import axios from 'axios';
 
 import '../../assets/styling/FindGamePage.css'
 
@@ -22,7 +23,8 @@ function FindGamePage({ props }) {
             setLoading(true);
     
             try {
-                const games = await query.getAvailableGamesWithCurrentUser()
+                let games = await axios.get('http://localhost:5001/api/availableGames')
+                games = games.data
                 const sortedGames = await sortGamesByLocationDistance(games);
                 setGames(sortedGames);
             } catch(err) {
@@ -34,17 +36,20 @@ function FindGamePage({ props }) {
         const sortGamesByLocationDistance = async (games) => {
             const userCoordinates = await getUserCoordinates();
             const { latitude: userLat, longitude: userLon } = userCoordinates;
-    
+            console.log("Trying to sort games by location distance...")
             const sortedGames = games.sort((game1, game2) => {
-                const distance1 = getDistanceFromLatLonInMiles(userLat, userLon, game1.coordinates._lat, game1.coordinates._long);
-                const distance2 = getDistanceFromLatLonInMiles(userLat, userLon, game2.coordinates._lat, game2.coordinates._long);
+                const distance1 = getDistanceFromLatLonInMiles(userLat, userLon, game1.latitude, game1.longitude);
+                const distance2 = getDistanceFromLatLonInMiles(userLat, userLon, game2.latitude, game2.longitude);
                 return distance1 - distance2;
             });
-    
+            
+            console.log(sortedGames)
             sortedGames.forEach((game) => {
-                game.distance = getDistanceFromLatLonInMiles(userLat, userLon, game.coordinates._lat, game.coordinates._long);
-                game.time = convertToLocalTime(game.dateOfGame);
+                game.distance = getDistanceFromLatLonInMiles(userLat, userLon, game.latitude, game.longitude);
+                game.time = convertToLocalTime(game.dateOfGameInUTC);
             });
+            console.log(sortedGames)
+        
     
             return sortedGames;
         };

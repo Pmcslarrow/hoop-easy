@@ -46,30 +46,6 @@ const CreateGameForm = ( props ) => {
                     .catch((error) => {
                         console.error(error.message);
                 });
-                /*
-                const userCollection = await getDocs(usersCollectionRef);
-                userCollection.forEach(async (doc) => {
-                    const currentPlayerData = doc.data();
-                    const currentPlayerEmail = currentPlayerData?.email;
-                    const currentPlayerDocumentID = doc.id;
-                    const currentPlayerOverall = currentPlayerData?.overall
-                    const pendingGamesPath = `users/${currentPlayerDocumentID}/pendingGames`;
-                    const pendingGamesCollectionRef = collection(db, pendingGamesPath);
-                    
-                    if ( currentPlayerEmail === userLoggedIn?.email ) {   
-
-                        fetchLocationCoordinates()
-                            .then(({ longitude, latitude }) => {
-                                addGameToPlayersConfirmedGames( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID, currentPlayerOverall )
-                                toggleCreateGame()
-                            })
-                            .catch((error) => {
-                                console.error(error.message);
-                            });
-
-                    }
-                });
-                */
 
             } else {
                 console.log("No user signed in");
@@ -109,6 +85,19 @@ const CreateGameForm = ( props ) => {
                 });
          }
 
+         function formatToLocalDatetimeString(localDateTimeString) {
+            const dateObj = new Date(localDateTimeString);
+        
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+        
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+                
          const createNewGameInstance = async (longitude, latitude, loggedInUser) => {
             const addressString = formData.streetAddress;
             const date = formData.dateOfGame;
@@ -116,7 +105,7 @@ const CreateGameForm = ( props ) => {
             const gameType = formData.gameType;
             const playerID = loggedInUser.data.id;
             const userDateTime = new Date(`${date}T${time}`);
-            const utcDateTime = userDateTime.toUTCString();
+            const dateOfGame = formatToLocalDatetimeString(userDateTime)
             const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const teammates = { playerID };
 
@@ -130,11 +119,10 @@ const CreateGameForm = ( props ) => {
                 address: addressString,
                 longitude,
                 latitude,
-                dateOfGame: date,
+                dateOfGame: dateOfGame,
                 timeOfGame: time,
                 gameType,
                 playerCreatedID: playerID,
-                utcDateTime,
                 userTimeZone,
             };
 

@@ -54,26 +54,69 @@ app.get('/api/getUser', async (req, res) => {
         if (!userEmail) {
             return res.status(400).json({ message: 'Email parameter is required' });
         }
-
         const sql = 'SELECT * FROM users WHERE email = ?';
         connection.query(sql, [userEmail], (err, result) => {
             if (err) {
                 console.error('Error fetching user:', err);
                 return res.status(500).json({ message: 'Failed to fetch user' });
             }
-
             if (result.length === 0) {
                 return res.status(404).json({ message: 'User not found' });
             }
-
             res.json(result[0]);
         });
-
     } catch (err) {
         console.error('Error handling request:', err);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+app.get('/api/availableGames', async (req, res) => {
+    const sql = `SELECT * FROM games;`
+    connection.query(sql, (err, result, fields) => {
+        if (err) {
+            console.error('Error inserting user:', err);
+            return res.status(500).json({ message: 'Failed to get available games' });
+        }
+        console.log(result)
+        console.log(typeof(result))
+        res.send(result)
+        return result
+    })
+})
+
+app.get('/api/getTeammates', async (req, res) => {
+    try {
+        const game = req.query; 
+        const gameID = game.gameID
+        const sql = `SELECT teammates FROM games WHERE gameID = ${gameID}`
+        connection.query(sql, (err, result, fields) => {
+            res.status(200).send(result)
+        })
+    } catch (err) {
+        res.status(500).send("Error getting teammates")
+    }
+
+});
+
+app.get('/api/getCurrentUserID', async(req, res) => {
+    try {
+        const currentUserEmail = req.query.email
+        const sql = 'SELECT * FROM users WHERE email = ?';
+        connection.query(sql, [currentUserEmail], (err, result) => {
+            if (err) {
+                console.error('Error fetching user:', err);
+                return res.status(500).json({ message: 'Failed to fetch user' });
+            }
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.json(result[0].id);
+        });
+    } catch(err) {
+        res.status(500).send("Error getting current user ID")
+    }
+})
 
 // POST Route
 app.post('/api/newUser', (req, res) => {
@@ -98,14 +141,14 @@ app.post('/api/newUser', (req, res) => {
     }
 });
 
-
 app.post('/api/newGame', async (req, res) => {
     try {
         const game = req.body;
         const { userID, address, latitude, longitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone } = game;
 
+        console.log("Inserting dateOfGame as: ", dateOfGame)
         const addNewGameToGamesTable = async () => {
-            const sql = `INSERT INTO games (userID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone, status, teammates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            const sql = `INSERT INTO games (userID, address, longitude, latitude, dateOfGameInUTC, timeOfGame, gameType, playerCreatedID, userTimeZone, status, teammates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             const teammates = `{"teammate0" : "${userID}"}`
             connection.query(sql, [userID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone, 'pending', teammates], (err, result) => {
                 if (err) {
@@ -123,13 +166,6 @@ app.post('/api/newGame', async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error: err.message });
     }
 });
-
-
-
-
-
-
-
 
 
 // Server Setup

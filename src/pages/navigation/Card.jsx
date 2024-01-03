@@ -2,46 +2,50 @@
 import React from 'react';
 import { FirebaseQuery } from '../../utils/FirebaseQuery.js'
 import { useState, useEffect, useContext } from 'react'
-import { db } from '../../config/firebase.js';
+import { db, auth } from '../../config/firebase.js';
 import { UserContext } from '../../App.js'; 
 import missingImage from '../../assets/images/missingImage.jpg'
+import axios from 'axios'
 
 
 const Card = ({ props }) => {
-    const { game, currentUser, refreshToken, setRefreshToken } = props;
-    const query = new FirebaseQuery(game, currentUser)
+    const { game, refreshToken, setRefreshToken } = props;
     const [teammatesIdArray, setTeammatesIdArray] = useState([]);
     const MAX_PLAYERS = parseInt(game.gameType) * 2
     const CURRENT_NUMBER_TEAMMATES = teammatesIdArray && teammatesIdArray.length > 0 ? teammatesIdArray.length : 0;
     const [opacity, setOpacity] = useState(0)
     const [profilePic, setProfilePic] = useState([])
+    const [currentUserID, setCurrentUserID] = useState([])
 
 
     useEffect(() => {
-        const getTeammatesIdArray = async () => {
-            try {
-                const teammates = await query.getTeammateIdArray()
-                setTeammatesIdArray(teammates);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const getGameCreatorImage = async () => {
-            const profileUrl = await query.getProfilePictureFrom(currentUser.id)
-            if ( profileUrl !== null ) {
-                setProfilePic(profileUrl)
-            } else {
-                setProfilePic(missingImage)
-            }
+        // Later on get the creator image if you want, or just design the card
+        const getArrayOfTeammates = async () => {
+            const result = await axios.get('http://localhost:5001/api/getTeammates', {params: game});
+            const teammates = result.data[0].teammates
+            const teammatesArray = Object.keys(teammates).map(key => teammates[key]);
+            setTeammatesIdArray(teammatesArray)
         }
-    
-        getTeammatesIdArray()
-        getGameCreatorImage()
+        
+        const getCurrentUserID = async () => {
+            const currentUserEmail = auth?.currentUser?.email
+            const result = await axios.get(`http://localhost:5001/api/getCurrentUserID?email=${currentUserEmail}`);
+            setCurrentUserID(result.data)
+        }
+                
+        getArrayOfTeammates()
+        getCurrentUserID()
     }, [refreshToken]);
+    
 
+    useEffect(() => {
+        setProfilePic(missingImage)
+        console.log("should be showing card with gameId ", game.gameID)
+    }, [])
 
     const handleJoinGame = async () => {
+
+        /*
         try {
             await query.joinGame();               
             setTeammatesIdArray([...query.teammatesIdArray]);  
@@ -52,9 +56,11 @@ const Card = ({ props }) => {
         } catch (error) {
             console.log("Error handling join game:", error);
         }
+        */
     }
     
     const handleLeaveGame = async () => {
+        /*
         try {
             await query.leaveGame();          
             setTeammatesIdArray([...query.teammatesIdArray]);
@@ -65,6 +71,7 @@ const Card = ({ props }) => {
         } catch (error) {
             console.log("Error handling leave game:", error);
         }
+        */
     }
   
     const hover = () => {
@@ -81,14 +88,12 @@ const Card = ({ props }) => {
     });
 
     // We disable the player's ability to join a game if they are already a teammate of the game -- So they can leave the game instead
-    const disablePlayerAbilityToJoinGame = teammatesIdArray ? teammatesIdArray.some((player) => player === currentUser.id) : false;
+    const disablePlayerAbilityToJoinGame = teammatesIdArray ? teammatesIdArray.some((player) => toString(player) === toString(currentUserID)) : false;
 
     if ( CURRENT_NUMBER_TEAMMATES <= 0 ) {
         return <div style={{display: 'none'}}></div>
     }
 
-    console.log(profilePic)
-    
     return (
         <div>
             <div 
