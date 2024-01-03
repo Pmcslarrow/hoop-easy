@@ -72,7 +72,7 @@ app.get('/api/getUser', async (req, res) => {
 });
 
 app.get('/api/availableGames', async (req, res) => {
-    const sql = `SELECT * FROM games;`
+    const sql = `SELECT * FROM games WHERE status = 'pending';`
     connection.query(sql, (err, result, fields) => {
         if (err) {
             console.error('Error inserting user:', err);
@@ -111,6 +111,7 @@ app.get('/api/getCurrentUserID', async(req, res) => {
             if (result.length === 0) {
                 return res.status(404).json({ message: 'User not found' });
             }
+            console.log("Current user id = ", result[0].id)
             res.json(result[0].id);
         });
     } catch(err) {
@@ -166,6 +167,52 @@ app.post('/api/newGame', async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error: err.message });
     }
 });
+
+// PUT 
+    /*
+        UPDATE games
+        SET teammates = '{"teammate0": "1", "teammate1": "2"}'
+        WHERE gameID = GAMEID;
+    */
+app.put('/api/updateTeammates', (req, res) => {
+    const gameID = req.query.gameID
+    const JSON = req.query.teammateJson
+    const sql = `UPDATE games SET teammates = '${JSON}' WHERE gameID = ${gameID}`
+    connection.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).send("Error updating teammates (query)")
+        }
+        res.status(200).send("Success updating teammates")
+    })
+})
+
+// DELETE
+app.delete('/api/deleteGame', (req, res) => {
+    try {
+        const gameID = req.query.gameID;
+        if (!gameID || isNaN(gameID)) {
+            return res.status(400).send("Invalid gameID provided");
+        }
+
+        const sql = 'DELETE FROM games WHERE gameID = ?';
+        connection.query(sql, [gameID], (err, result) => {
+            if (err) {
+                console.error("Error deleting game:", err);
+                return res.status(500).send("Error trying to delete game");
+            }
+            console.log("Success deleting game!!!");
+            res.status(200).send("Success deleting game");
+        });
+    } catch (err) {
+        console.error("Error in deleteGame endpoint:", err);
+        res.status(500).send("Error trying to delete game.");
+    }
+});
+
+
+
+
+
 
 
 // Server Setup

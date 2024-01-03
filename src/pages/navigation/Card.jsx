@@ -17,20 +17,30 @@ const Card = ({ props }) => {
     const [profilePic, setProfilePic] = useState([])
     const [currentUserID, setCurrentUserID] = useState([])
 
-
     useEffect(() => {
         // Later on get the creator image if you want, or just design the card
         const getArrayOfTeammates = async () => {
-            const result = await axios.get('http://localhost:5001/api/getTeammates', {params: game});
-            const teammates = result.data[0].teammates
-            const teammatesArray = Object.keys(teammates).map(key => teammates[key]);
-            setTeammatesIdArray(teammatesArray)
-        }
+            try {
+                const result = await axios.get('http://localhost:5001/api/getTeammates', { params: game });        
+                if (result.data && result.data[0] && result.data[0].teammates) {
+                    const teammates = result.data[0].teammates;
+                    const teammatesArray = Object.keys(teammates).map(key => teammates[key]);
+                    setTeammatesIdArray(teammatesArray);
+                } else {
+                    console.error('Unexpected response structure:', result.data);
+                }
+            } catch (error) {
+                console.error('Error fetching teammates:', error);
+            }
+        };
+        
         
         const getCurrentUserID = async () => {
             const currentUserEmail = auth?.currentUser?.email
-            const result = await axios.get(`http://localhost:5001/api/getCurrentUserID?email=${currentUserEmail}`);
-            setCurrentUserID(result.data)
+            if (currentUserEmail !== undefined) {
+                const result = await axios.get(`http://localhost:5001/api/getCurrentUserID?email=${currentUserEmail}`);
+                setCurrentUserID(result.data)
+            }
         }
                 
         getArrayOfTeammates()
@@ -44,34 +54,55 @@ const Card = ({ props }) => {
     }, [])
 
     const handleJoinGame = async () => {
-
-        /*
         try {
-            await query.joinGame();               
-            setTeammatesIdArray([...query.teammatesIdArray]);  
-                                 
-            if (query.teammatesIdArray.length >= MAX_PLAYERS) {  await query.handleFullGame();  }
-        
-            setRefreshToken(prevToken => prevToken + 1);
-        } catch (error) {
-            console.log("Error handling join game:", error);
-        }
+            let newSizeOfTeammates = teammatesIdArray.length++;
+            return
+        /*
+            1) Get the size of the array and update it to plus 1 size to check against max players
+            2) Add the current user to the teammate JSON in the database
+            3) Recall the api to get the teammates for this game
+            4) If the game is full --> 
+                4a) Update the status of the game from pending to confirmed
+            5) Set refresh token + 1
         */
+        } catch (err) {
+            console.log("Error trying to join game: ", err)
+        }
     }
     
+
     const handleLeaveGame = async () => {
-        /*
-        try {
-            await query.leaveGame();          
-            setTeammatesIdArray([...query.teammatesIdArray]);
-
-            if (query.teammatesIdArray.length <= 0) {  await query.handleEmptyGame();  }
-
-            setRefreshToken(prevToken => prevToken + 1);
-        } catch (error) {
-            console.log("Error handling leave game:", error);
+        const sizeOfArrayAfterRemoval = teammatesIdArray.length - 1
+        const newTeammatesIdArray = teammatesIdArray.filter(id => id.toString() !== currentUserID.toString());
+        
+        if (isEmpty(sizeOfArrayAfterRemoval)) {
+            await axios.delete(`http://localhost:5001/api/deleteGame?gameID=${game.gameID}`)
+            setRefreshToken(refreshToken + 1)
+            return
         }
-        */
+
+        const newJSONTeammates = createTeammateJsonFromArray(newTeammatesIdArray)
+        await axios.put(`http://localhost:5001/api/updateTeammates?gameID=${game.gameID}&teammateJson=${newJSONTeammates}`);
+        setRefreshToken(refreshToken + 1)
+        return
+    }
+
+
+    const isEmpty = (size) => {
+        return size <= 0
+    }
+
+    // ['2', '3']
+    // '{"teammate0": "1", "teammate1": "2"}'
+    const createTeammateJsonFromArray = (array) => {
+        const jsonArray = []
+        for (let i=0; i<array.length; i++) {
+            const string = `"teammate${i}": "${array[i]}"`
+            jsonArray.push(string)
+        }
+        const jsonInside = jsonArray.join(', ')
+        const json = '{' + jsonInside + '}'
+        return json
     }
   
     const hover = () => {
