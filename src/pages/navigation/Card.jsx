@@ -53,18 +53,21 @@ const Card = ({ props }) => {
         console.log("should be showing card with gameId ", game.gameID)
     }, [])
 
+
     const handleJoinGame = async () => {
         try {
-            let newSizeOfTeammates = teammatesIdArray.length++;
+
+            let newSizeOfTeammates = teammatesIdArray.length += 1;
+            teammatesIdArray.push(currentUserID)
+            const newTeammatesIdArray = teammatesIdArray
+            const newJSONTeammates = createTeammateJsonFromArray(newTeammatesIdArray)
+            await axios.put(`http://localhost:5001/api/updateTeammates?gameID=${game.gameID}&teammateJson=${newJSONTeammates}`)
+            
+            if (isFull(newSizeOfTeammates)){
+                await axios.put(`http://localhost:5001/api/updateStatus?gameID=${game.gameID}&status=confirmed`)
+            }
+            setRefreshToken(refreshToken + 1)
             return
-        /*
-            1) Get the size of the array and update it to plus 1 size to check against max players
-            2) Add the current user to the teammate JSON in the database
-            3) Recall the api to get the teammates for this game
-            4) If the game is full --> 
-                4a) Update the status of the game from pending to confirmed
-            5) Set refresh token + 1
-        */
         } catch (err) {
             console.log("Error trying to join game: ", err)
         }
@@ -92,13 +95,20 @@ const Card = ({ props }) => {
         return size <= 0
     }
 
+    const isFull = (size) => {
+        return size === MAX_PLAYERS
+    }
+
     // ['2', '3']
     // '{"teammate0": "1", "teammate1": "2"}'
     const createTeammateJsonFromArray = (array) => {
         const jsonArray = []
+        console.log(array)
         for (let i=0; i<array.length; i++) {
-            const string = `"teammate${i}": "${array[i]}"`
-            jsonArray.push(string)
+            if (array[i] !== undefined) {
+                const string = `"teammate${i}": "${array[i]}"`
+                jsonArray.push(string)
+            }
         }
         const jsonInside = jsonArray.join(', ')
         const json = '{' + jsonInside + '}'
@@ -119,7 +129,7 @@ const Card = ({ props }) => {
     });
 
     // We disable the player's ability to join a game if they are already a teammate of the game -- So they can leave the game instead
-    const disablePlayerAbilityToJoinGame = teammatesIdArray ? teammatesIdArray.some((player) => toString(player) === toString(currentUserID)) : false;
+    const disablePlayerAbilityToJoinGame = teammatesIdArray ? teammatesIdArray.some((player) => player.toString() === currentUserID.toString()) : false;
 
     if ( CURRENT_NUMBER_TEAMMATES <= 0 ) {
         return <div style={{display: 'none'}}></div>

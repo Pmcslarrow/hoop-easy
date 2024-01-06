@@ -71,6 +71,27 @@ app.get('/api/getUser', async (req, res) => {
     }
 });
 
+app.get('/api/myGames', async (req, res) => {
+    const userID = req.query.userID
+    const sql = `
+    SELECT *
+    FROM games AS g
+    WHERE status = 'confirmed'
+    AND EXISTS (
+        SELECT 1
+        FROM JSON_TABLE(g.teammates, '$.*' COLUMNS(value VARCHAR(255) PATH '$')) AS teammate
+        WHERE teammate.value = '${userID}'
+    );
+    `
+
+    connection.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).send("Error getting myGames")
+        }
+        res.status(200).send(result)
+    })
+})
+
 app.get('/api/availableGames', async (req, res) => {
     const sql = `SELECT * FROM games WHERE status = 'pending';`
     connection.query(sql, (err, result, fields) => {
@@ -169,11 +190,6 @@ app.post('/api/newGame', async (req, res) => {
 });
 
 // PUT 
-    /*
-        UPDATE games
-        SET teammates = '{"teammate0": "1", "teammate1": "2"}'
-        WHERE gameID = GAMEID;
-    */
 app.put('/api/updateTeammates', (req, res) => {
     const gameID = req.query.gameID
     const JSON = req.query.teammateJson
@@ -183,6 +199,19 @@ app.put('/api/updateTeammates', (req, res) => {
             res.status(500).send("Error updating teammates (query)")
         }
         res.status(200).send("Success updating teammates")
+    })
+})
+
+app.put('/api/updateStatus', (req, res) => {
+    const gameID = req.query.gameID
+    const status = req.query.status
+    const sql = `UPDATE games SET status = '${status}' WHERE gameID = ${gameID};`
+
+    connection.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).send("Error updating status")
+        }
+        res.status(200).send("Success updating status")
     })
 })
 
@@ -208,7 +237,6 @@ app.delete('/api/deleteGame', (req, res) => {
         res.status(500).send("Error trying to delete game.");
     }
 });
-
 
 
 

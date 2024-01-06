@@ -4,6 +4,7 @@ import setGridStyle from '../../utils/setGridStyle';
 import missingImage from '../../assets/images/missingImage.jpg'
 import { FirebaseQuery } from '../../utils/FirebaseQuery'
 import { auth } from '../../config/firebase'
+import axios from 'axios'
 
 /* Components */
 import Teammates  from '../../components/ui/Teammates'
@@ -15,6 +16,7 @@ const MyGames = ({ props }) => {
     const [verifiedGames, setVerifiedGames] = useState([])
     const [pendingGames, setPendingGames] = useState([])
     const [confirmedGames, setConfirmedGames] = useState([])
+    const [currentUserID, setCurrentUserID] = useState([])
     const query = new FirebaseQuery(auth, db, null, currentUser)
 
     const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
@@ -40,6 +42,7 @@ const MyGames = ({ props }) => {
         const confimedGamesAwaitingUserInput = []
         const confirmedGamesAwaitingScoreVerification = []
 
+        /*
         const getPendingGames = async() => {
             let pendingGames = await query.getPendingGames(currentUser.id)
             pendingGames = pendingGames.map((game) => { 
@@ -62,8 +65,25 @@ const MyGames = ({ props }) => {
             setConfirmedGames(confimedGamesAwaitingUserInput)
             setVerifiedGames(confirmedGamesAwaitingScoreVerification)
         }
+        */
 
-        getPendingGames()
+
+        const getCurrentUserID = async () => {
+            const currentUserEmail = auth?.currentUser?.email
+            if (currentUserEmail !== undefined) {
+                const result = await axios.get(`http://localhost:5001/api/getCurrentUserID?email=${currentUserEmail}`);
+                setCurrentUserID(result.data)
+                return result.data
+            }
+        }
+
+        const getConfirmedGames = async() => {
+            const id = await getCurrentUserID()
+            const games = await axios.get(`http://localhost:5001/api/myGames?userID=${id}`)
+            setConfirmedGames(games?.data)
+        }
+
+        //getPendingGames()
         getConfirmedGames()
     }, [])
 
@@ -84,7 +104,8 @@ const MyGames = ({ props }) => {
 
     // If the game is confirmed, it will show pending, otherwise it will let you submit the scores
     const Card = ({ currentCard, type, isVerified }) => {
-    
+        console.log(currentCard)
+        return <div>I am a card! And you, Paul McSlarrow, need to redesign the logic here Line 108 of MyGames.jsx. I am disgusting. AND you intelligently implemented status as a column now so you don't need all these weird handlings the same</div>
         const renderScoreSubmission = () => {
           if (type === 'confirmed') {
             return (
@@ -158,16 +179,23 @@ const MyGames = ({ props }) => {
 
             <div id='myGamesContainer' style={myGamesLocation}>
             <ul className="cards" >
+                {/*
                 {verifiedGames.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed' isVerified={true}/>  
                 ))}
+                */}
+
                 {confirmedGames.map((currentCard, i) => (
-                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
+                    <Card key={`confirmed-${i}`} currentCard={currentCard} type={currentCard.status}/>  
                 ))}
+
+                {/*
                 {pendingGames.map((currentCard, i) => (
                     <Card key={`pending-${i}`} currentCard={currentCard} type='pending' />  
                 ))}
-                
+                */}
+
+    
             {/*
                 {verifiedGames.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed' isVerified={true}/>  
