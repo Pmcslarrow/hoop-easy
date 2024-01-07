@@ -13,6 +13,7 @@ import Teammates from '../ui/Teammates';
 import { FirebaseQuery } from '../../utils/FirebaseQuery'
 import { getDocs, collection, updateDoc, doc } from 'firebase/firestore'
 import {db} from '../../config/firebase'
+import {createCaptainJsonFromArray, createScoreJsonFromArray} from '../../utils/toJSON'
 import axios from 'axios'
 
 import '../../assets/styling/ScoreInput.css'
@@ -267,66 +268,20 @@ function ScoreInput({props}) {
             opponentTeamScore: teamOneScore
         }
 
-        console.log(teamOneObject)
-        console.log(teamTwoObject)
-        setRefreshToken(refreshToken + 1)
-
-        return
-
-        /**
-         * Need to rename the variables and think about it for n number of players on two teams instead of 1v1. 
-         * dataForCurrentPlayerCollection should become dataForTeamOnePlayers
-         * dataForOpponentCollection should become dataForTeamTwoPlayers
-         */
-        const dataForCurrentPlayerCollection = {
-            ...currentCard,
-            playerID: currentUser.id,
-            score: {
-                playerScore: teamOneScore,
-                teamTwoScore: teamTwoScore
-            },
-            gameApprovalStatus: true,
-        };
-        const dataForOpponentCollection = {
-            ...currentUser,
-            opponentID: currentUser.id,
-            opponent: currentUser.username,
-            email: currentUser.email,
-            firstName: currentUser.firstName,
-            heightFt: currentUser.heightFt,
-            heightInches: currentUser.heightInches,
-            playerID: currentCard.playerID,
-            lastName: currentUser.lastName,
-            score: {
-                playerScore: teamTwoScore,
-                teamTwoScore: teamOneScore
-            },
-            gameApprovalStatus: false
-        };
-
-        const playerDocID = currentCard.id;
-        const playerDocRef = doc(db, `users/${currentUser.id}/confirmedGames`, playerDocID);
-        const opponentConfirmed = collection(db, `users/${currentCard.opponentID}/confirmedGames`); // This is looking at a single opponentID which doesnt exit. Iterate through teammates
-        const opponentConfirmedSnapshot = await getDocs(opponentConfirmed);
-
+        const captainJSON = createCaptainJsonFromArray([teamOneCaptain.userID, teamTwoCaptain.userID])
+        const scoreJSON = createScoreJsonFromArray([scoreData.teamOneScore.toString(), scoreData.teamTwoScore.toString()])
         console.log(currentCard)
-        console.log(`users/${currentCard.opponentID}/confirmedGames`)
 
-        let opponentDoc = opponentConfirmedSnapshot.docs.find((doc) => {
-            const currDoc = doc.data();
-            
-            return currDoc.dateOfGame === currentCard.dateOfGame &&
-            currDoc.time === currentCard.time &&
-            currDoc.addressString === currentCard.addressString;
-        });
-            
-        
-        if (opponentDoc) {
-            await updateDoc(opponentDoc.ref, dataForOpponentCollection);
-            await updateDoc(playerDocRef, dataForCurrentPlayerCollection);
-            } else {
-            console.log("Something went wrong while submitting the game")
-        }     
+        await axios.put('http://localhost:5001/api/handleGameSubmission', {
+            params: {
+              status: 'verification',
+              teamOneObject: teamOneObject,  
+              teamTwoObject: teamTwoObject,
+              captainJSON: captainJSON,
+              scoreJSON: scoreJSON,
+              gameID: currentCard.gameID
+            }
+        })
         setRefreshToken(refreshToken + 1)
     };
 

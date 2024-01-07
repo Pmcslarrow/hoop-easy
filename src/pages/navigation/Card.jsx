@@ -99,8 +99,8 @@ const Card = ({ props }) => {
         return size === MAX_PLAYERS
     }
 
-    // ['2', '3']
-    // '{"teammate0": "1", "teammate1": "2"}'
+    // @input: ['2', '3']
+    // @return: '{"teammate0": "1", "teammate1": "2"}'
     const createTeammateJsonFromArray = (array) => {
         const jsonArray = []
         console.log(array)

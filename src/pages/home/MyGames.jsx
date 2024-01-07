@@ -72,37 +72,7 @@ const MyGames = ({ props }) => {
         getMyGames()
     }, [])
 
-    /*
 
-    {
-<Card/> with CurrentCard
-    "gameID": 16,
-    "userID": 3,
-    "address": "123 Main St",
-    "longitude": "123.456",
-    "latitude": "78.910",
-    "dateOfGameInUTC": "2024-01-05T19:00:00.000Z",
-    "distance": "10 miles",
-    "gameType": 1,
-    "playerCreatedID": "player123",
-    "status": "confirmed",
-    "teammates": {
-        "teammate0": "3",
-        "teammate2": "2"
-    },
-    "timeOfGame": "3:00 PM",
-    "userTimeZone": "UTC",
-    "captains": {},
-    "scores": {}
-    }
-
-
-    If the status is pending --> Then it should show Waiting for the game to be accepted by other players
-    If the status is confirmed and no scores exist --> Show ScoreInputComponent (make sure that you create a captains JSON column in the database for the two people that must verify the scores)
-    If the status is confirmed and scores exist and your currentUserID is inside the JSON for captains --> VerifyGameComponent
-    If the status is confirmed and scores exist and your currentUserID is NOT inside the captains --> PendingGameApproval
-    
-    */
     const Card = ({ currentCard, type }) => {
         const renderLowerCardSection = () => {
             if (type === 'pending') {
@@ -114,7 +84,16 @@ const MyGames = ({ props }) => {
             }
 
             if (type === 'verification') {
-                return <div>Either VerifyGameComponent or PendingGameApproval depending if your id is a captain or not</div>
+                const searchID = currentUserID.toString()
+                const captainsArray = Object.values(currentCard.captains)
+                const isCurrentUserCaptain = captainsArray.some((obj) => obj.toString() === searchID.toString())
+                //const { currentCard, currentUser, refreshToken, setRefreshToken } = props
+
+                if (isCurrentUserCaptain) {
+                    return <VerifyGameComponent props={{currentCard, currentUserID, refreshToken, setRefreshToken}}/>
+                } else {
+                    return <PendingGameApproval />
+                }
             }
         };
 
@@ -174,8 +153,7 @@ const MyGames = ({ props }) => {
     }
 
 
-
-            
+ 
 
     /*
     const gamesAwaitingOpponentScoreVerification = []

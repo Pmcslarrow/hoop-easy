@@ -254,6 +254,38 @@ app.put('/api/updateStatus', (req, res) => {
     })
 })
 
+// `http://localhost:5001/api/handleGameSubmission?team1=${teamOneObject}&team2=${teamTwoObject}&status=verification`
+app.put('/api/handleGameSubmission', (req, res) => {
+    const data = req.body;
+    const status = data.params.status;
+    const teamOneObject = data.params.teamOneObject;
+    const teamTwoObject = data.params.teamTwoObject;
+    const captainJSON = data.params.captainJSON;
+    const scoreJSON = data.params.scoreJSON;
+    const gameID = data.params.gameID;
+
+    const sql = `
+        UPDATE games
+        SET 
+            status = ?,
+            captains = ?,
+            scores = ?
+        WHERE gameID = ?
+    `;
+
+    connection.query(sql, [status, captainJSON, scoreJSON, gameID], (err, result) => {
+        if (err) {
+            console.error("Error handling game submission:", err);
+            res.status(500).send("Error handling game submission");
+            return;
+        }
+        
+        res.status(200).send("Success handling game submission");
+    });
+});
+
+
+
 // DELETE
 app.delete('/api/deleteGame', (req, res) => {
     try {

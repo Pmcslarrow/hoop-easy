@@ -1,14 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../config/firebase';
 import { getDocs, collection, updateDoc, doc, deleteDoc, addDoc } from 'firebase/firestore'
+import axios from 'axios'
 
 
 const VerifyGameComponent = ({ props }) => {
-    const { currentCard, currentUser, refreshToken, setRefreshToken } = props
+    const { currentCard, currentUserID, refreshToken, setRefreshToken } = props
+    const [currentUser, setCurrentUser] = useState([])
     const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
     const flexRow = {
         display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '5px'
     }
+
+    useEffect(() => {
+        const getCurrentUser = async () => {
+            const response = await axios.get(`http://localhost:5001/api/getUserWithID?userID=${currentUserID}`)
+            const currentUser = response?.data
+            setCurrentUser(currentUser)
+        }
+    
+        getCurrentUser()
+    }, [])
 
     // Player A should be current player and Player B should be opponent
     // Returns { player A new rating, player B new rating}
@@ -85,50 +97,7 @@ const VerifyGameComponent = ({ props }) => {
         return { new_R_A, new_R_B }
     } /* ratingAlgorithm() */
 
-    // How to call: const _ = await findConfirmedGameID(opponentConfirmedGamesRef, { coordinates, dateOfGame, time, opponentID });
-    async function findConfirmedGameID(ref, dataToMatchOn) {
-        try {
-            const confirmedGames = await getDocs(ref);
-            const filteredConfirmedGames = confirmedGames.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    
-            for (const game of filteredConfirmedGames) {
-                if (
-                    game.dateOfGame === dataToMatchOn.dateOfGame &&
-                    game.coordinates._lat === dataToMatchOn.coordinates._lat &&
-                    game.coordinates._long === dataToMatchOn.coordinates._long &&
-                    game.playerID === dataToMatchOn.opponentID &&
-                    game.time === dataToMatchOn.time
-                ) {
-                    return game.id;
-                }
-            }
-    
-            return null;
-        } catch (error) {
-            console.error("Error in findConfirmedGameID:", error);
-            throw error; 
-        }
-    }       
-    
-    const deletingConfirmedGames = async ( opponentCard, currentUserConfirmedGamesRef, opponentConfirmedGamesRef, coordinates, dateOfGame, time, opponentID ) => {
-        try {
-            const confirmedGameID = await findConfirmedGameID(opponentConfirmedGamesRef, { coordinates, dateOfGame, time, opponentID });
-        
-            if (confirmedGameID) {
-                const opponentConfirmedGameDocRef = doc(opponentConfirmedGamesRef, confirmedGameID);
-                const currentUserConfirmedGameDocRef = doc(currentUserConfirmedGamesRef, opponentCard.id)
-
-                await deleteDoc(opponentConfirmedGameDocRef);
-                await deleteDoc(currentUserConfirmedGameDocRef)
-                console.log(`Confirmed Game Successfully Deleted.`);
-            } else {
-                console.log("No matching document found to delete.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    }
-
+    /*
     const handleAccept = async () => {
         let opponentCard = currentCard
         const opponentDocRef = doc(db, `users/${opponentCard.playerID}`);
@@ -224,7 +193,7 @@ const VerifyGameComponent = ({ props }) => {
             console.error("Error in one or more async functions:", error);
         });   
 
-    } /* handleAccept() */
+    } 
 
     const handleDeny = async () => {
         let opponentCard = currentCard
@@ -269,22 +238,31 @@ const VerifyGameComponent = ({ props }) => {
         .catch((error) => {
             console.error("Error in one or more async functions:", error);
         }); 
-    } /* handleDeny() */
+    } 
+    */
+
+    const handleAccept = () => {
+        console.log("Player accepted")
+    }
+
+    const handleDeny = () => {
+        console.log("Player Denied")
+    }
 
     const center = { position: 'relative', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', ...boldItalicStyle}
     return (
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', gap: '10px'}}>
             <div style={flexRow}>
                 <div style={{...flexRow, ...boldItalicStyle, color: 'gray'}}>
-                    <div>YOU</div>
+                    <div>Team 1 'later on adjust so that the left side is all data relating to the currentUser'</div>
                 </div>
                 <div style={{...flexRow, ...boldItalicStyle, fontSize: '36px'}}>
-                    <div>{currentCard.score.playerScore}</div>
+                    <div>{currentCard.scores.team1}</div>
                     :
-                    <div>{currentCard.score.opponentScore}</div>
+                    <div>{currentCard.scores.team2}</div>
                 </div>
                 <div style={{...flexRow, ...boldItalicStyle, color: 'gray'}}>
-                    <div>OPP</div>
+                    <div>Team 2</div>
                 </div>
             </div>
             <div style={flexRow}>
