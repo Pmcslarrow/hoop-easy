@@ -13,6 +13,7 @@ import Teammates from '../ui/Teammates';
 import { FirebaseQuery } from '../../utils/FirebaseQuery'
 import { getDocs, collection, updateDoc, doc } from 'firebase/firestore'
 import {db} from '../../config/firebase'
+import axios from 'axios'
 
 import '../../assets/styling/ScoreInput.css'
 
@@ -63,7 +64,6 @@ export default function ScoreDrawer({props}) {
 
 function ScoreInput({props}) {
     const {currentCard, currentUser, refreshToken, setRefreshToken} = props
-    const query = new FirebaseQuery(currentCard, currentUser);
     const [profiles, setProfiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(0); 
     const [selectedObjects, setSelectedObjects] = useState([]);
@@ -80,31 +80,31 @@ function ScoreInput({props}) {
         teamTwoScore: ''
     });
 
-  useEffect(() => {
-    const fetchTeammates = async () => {
-      const profiles = await query.getTeammateProfiles(currentCard.teammates);
-      setProfiles(profiles);
+    useEffect(() => {
+        const fetchTeammates = async () => {
+            const teammateIdArray = Object.values(currentCard.teammates)
+            const profiles = await axios.get(`http://localhost:5001/api/getProfiles?arrayOfID=${teammateIdArray}`)
+            setProfiles(profiles.data)
+        }
+
+        fetchTeammates();
+    }, []);
+
+    const handlePageChange = (event, newValue) => {
+        setCurrentPage(newValue);
     };
 
-    fetchTeammates();
-  }, []);
+    const handleTabClick = (event) => {
+        event.stopPropagation();
+    };
 
-
-  const handlePageChange = (event, newValue) => {
-    setCurrentPage(newValue);
-  };
-
-  const handleTabClick = (event) => {
-    event.stopPropagation();
-  };
-
-  const handleCheckboxChange = (selectedObj) => {
-    if (selectedObjects.some(obj => obj.username === selectedObj.username)) {
-      setSelectedObjects(prevObjects => prevObjects.filter(obj => obj.username !== selectedObj.username));
-    } else {
-      setSelectedObjects(prevObjects => [...prevObjects, selectedObj]);
-    }
-  };
+    const handleCheckboxChange = (selectedObj) => {
+        if (selectedObjects.some(obj => obj.username === selectedObj.username)) {
+        setSelectedObjects(prevObjects => prevObjects.filter(obj => obj.username !== selectedObj.username));
+        } else {
+        setSelectedObjects(prevObjects => [...prevObjects, selectedObj]);
+        }
+    };
 
 
     const handleTeamOneScoreChange = useCallback((event) => {

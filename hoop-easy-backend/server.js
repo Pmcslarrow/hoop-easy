@@ -71,13 +71,52 @@ app.get('/api/getUser', async (req, res) => {
     }
 });
 
+app.get('/api/getUserWithID', async (req, res) => {
+    try {
+        const userID = req.query.userID;
+        if (!userID) {
+            return res.status(400).json({ message: 'UserID parameter is required' });
+        }
+        const sql = 'SELECT * FROM users WHERE id = ?';
+        connection.query(sql, [userID], (err, result) => {
+            if (err) {
+                console.error('Error fetching user:', err);
+                return res.status(500).json({ message: 'Failed to fetch user' });
+            }
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.json(result[0]);
+        });
+    } catch (err) {
+        console.error('Error handling request:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+app.get('/api/getProfiles', async (req, res) => {
+    const arrayOfID = req.query.arrayOfID;
+    const array = arrayOfID.split(',')
+
+    const sql = `SELECT * FROM users WHERE id IN (${array.join(', ')})`;
+    console.log(sql)
+    connection.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).send("Error getting profiles")
+        }
+        res.status(200).send(result)
+    })
+
+    console.log(arrayOfID)
+});
+
 app.get('/api/myGames', async (req, res) => {
     const userID = req.query.userID
     const sql = `
     SELECT *
     FROM games AS g
-    WHERE status = 'confirmed'
-    AND EXISTS (
+    WHERE 
+    EXISTS (
         SELECT 1
         FROM JSON_TABLE(g.teammates, '$.*' COLUMNS(value VARCHAR(255) PATH '$')) AS teammate
         WHERE teammate.value = '${userID}'

@@ -12,12 +12,9 @@ import VerifyGameComponent from './VerifyGameComponent';
 import ScoreInputComponent from './ScoreInputComponent';
 
 const MyGames = ({ props }) => {
-    const { db, currentUser, setRefreshToken, refreshToken } = props;
-    const [verifiedGames, setVerifiedGames] = useState([])
-    const [pendingGames, setPendingGames] = useState([])
-    const [confirmedGames, setConfirmedGames] = useState([])
+    const { db, setRefreshToken, refreshToken } = props;
+    const [confirmedGames, setMyGames] = useState([])
     const [currentUserID, setCurrentUserID] = useState([])
-    const query = new FirebaseQuery(auth, db, null, currentUser)
 
     const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
@@ -30,44 +27,34 @@ const MyGames = ({ props }) => {
         gap: '10px',
     };
 
-    function convertToLocalTime( storedUtcDateTime ) {
-        const userLocalDateTime = new Date(storedUtcDateTime);
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const userDateTimeString = userLocalDateTime.toLocaleString('en-US', { timeZone: userTimeZone });
-        return userDateTimeString
+    function convertToLocalTime(storedUtcDateTime, options = {}) {
+        try {
+            const userLocalDateTime = new Date(storedUtcDateTime);
+    
+            if (isNaN(userLocalDateTime)) {
+                throw new Error("Invalid date");
+            }
+    
+            const userTimeZone = options.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const dateFormat = options.dateFormat || { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeFormat = options.timeFormat || { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    
+            const userDateTimeString = userLocalDateTime.toLocaleString('en-US', {
+                timeZone: userTimeZone,
+                ...dateFormat,
+                ...timeFormat,
+            });
+    
+            return userDateTimeString;
+        } catch (error) {
+            console.error("Error converting to local time:", error.message);
+            return null;
+        }
     }
+    
 
     // Finds the verified games, confirmed games, and pending games from the passed in prop. (sorts in that order for rendering below)
     useEffect(() => {
-        const confimedGamesAwaitingUserInput = []
-        const confirmedGamesAwaitingScoreVerification = []
-
-        /*
-        const getPendingGames = async() => {
-            let pendingGames = await query.getPendingGames(currentUser.id)
-            pendingGames = pendingGames.map((game) => { 
-                game.time = convertToLocalTime(game.dateOfGame);
-                return game;
-            }) 
-            setPendingGames(pendingGames)
-        }
-        const getConfirmedGames = async() => {
-            const confirmedGames = await query.getConfirmedGames( currentUser.id )
-            confirmedGames.forEach((game) => { 
-                if (!game.gameApprovalStatus && (game?.score?.playerScore || game?.score?.opponentScore)) {
-                    game.time = convertToLocalTime(game.dateOfGame)
-                    confirmedGamesAwaitingScoreVerification.push(game)
-                } else {
-                    game.time = convertToLocalTime(game.dateOfGame)
-                    confimedGamesAwaitingUserInput.push(game)
-                }
-            })
-            setConfirmedGames(confimedGamesAwaitingUserInput)
-            setVerifiedGames(confirmedGamesAwaitingScoreVerification)
-        }
-        */
-
-
         const getCurrentUserID = async () => {
             const currentUserEmail = auth?.currentUser?.email
             if (currentUserEmail !== undefined) {
@@ -76,17 +63,101 @@ const MyGames = ({ props }) => {
                 return result.data
             }
         }
-
-        const getConfirmedGames = async() => {
+        const getMyGames = async() => {
             const id = await getCurrentUserID()
             const games = await axios.get(`http://localhost:5001/api/myGames?userID=${id}`)
-            setConfirmedGames(games?.data)
+            setMyGames(games?.data)
         }
 
-        //getPendingGames()
-        getConfirmedGames()
+        getMyGames()
     }, [])
 
+    /*
+
+    {
+<Card/> with CurrentCard
+    "gameID": 16,
+    "userID": 3,
+    "address": "123 Main St",
+    "longitude": "123.456",
+    "latitude": "78.910",
+    "dateOfGameInUTC": "2024-01-05T19:00:00.000Z",
+    "distance": "10 miles",
+    "gameType": 1,
+    "playerCreatedID": "player123",
+    "status": "confirmed",
+    "teammates": {
+        "teammate0": "3",
+        "teammate2": "2"
+    },
+    "timeOfGame": "3:00 PM",
+    "userTimeZone": "UTC",
+    "captains": {},
+    "scores": {}
+    }
+
+
+    If the status is pending --> Then it should show Waiting for the game to be accepted by other players
+    If the status is confirmed and no scores exist --> Show ScoreInputComponent (make sure that you create a captains JSON column in the database for the two people that must verify the scores)
+    If the status is confirmed and scores exist and your currentUserID is inside the JSON for captains --> VerifyGameComponent
+    If the status is confirmed and scores exist and your currentUserID is NOT inside the captains --> PendingGameApproval
+    
+    */
+    const Card = ({ currentCard, type }) => {
+        const renderLowerCardSection = () => {
+            if (type === 'pending') {
+                return <WaitingForGameAcceptance />
+            }
+
+            if (type === 'confirmed') {
+                return <ScoreInputComponent props={{currentCard, currentUserID, refreshToken, setRefreshToken}} />
+            }
+
+            if (type === 'verification') {
+                return <div>Either VerifyGameComponent or PendingGameApproval depending if your id is a captain or not</div>
+            }
+        };
+
+        const convertedTime = convertToLocalTime(currentCard.dateOfGameInUTC, {
+            timeZone: 'America/New_York',
+            dateFormat: { year: 'numeric', month: 'numeric', day: 'numeric' },
+            timeFormat: { hour: 'numeric', minute: 'numeric' },
+        });
+        
+        const [dateOfGame, timeOfGame] = convertedTime.split(',');
+        const trimmedDateOfGame = dateOfGame.trim();
+        const trimmedTimeOfGame = timeOfGame.trim();
+        
+        return (
+          <li className='card'>
+            <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
+              <div>{currentCard.gameType}v{currentCard.gameType}</div>
+              <div>
+                <div>{trimmedDateOfGame}</div> {/* Date */}
+                <div>{trimmedTimeOfGame}</div> {/* Time */}
+              </div>
+            </div>
+            <div className='opponentText' style={{ padding: '20px'}}>
+                {/*<Teammates game={currentCard}/>*/}
+            </div>
+            <div className='addressText'>{currentCard.addressString}</div>
+            {renderLowerCardSection()}
+          </li>
+        );
+    };
+
+    const WaitingForGameAcceptance = () => {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <div>Waiting for the game to be accepted by other players</div>
+              <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px' }}>
+                <div className='el'></div>
+                <div className='el'></div>
+                <div className='el'></div>
+              </div>
+            </div>
+        );
+    }
 
     const PendingGameApproval = () => {
         return ( 
@@ -102,53 +173,8 @@ const MyGames = ({ props }) => {
         )        
     }
 
-    // If the game is confirmed, it will show pending, otherwise it will let you submit the scores
-    const Card = ({ currentCard, type, isVerified }) => {
-        console.log(currentCard)
-        return <div>I am a card! And you, Paul McSlarrow, need to redesign the logic here Line 108 of MyGames.jsx. I am disgusting. AND you intelligently implemented status as a column now so you don't need all these weird handlings the same</div>
-        const renderScoreSubmission = () => {
-          if (type === 'confirmed') {
-            return (
-              <>
-                {currentCard.gameApprovalStatus && <PendingGameApproval />}
-                {!currentCard.gameApprovalStatus && (currentCard?.score?.playerScore || currentCard?.score?.opponentScore) && <VerifyGameComponent props={{ currentCard, currentUser, refreshToken, setRefreshToken }}/>}
-                {!currentCard.gameApprovalStatus && !(currentCard?.score?.playerScore || currentCard?.score?.opponentScore) && <ScoreInputComponent props={{currentCard, currentUser, refreshToken, setRefreshToken}}/>}
-              </>
-            );
-          }
-          return (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-              <div>Waiting for the game to be accepted by other players</div>
-              <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px' }}>
-                <div className='el'></div>
-                <div className='el'></div>
-                <div className='el'></div>
-              </div>
-            </div>
-          );
-        };
 
-        const [dateOfGame, timeOfGame] = currentCard.time.split(',');
-        const trimmedDateOfGame = dateOfGame.trim();
-        const trimmedTimeOfGame = timeOfGame.trim();
-        
-        return (
-          <li className='card'>
-            <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
-              <div>{currentCard.gameType}v{currentCard.gameType}</div>
-              <div>
-                <div>{trimmedDateOfGame}</div>
-                <div>{trimmedTimeOfGame}</div>
-              </div>
-            </div>
-            <div className='opponentText' style={{ padding: '20px'}}>
-                <Teammates game={currentCard}/>
-            </div>
-            <div className='addressText'>{currentCard.addressString}</div>
-            {renderScoreSubmission()}
-          </li>
-        );
-    };
+
             
 
     /*
@@ -179,22 +205,10 @@ const MyGames = ({ props }) => {
 
             <div id='myGamesContainer' style={myGamesLocation}>
             <ul className="cards" >
-                {/*
-                {verifiedGames.map((currentCard, i) => (
-                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed' isVerified={true}/>  
-                ))}
-                */}
 
                 {confirmedGames.map((currentCard, i) => (
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type={currentCard.status}/>  
                 ))}
-
-                {/*
-                {pendingGames.map((currentCard, i) => (
-                    <Card key={`pending-${i}`} currentCard={currentCard} type='pending' />  
-                ))}
-                */}
-
     
             {/*
                 {verifiedGames.map((currentCard, i) => (
