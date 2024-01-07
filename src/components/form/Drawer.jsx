@@ -13,7 +13,7 @@ import Teammates from '../ui/Teammates';
 import { FirebaseQuery } from '../../utils/FirebaseQuery'
 import { getDocs, collection, updateDoc, doc } from 'firebase/firestore'
 import {db} from '../../config/firebase'
-import {createCaptainJsonFromArray, createScoreJsonFromArray} from '../../utils/toJSON'
+import {createCaptainJsonFromArray, createScoreJsonFromArray, createTeamJsonFromArray} from '../../utils/toJSON'
 import axios from 'axios'
 
 import '../../assets/styling/ScoreInput.css'
@@ -270,13 +270,16 @@ function ScoreInput({props}) {
 
         const captainJSON = createCaptainJsonFromArray([teamOneCaptain.userID, teamTwoCaptain.userID])
         const scoreJSON = createScoreJsonFromArray([scoreData.teamOneScore.toString(), scoreData.teamTwoScore.toString()])
-        console.log(currentCard)
+        const teamOneArray = team1.map((obj) => obj.id)
+        const teamTwoArray = team2.map((obj) => obj.id)
+        const teamOne = createTeamJsonFromArray(teamOneArray)
+        const teamTwo = createTeamJsonFromArray(teamTwoArray)
 
         await axios.put('http://localhost:5001/api/handleGameSubmission', {
             params: {
               status: 'verification',
-              teamOneObject: teamOneObject,  
-              teamTwoObject: teamTwoObject,
+              teamOne: teamOne,  
+              teamTwo: teamTwo,
               captainJSON: captainJSON,
               scoreJSON: scoreJSON,
               gameID: currentCard.gameID

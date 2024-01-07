@@ -37,5 +37,17 @@ const createScoreJsonFromArray = (array) => {
     return json
 }
 
+const createTeamJsonFromArray = (array) => {
+    const jsonArray = []
+    for (let i=0; i<array.length; i++) {
+        if (array[i] !== undefined) {
+            const string = `"player${i}": "${array[i]}"`
+            jsonArray.push(string)
+        }
+    }
+    const jsonInside = jsonArray.join(', ')
+    const json = '{' + jsonInside + '}'
+    return json
+}
 
-export {createTeammateJsonFromArray, createCaptainJsonFromArray, createScoreJsonFromArray}
+export {createTeammateJsonFromArray, createCaptainJsonFromArray, createScoreJsonFromArray, createTeamJsonFromArray}

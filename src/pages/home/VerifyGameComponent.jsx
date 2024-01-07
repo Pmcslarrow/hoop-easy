@@ -242,27 +242,46 @@ const VerifyGameComponent = ({ props }) => {
     */
 
     const handleAccept = () => {
-        console.log("Player accepted")
+        console.log("Captain accepted the score\nUse the rating algorithm to update all player overall ratings\nupdate history\nremove game")
+        console.log(teamOneObject, teamTwoObject)
+        // If the user accepts the score,
     }
 
     const handleDeny = () => {
         console.log("Player Denied")
     }
 
+    const isCurrentUserOnTeamOne = Object.values(currentCard.team1).some((obj) => obj.toString() === currentUserID.toString())
+    const teamOneObject = {
+        team1: currentCard.team1,
+        score: currentCard.scores.team1
+    }
+
+    const teamTwoObject = {
+        team2: currentCard.team2,
+        score: currentCard.scores.team2
+    }
+
+    console.log(teamOneObject, teamTwoObject)
+
     const center = { position: 'relative', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', ...boldItalicStyle}
     return (
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', gap: '10px'}}>
             <div style={flexRow}>
                 <div style={{...flexRow, ...boldItalicStyle, color: 'gray'}}>
-                    <div>Team 1 'later on adjust so that the left side is all data relating to the currentUser'</div>
+                    <div>You</div>
                 </div>
                 <div style={{...flexRow, ...boldItalicStyle, fontSize: '36px'}}>
-                    <div>{currentCard.scores.team1}</div>
+                    <div>
+                        {isCurrentUserOnTeamOne ? teamOneObject.score : teamTwoObject.score}
+                    </div>
                     :
-                    <div>{currentCard.scores.team2}</div>
+                    <div>
+                        {isCurrentUserOnTeamOne ? teamTwoObject.score : teamOneObject.score}
+                    </div>
                 </div>
                 <div style={{...flexRow, ...boldItalicStyle, color: 'gray'}}>
-                    <div>Team 2</div>
+                    <div>Opp</div>
                 </div>
             </div>
             <div style={flexRow}>

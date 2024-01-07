@@ -115,12 +115,7 @@ app.get('/api/myGames', async (req, res) => {
     const sql = `
     SELECT *
     FROM games AS g
-    WHERE 
-    EXISTS (
-        SELECT 1
-        FROM JSON_TABLE(g.teammates, '$.*' COLUMNS(value VARCHAR(255) PATH '$')) AS teammate
-        WHERE teammate.value = '${userID}'
-    );
+    WHERE JSON_SEARCH(g.teammates, 'one', '${userID}') IS NOT NULL;
     `
 
     connection.query(sql, (err, result) => {
@@ -258,8 +253,8 @@ app.put('/api/updateStatus', (req, res) => {
 app.put('/api/handleGameSubmission', (req, res) => {
     const data = req.body;
     const status = data.params.status;
-    const teamOneObject = data.params.teamOneObject;
-    const teamTwoObject = data.params.teamTwoObject;
+    const teamOne = data.params.teamOne;
+    const teamTwo = data.params.teamTwo;
     const captainJSON = data.params.captainJSON;
     const scoreJSON = data.params.scoreJSON;
     const gameID = data.params.gameID;
@@ -269,11 +264,13 @@ app.put('/api/handleGameSubmission', (req, res) => {
         SET 
             status = ?,
             captains = ?,
-            scores = ?
+            scores = ?,
+            team1 = ?,
+            team2 = ?
         WHERE gameID = ?
     `;
 
-    connection.query(sql, [status, captainJSON, scoreJSON, gameID], (err, result) => {
+    connection.query(sql, [status, captainJSON, scoreJSON, teamOne, teamTwo, gameID], (err, result) => {
         if (err) {
             console.error("Error handling game submission:", err);
             res.status(500).send("Error handling game submission");
