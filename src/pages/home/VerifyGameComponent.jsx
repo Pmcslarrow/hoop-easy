@@ -8,6 +8,15 @@ const VerifyGameComponent = ({ props }) => {
     const { currentCard, currentUserID, refreshToken, setRefreshToken } = props
     const [currentUser, setCurrentUser] = useState([])
     const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
+    const isCurrentUserOnTeamOne = Object.values(currentCard.team1).some((obj) => obj.toString() === currentUserID.toString())
+    const teamOneObject = {
+        team1: currentCard.team1,
+        score: currentCard.scores.team1
+    }
+    const teamTwoObject = {
+        team2: currentCard.team2,
+        score: currentCard.scores.team2
+    }
     const flexRow = {
         display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '5px'
     }
@@ -241,26 +250,32 @@ const VerifyGameComponent = ({ props }) => {
     } 
     */
 
-    const handleAccept = () => {
+    const handleAccept = async () => {
         console.log("Captain accepted the score\nUse the rating algorithm to update all player overall ratings\nupdate history\nremove game")
-        console.log(teamOneObject, teamTwoObject)
-        // If the user accepts the score,
+        console.log(teamOneObject, teamTwoObject, currentCard)
+        if (currentCard.teamOneApproval || currentCard.teamTwoApproval) {
+            console.log("One of the teams has already approved the score, so this should update player ratings, update history for each player, and remove game instance.")
+        } else {                
+            if (isCurrentUserOnTeamOne) {
+                await axios.put(`http://localhost:5001/api/approveScore?team=1&gameID=${currentCard.gameID}`);
+            } else {
+                console.log("Approving for team 2")
+                await axios.put(`http://localhost:5001/api/approveScore?team=2&gameID=${currentCard.gameID}`);
+            }
+        }
+        setRefreshToken(refreshToken + 1)
+        /**
+        If one of the teams has already approved the score, then when they click accept here, it should go through the process of
+        Updating all players ratings, updating the history for each player, removing the game instance
+
+        If neither team has approved the score, then all that should happen is set the teamOneApproved or teamTwoApproved column to TRUE
+         */
     }
 
     const handleDeny = () => {
         console.log("Player Denied")
     }
 
-    const isCurrentUserOnTeamOne = Object.values(currentCard.team1).some((obj) => obj.toString() === currentUserID.toString())
-    const teamOneObject = {
-        team1: currentCard.team1,
-        score: currentCard.scores.team1
-    }
-
-    const teamTwoObject = {
-        team2: currentCard.team2,
-        score: currentCard.scores.team2
-    }
 
     console.log(teamOneObject, teamTwoObject)
 

@@ -84,18 +84,39 @@ const MyGames = ({ props }) => {
             }
 
             if (type === 'verification') {
-                const searchID = currentUserID.toString()
-                const captainsArray = Object.values(currentCard.captains)
-                const isCurrentUserCaptain = captainsArray.some((obj) => obj.toString() === searchID.toString())
-                //const { currentCard, currentUser, refreshToken, setRefreshToken } = props
-
-                if (isCurrentUserCaptain) {
-                    return <VerifyGameComponent props={{currentCard, currentUserID, refreshToken, setRefreshToken}}/>
-                } else {
-                    return <PendingGameApproval />
-                }
+                return handleVerificationStage()
             }
         };
+
+        const handleVerificationStage = () => {
+            const searchID = currentUserID.toString()
+            const captainsArray = Object.values(currentCard.captains)
+            const isCurrentUserCaptain = captainsArray.some((obj) => obj.toString() === searchID.toString())
+            const isPendingApproval = checkIfUserIsPendingApproval(searchID)
+
+            if (isCurrentUserCaptain && isPendingApproval) {
+                return <VerifyGameComponent props={{currentCard, currentUserID, refreshToken, setRefreshToken}}/>
+            } else {
+                return <PendingGameApproval />
+            }
+        }
+
+        const checkIfUserIsPendingApproval = (userID) => {
+            const currentUserOnTeamOne = Object.values(currentCard.team1).some((obj) => obj.toString() === userID)
+            console.log("Current user is on team1? : ", currentUserOnTeamOne)
+
+            if (currentUserOnTeamOne) {
+                if (currentCard.teamOneApproval !== null) {
+                    return false
+                }
+                return true
+            } else {
+                if (currentCard.teamTwoApproval !== null) {
+                    return false
+                }
+                return true
+            }
+        }
 
         const convertedTime = convertToLocalTime(currentCard.dateOfGameInUTC, {
             timeZone: 'America/New_York',

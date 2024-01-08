@@ -281,6 +281,26 @@ app.put('/api/handleGameSubmission', (req, res) => {
     });
 });
 
+app.put('/api/approveScore', (req, res) => {
+    const teamNumber = req.query.team
+    const gameID = req.query.gameID
+    const column = parseInt(teamNumber) === 1 ? 'teamOneApproval' : 'teamTwoApproval'
+    const sql = `
+    UPDATE games
+    SET
+        ${column} = TRUE
+    WHERE gameID = ?
+    `
+
+    connection.query(sql, [gameID], (err, result) => {
+        if (err) {
+            res.status(500).send("Failed approving game score")
+        }
+        res.status(200).send("Success approving game score")
+    })
+
+})
+
 
 
 // DELETE
