@@ -251,25 +251,24 @@ const VerifyGameComponent = ({ props }) => {
     */
 
     const handleAccept = async () => {
-        console.log("Captain accepted the score\nUse the rating algorithm to update all player overall ratings\nupdate history\nremove game")
-        console.log(teamOneObject, teamTwoObject, currentCard)
+        //console.log(teamOneObject, teamTwoObject, currentCard)
+        /*
+        Steps:
+        1) update player ratings --> Involves getting the player ratings for each player on each team. And then getting the average which we can use for the algorithm
+        2) update history for each player
+        3) remove game instance
+        */
         if (currentCard.teamOneApproval || currentCard.teamTwoApproval) {
             console.log("One of the teams has already approved the score, so this should update player ratings, update history for each player, and remove game instance.")
+            console.log("Line 263 of VerifyGameComponent.jsx is where you need to work on next!")
         } else {                
             if (isCurrentUserOnTeamOne) {
                 await axios.put(`http://localhost:5001/api/approveScore?team=1&gameID=${currentCard.gameID}`);
             } else {
-                console.log("Approving for team 2")
                 await axios.put(`http://localhost:5001/api/approveScore?team=2&gameID=${currentCard.gameID}`);
             }
         }
         setRefreshToken(refreshToken + 1)
-        /**
-        If one of the teams has already approved the score, then when they click accept here, it should go through the process of
-        Updating all players ratings, updating the history for each player, removing the game instance
-
-        If neither team has approved the score, then all that should happen is set the teamOneApproved or teamTwoApproved column to TRUE
-         */
     }
 
     const handleDeny = () => {

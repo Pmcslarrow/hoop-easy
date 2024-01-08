@@ -103,7 +103,6 @@ const MyGames = ({ props }) => {
 
         const checkIfUserIsPendingApproval = (userID) => {
             const currentUserOnTeamOne = Object.values(currentCard.team1).some((obj) => obj.toString() === userID)
-            console.log("Current user is on team1? : ", currentUserOnTeamOne)
 
             if (currentUserOnTeamOne) {
                 if (currentCard.teamOneApproval !== null) {
@@ -174,29 +173,6 @@ const MyGames = ({ props }) => {
     }
 
 
- 
-
-    /*
-    const gamesAwaitingOpponentScoreVerification = []
-    const gamesAwaitingUserInput = []
-
-    confirmedGames.forEach((game) => {
-        if ( game?.score?.playerScore || game?.score?.opponentScore ) {
-            gamesAwaitingOpponentScoreVerification.push(game)
-        } else {
-            gamesAwaitingUserInput.push(game)
-        }
-    })
-    */
-
-    /*
-        Order of games appearing should be:
-            1) verified games --> Games that the opponent has submit a score for, and you the user need to verify the score on your end
-            2) gamesAwaitingUserInput --> Games that have been accepted but that either you or your opponent need to submit scores
-            3) gamesAwaitingOpponentScoreVerification --> Games that are awaiting opponent approval of the score
-            4) pendingGames --> Games that you created that have not been picked up by anyone yet
-    */
-
     return (
         <section id="my-games" style={gridStyle}>
             <h1 style={h1Style}>My Games</h1>
@@ -209,20 +185,6 @@ const MyGames = ({ props }) => {
                     <Card key={`confirmed-${i}`} currentCard={currentCard} type={currentCard.status}/>  
                 ))}
     
-            {/*
-                {verifiedGames.map((currentCard, i) => (
-                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed' isVerified={true}/>  
-                ))}
-                {gamesAwaitingUserInput.map((currentCard, i) => (
-                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
-                ))}
-                {gamesAwaitingOpponentScoreVerification.map((currentCard, i) => (
-                    <Card key={`confirmed-${i}`} currentCard={currentCard} type='confirmed'/>  
-                ))}
-                {pendingGames.map((currentCard, i) => (
-                    <Card key={`pending-${i}`} currentCard={currentCard} type='pending' />  
-                ))}
-            */}
             </ul>
 
             </div>
