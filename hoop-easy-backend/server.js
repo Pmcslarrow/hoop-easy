@@ -392,6 +392,21 @@ app.put('/api/updateTeamOverallRatings', (req, res) => {
     })
 })
 
+app.put('/api/updateDeniedGames', (req, res) => {
+    const players = req.body.params.values
+    const sql = `
+    UPDATE users
+	SET gamesDenied = gamesDenied + 1
+    WHERE id IN (?);
+    `
+    connection.query(sql, [players], (err, result) => {
+        if (err) {
+            return res.status(500).send("Failed to updateDeniedGames")
+        }
+        res.status(200).send("Success updating player denied games ratings")
+    })
+})
+
 // DELETE
 app.delete('/api/deleteGame', (req, res) => {
     try {

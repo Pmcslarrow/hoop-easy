@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../config/firebase';
 import { getDocs, collection, updateDoc, doc, deleteDoc, addDoc } from 'firebase/firestore'
 import { convertToMySQLDatetime } from '../../utils/toJSON';
-import axios from 'axios'
+import axios, { all } from 'axios'
 
 
 const VerifyGameComponent = ({ props }) => {
@@ -349,6 +349,12 @@ const VerifyGameComponent = ({ props }) => {
         setRefreshToken(refreshToken + 1)
     }
 
+    const handleDeny = async () => {
+        await updateDeniedGames()
+        await removeGameInstance(currentCard.gameID)
+        setRefreshToken(refreshToken + 1)
+    }
+
     const updateTeamOverallRatings = async (team, delta) => {
         await axios.put(`http://localhost:5001/api/updateTeamOverallRatings?overallChange=${delta}`, {
             params : {
@@ -378,8 +384,14 @@ const VerifyGameComponent = ({ props }) => {
         await axios.delete(`http://localhost:5001/api/deleteGame?gameID=${gameID}`)
     }
     
-    const handleDeny = () => {
-        console.log("Player Denied")
+
+    const updateDeniedGames = async () => {
+        const allPlayersInGame = Object.values(currentCard.teammates)
+        await axios.put(`http://localhost:5001/api/updateDeniedGames`, {
+            params: {
+                values: allPlayersInGame
+            }
+        })
     }
 
     const center = { position: 'relative', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', ...boldItalicStyle}
