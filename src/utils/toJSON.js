@@ -50,4 +50,9 @@ const createTeamJsonFromArray = (array) => {
     return json
 }
 
-export {createTeammateJsonFromArray, createCaptainJsonFromArray, createScoreJsonFromArray, createTeamJsonFromArray}
+const convertToMySQLDatetime = (isoDatetime) => {
+    const date = new Date(isoDatetime);
+    return date.toISOString().slice(0, 19).replace('T', ' ');
+};
+
+export {createTeammateJsonFromArray, createCaptainJsonFromArray, createScoreJsonFromArray, createTeamJsonFromArray, convertToMySQLDatetime}

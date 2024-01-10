@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS games (
     address VARCHAR(255),
     longitude VARCHAR(255),
     latitude VARCHAR(255),
-    dateOfGame DATETIME,
+    dateOfGameInUTC DATETIME,
     distance VARCHAR(255) NULL,
     gameType SMALLINT,
     playerCreatedID VARCHAR(255),
@@ -43,7 +43,26 @@ CREATE TABLE IF NOT EXISTS games (
     userTimeZone VARCHAR(255),
     status VARCHAR(255),
     teammates JSON,
+    captains JSON NULL,
+    scores JSON NULL,
+    team1 JSON NULL,
+    team2 JSON NULL,
+    teamOneApproval TINYINT(1),
+    teamTwoApproval TINYINT(1),
     FOREIGN KEY (userID) REFERENCES users(id)
+);
+
+
+DROP TABLE IF EXISTS game_history;
+CREATE TABLE game_history (
+    userID INT NOT NULL, 
+    rating VARCHAR(255) NOT NULL,
+    my_team_score INT NOT NULL,
+    opponent_team_score INT NOT NULL,
+    game_date DATETIME NOT NULL,
+    game_location VARCHAR(255) NOT NULL,
+    opponent_ids JSON NOT NULL, 
+    FOREIGN KEY (userID) REFERENCES users(id)  
 );
 
 DROP TABLE IF EXISTS confirmedGames;

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../config/firebase';
 import { getDocs, collection, updateDoc, doc, deleteDoc, addDoc } from 'firebase/firestore'
+import { convertToMySQLDatetime } from '../../utils/toJSON';
 import axios from 'axios'
 
 
@@ -310,23 +311,17 @@ const VerifyGameComponent = ({ props }) => {
     */
 
     const handleAccept = async () => {
-        //console.log(teamOneObject, teamTwoObject, currentCard)
-        /*
-        Steps:
-        1) update player ratings --> Involves getting the player ratings for each player on each team. And then getting the average which we can use for the algorithm
-        2) update history for each player
-        3) remove game instance
-        */
         if (currentCard.teamOneApproval || currentCard.teamTwoApproval) {
             const ratingChanges = await ratingAlgorithm(teamOneObject.team1, teamTwoObject.team2, teamOneObject.score, teamTwoObject.score)
             const { team_A_average_overall_delta, team_B_average_overall_delta } = ratingChanges
+            const convertedDT = convertToMySQLDatetime(currentCard.dateOfGameInUTC)
 
-            //await updateTeamOverallRatings(teamOneObject.team1, team_A_average_overall_delta)
-            //await updateTeamOverallRatings(teamTwoObject.team2, team_B_average_overall_delta)
+            await updateTeamOverallRatings(teamOneObject.team1, team_A_average_overall_delta)
+            await updateTeamOverallRatings(teamTwoObject.team2, team_B_average_overall_delta)
 
             await updateTeamHistory(
                 teamOneObject.team1,  // "Team A"
-                currentCard.dateOfGameInUTC,  // "2024-01-17T18:07:00.000Z"
+                convertedDT,  // "2024-01-17 18:07:00"
                 teamTwoObject.team2,  // "Team B"
                 currentCard.address,  // "2065 Myrtle Ave NE"
                 [teamOneObject.score, teamTwoObject.score],  // [21, 5]
@@ -335,14 +330,14 @@ const VerifyGameComponent = ({ props }) => {
 
             await updateTeamHistory(
                 teamTwoObject.team2,
-                currentCard.dateOfGameInUTC,
+                convertedDT,
                 teamOneObject.team1,
                 currentCard.address,
                 [teamTwoObject.score, teamOneObject.score],
                 team_B_average_overall_delta
             )
 
-            //await removeGameInstance(gameID)
+            await removeGameInstance(currentCard.gameID)
 
         } else {                
             if (isCurrentUserOnTeamOne) {
@@ -363,7 +358,9 @@ const VerifyGameComponent = ({ props }) => {
     }
 
     const updateTeamHistory = async (team, when, who, where, what, rating) => {
+        const currentTeam = Array(Object.values(team).join(','))
         const data = {
+            team: currentTeam,
             when,
             who,
             where,
@@ -376,11 +373,11 @@ const VerifyGameComponent = ({ props }) => {
             }
         })
     }
-    
-    const updateTeamTwoHistory = async (team, gameCard) => {
 
+    const removeGameInstance = async(gameID) => {
+        await axios.delete(`http://localhost:5001/api/deleteGame?gameID=${gameID}`)
     }
-
+    
     const handleDeny = () => {
         console.log("Player Denied")
     }
