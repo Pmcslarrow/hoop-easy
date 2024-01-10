@@ -103,6 +103,7 @@ app.get('/api/getProfiles', async (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) {
             res.status(500).send("Error getting profiles")
+            return
         }
         res.status(200).send(result)
     })
@@ -121,6 +122,7 @@ app.get('/api/myGames', async (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) {
             res.status(500).send("Error getting myGames")
+            return
         }
         res.status(200).send(result)
     })
@@ -172,6 +174,18 @@ app.get('/api/getCurrentUserID', async(req, res) => {
     } catch(err) {
         res.status(500).send("Error getting current user ID")
     }
+})
+
+app.get('/api/teamData', async(req, res) => {
+    const team = req.query.values;
+    const query = `SELECT * FROM users WHERE id IN (?)`;
+    connection.query(query, [team], (err, result) => {
+        if (err) {
+            res.status(500).send("Failed to get team data for verifying a game")
+            return
+        }
+        res.status(200).send(result)
+    })
 })
 
 // POST Route
@@ -231,6 +245,7 @@ app.put('/api/updateTeammates', (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) {
             res.status(500).send("Error updating teammates (query)")
+            return
         }
         res.status(200).send("Success updating teammates")
     })
@@ -244,6 +259,7 @@ app.put('/api/updateStatus', (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) {
             res.status(500).send("Error updating status")
+            return
         }
         res.status(200).send("Success updating status")
     })
@@ -295,13 +311,33 @@ app.put('/api/approveScore', (req, res) => {
     connection.query(sql, [gameID], (err, result) => {
         if (err) {
             res.status(500).send("Failed approving game score")
+            return
         }
         res.status(200).send("Success approving game score")
     })
-
 })
 
+app.put('/api/updateTeamOverallRatings', (req, res) => {
+    const ratingChange = parseFloat(req.query.overallChange).toFixed(2)
+    const team = req.body.params.values
+    const sql = `
+    UPDATE users
+    SET 
+        overall = CAST(overall AS DECIMAL(10, 2)) + ?,
+        gamesPlayed = gamesPlayed + 1,
+        gamesAccepted = gamesAccepted + 1
+    WHERE id IN (?);
+    `
 
+    connection.query(sql, [ratingChange, team], (err, result) => {
+        if (err) {
+            res.status(500).send("Failed to update team overall ratings")
+            return
+        }
+
+        res.status(200).send("Success updating team overall ratings")
+    })
+})
 
 // DELETE
 app.delete('/api/deleteGame', (req, res) => {
