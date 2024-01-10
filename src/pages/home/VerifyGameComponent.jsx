@@ -321,22 +321,28 @@ const VerifyGameComponent = ({ props }) => {
             const ratingChanges = await ratingAlgorithm(teamOneObject.team1, teamTwoObject.team2, teamOneObject.score, teamTwoObject.score)
             const { team_A_average_overall_delta, team_B_average_overall_delta } = ratingChanges
 
-            await axios.put(`http://localhost:5001/api/updateTeamOverallRatings?overallChange=${team_A_average_overall_delta}`, {
-                params : {
-                    values: Object.values(teamOneObject.team1).join(',')
-                }
-            })
+            //await updateTeamOverallRatings(teamOneObject.team1, team_A_average_overall_delta)
+            //await updateTeamOverallRatings(teamTwoObject.team2, team_B_average_overall_delta)
 
-            console.log("Your last implementation successfully updates the team player's overall ids!")
-            console.log("Your next implementation needs to update the history for each player")
-            console.log("Just create a little object to pass into both teams end points and update a new table called history")
-            console.log("Then remove the game and you are done with the major part")
+            await updateTeamHistory(
+                teamOneObject.team1,  // "Team A"
+                currentCard.dateOfGameInUTC,  // "2024-01-17T18:07:00.000Z"
+                teamTwoObject.team2,  // "Team B"
+                currentCard.address,  // "2065 Myrtle Ave NE"
+                [teamOneObject.score, teamTwoObject.score],  // [21, 5]
+                team_A_average_overall_delta  // -1.67
+            );            
 
-            await axios.put(`http://localhost:5001/api/updateTeamOverallRatings?overallChange=${team_B_average_overall_delta}`, {
-                params: {
-                    values: Object.values(teamTwoObject.team2).join(',')
-                }
-            });
+            await updateTeamHistory(
+                teamTwoObject.team2,
+                currentCard.dateOfGameInUTC,
+                teamOneObject.team1,
+                currentCard.address,
+                [teamTwoObject.score, teamOneObject.score],
+                team_B_average_overall_delta
+            )
+
+            //await removeGameInstance(gameID)
 
         } else {                
             if (isCurrentUserOnTeamOne) {
@@ -346,6 +352,33 @@ const VerifyGameComponent = ({ props }) => {
             }
         }
         setRefreshToken(refreshToken + 1)
+    }
+
+    const updateTeamOverallRatings = async (team, delta) => {
+        await axios.put(`http://localhost:5001/api/updateTeamOverallRatings?overallChange=${delta}`, {
+            params : {
+                values: Object.values(team).join(',')
+            }
+        })
+    }
+
+    const updateTeamHistory = async (team, when, who, where, what, rating) => {
+        const data = {
+            when,
+            who,
+            where,
+            what,
+            rating,
+        }
+        await axios.post('http://localhost:5001/api/createHistoryInstance', {
+            params: {
+                values: data
+            }
+        })
+    }
+    
+    const updateTeamTwoHistory = async (team, gameCard) => {
+
     }
 
     const handleDeny = () => {

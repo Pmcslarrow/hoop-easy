@@ -5,6 +5,7 @@ import missingImage from '../../assets/images/missingImage.jpg'
 import { FirebaseQuery } from '../../utils/FirebaseQuery'
 import { auth } from '../../config/firebase'
 import axios from 'axios'
+import { convertToLocalTimeWithOptions } from '../../utils/locationTimeFunctions';
 
 /* Components */
 import Teammates  from '../../components/ui/Teammates'
@@ -26,31 +27,6 @@ const MyGames = ({ props }) => {
         gridTemplateRows: 'repeat(30, 1fr)',
         gap: '10px',
     };
-
-    function convertToLocalTime(storedUtcDateTime, options = {}) {
-        try {
-            const userLocalDateTime = new Date(storedUtcDateTime);
-    
-            if (isNaN(userLocalDateTime)) {
-                throw new Error("Invalid date");
-            }
-    
-            const userTimeZone = options.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const dateFormat = options.dateFormat || { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const timeFormat = options.timeFormat || { hour: 'numeric', minute: 'numeric', second: 'numeric' };
-    
-            const userDateTimeString = userLocalDateTime.toLocaleString('en-US', {
-                timeZone: userTimeZone,
-                ...dateFormat,
-                ...timeFormat,
-            });
-    
-            return userDateTimeString;
-        } catch (error) {
-            console.error("Error converting to local time:", error.message);
-            return null;
-        }
-    }
     
 
     // Finds the verified games, confirmed games, and pending games from the passed in prop. (sorts in that order for rendering below)
@@ -117,7 +93,7 @@ const MyGames = ({ props }) => {
             }
         }
 
-        const convertedTime = convertToLocalTime(currentCard.dateOfGameInUTC, {
+        const convertedTime = convertToLocalTimeWithOptions(currentCard.dateOfGameInUTC, {
             timeZone: 'America/New_York',
             dateFormat: { year: 'numeric', month: 'numeric', day: 'numeric' },
             timeFormat: { hour: 'numeric', minute: 'numeric' },

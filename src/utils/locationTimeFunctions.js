@@ -24,4 +24,29 @@ function getDistanceFromLatLonInMiles(lat1, lon1, lat2, lon2) {
     return userDateTimeString
 }
 
-export { getDistanceFromLatLonInMiles, convertToLocalTime }
+function convertToLocalTimeWithOptions(storedUtcDateTime, options = {}) {
+    try {
+        const userLocalDateTime = new Date(storedUtcDateTime);
+
+        if (isNaN(userLocalDateTime)) {
+            throw new Error("Invalid date");
+        }
+
+        const userTimeZone = options.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const dateFormat = options.dateFormat || { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const timeFormat = options.timeFormat || { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+
+        const userDateTimeString = userLocalDateTime.toLocaleString('en-US', {
+            timeZone: userTimeZone,
+            ...dateFormat,
+            ...timeFormat,
+        });
+
+        return userDateTimeString;
+    } catch (error) {
+        console.error("Error converting to local time:", error.message);
+        return null;
+    }
+}
+
+export { getDistanceFromLatLonInMiles, convertToLocalTime, convertToLocalTimeWithOptions }

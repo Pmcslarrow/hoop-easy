@@ -237,6 +237,13 @@ app.post('/api/newGame', async (req, res) => {
     }
 });
 
+app.post('/api/createHistoryInstance', async (req, res) => {
+    const historyData = req.body.params.values
+    console.log("This is where you need to start working")
+    console.log(historyData)
+    res.status(200).send("Success")
+})
+
 // PUT 
 app.put('/api/updateTeammates', (req, res) => {
     const gameID = req.query.gameID
