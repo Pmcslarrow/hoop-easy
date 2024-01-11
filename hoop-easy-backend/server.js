@@ -402,31 +402,41 @@ app.put('/api/updateDeniedGames', (req, res) => {
 })
 
 app.put('/api/updateProfileData', (req, res) => {
-    const userID = req.body.params.userID
-    const fieldsToUpdate = req.body.params.values
-    const keys = Object.keys(fieldsToUpdate)
-    const values = Object.values(fieldsToUpdate)
+    const userID = req.body.params.userID;
+    const fieldsToUpdate = req.body.params.values;
+    const filteredFields = Object.entries(fieldsToUpdate).reduce((acc, [key, value]) => {
+        if (value !== '') {
+          acc[key] = value;
+        }
+        return acc;
+    }, {});
+
+    const keys = Object.keys(filteredFields);
+    const values = Object.values(filteredFields);
+
+    console.log(filteredFields)
+    console.log(keys)
+    console.log(values)
+    
     let setClause = keys.map((key) => `${key} = ?`).join(', ');
 
     const sql = `
         UPDATE users
         SET ${setClause}
-        WHERE id = ?
-    `;
-
-    console.log(userID)
-    console.log(fieldsToUpdate)
-    console.log(keys)
-    console.log(values)
-    console.log(setClause)
+        WHERE id = ?`;  
     
     connection.query(sql, [...values, userID], (err, result) => {
         if (err) {
-            res.status(500).send("Failed to update profile information")
+            console.error("Error executing SQL query:", err);
+            return res.status(500).send("Failed to update profile information");
         }
-        res.status(200).send("Success updating profile information")
-    })
-})
+        
+        res.status(200).send("Success updating profile information");
+    });
+});
+
+
+
 
 // DELETE
 app.delete('/api/deleteGame', (req, res) => {
