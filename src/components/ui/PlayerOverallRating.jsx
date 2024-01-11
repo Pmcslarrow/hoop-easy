@@ -56,7 +56,7 @@ const PlayerOverallRating = ({currentUserID, refreshToken}) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            fontSize: '1.2em',
+            fontSize: '1em',
             fontWeight: 'bold',
             color: 'white',
         };

@@ -158,7 +158,6 @@ const VerifyGameComponent = ({ props }) => {
         If player_x had an overall rating of 70 and was on team A --> their overall score is now 68.2 :)
         */
 
-        console.log("Should be changing by: ", team_A_average_overall_delta, team_B_average_overall_delta)
         return { team_A_average_overall_delta, team_B_average_overall_delta }
     } /* ratingAlgorithm() */
 
@@ -312,6 +311,7 @@ const VerifyGameComponent = ({ props }) => {
             const { team_A_average_overall_delta, team_B_average_overall_delta } = ratingChanges
             const convertedDT = convertToMySQLDatetime(currentCard.dateOfGameInUTC)
 
+
             await updateTeamOverallRatings(teamOneObject.team1, team_A_average_overall_delta)
             await updateTeamOverallRatings(teamTwoObject.team2, team_B_average_overall_delta)
 
@@ -334,7 +334,6 @@ const VerifyGameComponent = ({ props }) => {
             )
 
             await removeGameInstance(currentCard.gameID)
-
         } else {                
             if (isCurrentUserOnTeamOne) {
                 await axios.put(`http://localhost:5001/api/approveScore?team=1&gameID=${currentCard.gameID}`);

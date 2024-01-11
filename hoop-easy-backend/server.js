@@ -259,7 +259,7 @@ app.post('/api/createHistoryInstance', async (req, res) => {
     const game_date = historyData.when;
     const game_location = historyData.where;
     const opponent_ids = JSON.stringify(historyData.who); 
-
+    
     const sql = `
         INSERT INTO game_history (
             userID,
@@ -366,6 +366,7 @@ app.put('/api/approveScore', (req, res) => {
 app.put('/api/updateTeamOverallRatings', (req, res) => {
     const ratingChange = parseFloat(req.query.overallChange).toFixed(2)
     const team = req.body.params.values
+
     const sql = `
     UPDATE users
     SET 
