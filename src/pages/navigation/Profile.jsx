@@ -12,12 +12,13 @@ import {
 import { UserContext } from '../../App.js'; 
 import {Navbar} from '../../components/ui/Navbar.jsx'
 import missingPhoto from '../../assets/images/missingImage.jpg'
+import axios from 'axios'
 
 
 function Profile({ props }) {
     const navigate = useNavigate();
     
-    const { setAuthenticationStatus } = props
+    const { setAuthenticationStatus, currentUserID } = props
     const [errorStatus, setError] = useState(false);
     const [errorMessage, setMessage] = useState('');
     const [preview, setPreview] = useState("");
@@ -29,39 +30,27 @@ function Profile({ props }) {
     
 
     useEffect(() => {
-        const storageRef = ref(storage,`/files/${currentUser.id}/profilePic`);
-        getDownloadURL(storageRef)
-          .then((url) => {
-            setPreview(url);
-          })
-          .catch((error) => {
-            console.error("Error fetching image: ", error);
-          });
-    }, []);
-
-    useEffect(() => {
-
-        const updateProfileInformation = async () => {
-            getDoc(userProfileRef)
-                .then((profileSnapshot) => {
-                    if (profileSnapshot.exists()) {
-                    const profileInformation = profileSnapshot.data();
-                    setProfileInformation(profileInformation)
-                    } else {
-                    console.log('Document does not exist');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error getting document:', error);
-                });
+        console.log(currentUserID)
+        const getUserProfilePic = async () => {
+            const storageRef = ref(storage,`/files/${currentUserID}/profilePic`);
+            getDownloadURL(storageRef)
+            .then((url) => {
+                setPreview(url);
+            })
+            .catch((error) => {
+                setPreview(missingPhoto)
+                console.error("Error fetching image: ", error);
+            });
         }
 
-        updateProfileInformation()
-
-    }, [refreshData])
-
+        const getUserProfileInformation = async () => {
+            const response = await axios.get(`http://localhost:5001/api/getUserWithID?userID=${currentUserID}`)
+            setProfileInformation(response.data)
+        }
+        getUserProfilePic()
+        getUserProfileInformation()
+    }, [refreshData]);
        
-
     const [formData, setFormData] = useState({
         firstName: currentUser.firstName || '',
         middleInitial: currentUser.middleInitial || '',
@@ -82,9 +71,8 @@ function Profile({ props }) {
     };
 
     function handleImageUpload(event) {
-
         const file = event.target.files[0]
-        const storageRef = ref(storage,`/files/${currentUser.id}/profilePic`)
+        const storageRef = ref(storage,`/files/${currentUserID}/profilePic`)
         const uploadTask = uploadBytesResumable(storageRef, file);
         uploadTask.on(
             "state_changed",
@@ -111,10 +99,8 @@ function Profile({ props }) {
       }
     };
     
-  
     const updateUserProfile = async () => {
         try {
-          const currentDate = Timestamp.now();
           const { firstName, middleInitial, lastName, username, heightFt, heightInches, weight } = formData;
        
           const updatedFields = {};
@@ -125,12 +111,15 @@ function Profile({ props }) {
           if (heightFt !== currentUser.heightFt) updatedFields.heightFt = heightFt;
           if (heightInches !== currentUser.heightInches) updatedFields.heightInches = heightInches;
           if (weight !== currentUser.weight) updatedFields.weight = weight;
-
+          console.log(updatedFields)
+          
           if (Object.keys(updatedFields).length > 0) {
-            await updateDoc(userProfileRef, {
-              ...updatedFields,
-              date: currentDate
-            });
+            await axios.put("http://localhost:5001/api/updateProfileData", {
+                params: {
+                    values: updatedFields,
+                    userID: currentUserID
+                }
+            })
             setRefresh(refreshData + 1)
             alert("Success");
           }
@@ -138,8 +127,6 @@ function Profile({ props }) {
           console.error(error);
         }
     };
-
-
 
     const flexRow = { display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }
     const flexCol = {display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}
@@ -175,7 +162,7 @@ function Profile({ props }) {
 
             <div>
                 <h1 style={{fontFamily: 'var(--font-bold-italic)', fontSize: '4vw', margin: '0', marginTop: '50px'}}>{profileInformation.firstName} {profileInformation.lastName}</h1>
-                <h3 style={{fontFamily: 'var(--font-light-italic)', fontSize: '3vw', margin: '0'}}>{currentUser.heightFt}'{profileInformation.heightInches}" {profileInformation.weight}lbs</h3>
+                <h3 style={{fontFamily: 'var(--font-light-italic)', fontSize: '3vw', margin: '0'}}>{profileInformation.heightFt}'{profileInformation.heightInches}" {profileInformation.weight ? profileInformation.weight : "0"}lbs</h3>
             </div>
         </div>
 

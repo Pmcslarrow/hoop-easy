@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navbar } from "../../components/ui/Navbar";
 import { getDocs, collection } from 'firebase/firestore'
 import { auth, db } from '../../config/firebase';
+import axios from 'axios'
 
 import '../../assets/styling/homepage.css'
 
@@ -11,13 +12,10 @@ const Leaderboard = ({ currentUser }) => {
 
     useEffect(() => {
         const fetchGameHistory = async () => {
-            const usersCollectionPath = `users/`
-            const ref = collection(db, usersCollectionPath)
-            const userSnapshot = await getDocs(ref);
-            const users = userSnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-
+            const response = await axios.get("http://localhost:5001/api/users")
+            const users = response.data
             users.forEach((user) => {console.log(user)})
-
+            
             const data = users.map(obj => ({
                 username: obj.username,
                 overall: obj.overall,

@@ -21,6 +21,7 @@ function App() {
   const [isAuthenticated, setAuthenticationStatus] = useState(false);
   const [currentUser, setCurrentUser] = useState({})
   const [availableGames, setAvailableGames] = useState([]);
+  const [currentUserID, setCurrentUserID] = useState(null);
 
 
   useEffect(() => {
@@ -35,8 +36,8 @@ function App() {
             <Route path="/createAccount" element={<CreateAccount props={{ setAuthenticationStatus }} />} />
             <Route path="/login" element={<LoginPage props={{ setAuthenticationStatus }} />} />
             <Route path="/resetPassword" element={<ResetPassword />} />
-            <Route path="/homepage" element={isAuthenticated ? <Homepage props={{ setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames }} /> : <Navigate to="/" />} />
-            <Route path="/profile" element={isAuthenticated ? <Profile props={{ setAuthenticationStatus }} /> : <Navigate to="/" />} />
+            <Route path="/homepage" element={isAuthenticated ? <Homepage props={{ setAuthenticationStatus, currentUser, setCurrentUser, currentUserID, setCurrentUserID }} /> : <Navigate to="/" />} />
+            <Route path="/profile" element={isAuthenticated ? <Profile props={{ setAuthenticationStatus, currentUserID }} /> : <Navigate to="/" />} />
             <Route path='/rankings' element={isAuthenticated ? <PlayerRankings props={{ setAuthenticationStatus, currentUser }} /> : <Navigate to="/" />} />
             <Route path='/findGame' element={isAuthenticated ? <FindGamePage props={{ setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames }} /> : <Navigate to="/" />} />
         </Routes>

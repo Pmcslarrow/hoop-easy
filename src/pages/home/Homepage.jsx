@@ -21,8 +21,7 @@ bouncyArc.register()
 
 
 const Homepage = ({ props }) => {
-    const { setAuthenticationStatus } = props
-    const [currentUserID, setCurrentUserID] = useState(null);
+    const { setAuthenticationStatus, currentUserID, setCurrentUserID } = props
     const [isCreateGameActive, setCreateGameActive] = useState(false);
     const [refreshToken, setRefreshToken] = useState(0)
     const [isLoading, setLoading] = useState(true);
