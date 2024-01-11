@@ -370,7 +370,7 @@ app.put('/api/updateTeamOverallRatings', (req, res) => {
     const sql = `
     UPDATE users
     SET 
-        overall = CAST(overall AS DECIMAL(10, 2)) + ?,
+        overall = LEAST(GREATEST(CAST(overall AS DECIMAL(10, 2)) + ?, 60), 99),
         gamesPlayed = gamesPlayed + 1,
         gamesAccepted = gamesAccepted + 1
     WHERE id IN (?);

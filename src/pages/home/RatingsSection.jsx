@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getDocs, collection } from 'firebase/firestore'
 import setGridStyle from '../../utils/setGridStyle';
 import { Chart } from 'react-google-charts';
-
+import { convertToLocalTime } from '../../utils/locationTimeFunctions'
+import axios from 'axios'
 
 const RatingsSection = ({ currentUserID }) => {
     const [data, setData] = useState([])
@@ -31,6 +32,20 @@ const RatingsSection = ({ currentUserID }) => {
         }
         fetchGameHistory()
         */
+
+        const fetchGameHistory = async () => {            
+            const response = await axios.get(`http://localhost:5001/api/getHistory?userID=${currentUserID}`)
+            let data = response.data
+            const updatedData = data.map((obj) => {
+                obj.game_date = convertToLocalTime(obj.game_date);
+                return obj;
+            });
+            updatedData.sort((a, b) => new Date(b.game_date) - new Date(a.game_date));
+            const simplifiedData = updatedData.map(({ game_date, rating }) => ({ game_date, rating }));
+            setData(simplifiedData)
+        }   
+        fetchGameHistory()
+
      }, [])
      
     
@@ -66,7 +81,7 @@ const RatingsSection = ({ currentUserID }) => {
 const LineChart = ({ data }) => {
 
   const chartData = [['Date', 'Rating']].concat(
-    data.map(({ when, ratingAfter }) => [new Date(when), parseFloat(ratingAfter)])
+    data.map(({ game_date, rating }) => [new Date(game_date), parseFloat(rating)])
   );
 
   return (
