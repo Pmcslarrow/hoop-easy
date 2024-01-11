@@ -4,10 +4,11 @@ import setGridStyle from '../../utils/setGridStyle';
 import { Chart } from 'react-google-charts';
 
 
-const RatingsSection = ({ currentUser, currentUserID, db }) => {
+const RatingsSection = ({ currentUserID }) => {
     const [data, setData] = useState([])
 
     useEffect(() => {
+        /*
         const fetchGameHistory = async () => {
             const historyCollectionPath = `users/${currentUserID}/history/`
             const historyRef = collection(db, historyCollectionPath)
@@ -29,6 +30,7 @@ const RatingsSection = ({ currentUser, currentUserID, db }) => {
             setData(simplifiedData)
         }
         fetchGameHistory()
+        */
      }, [])
      
     

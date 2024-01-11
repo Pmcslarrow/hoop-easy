@@ -1,37 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { getDocs, collection } from 'firebase/firestore'
 import setGridStyle from '../../utils/setGridStyle';
+import axios from 'axios'
+import { convertToLocalTime } from '../../utils/locationTimeFunctions';
 
-const History = ( { currentUser, currentUserID, db}) => {
-    const [data, setData] = useState([])
-
-
-    function convertToLocalTime( storedUtcDateTime ) {
-        const userLocalDateTime = new Date(storedUtcDateTime);
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const userDateTimeString = userLocalDateTime.toLocaleString('en-US', { timeZone: userTimeZone });
-        return userDateTimeString
-    }
+const History = ( { currentUserID }) => {
+    const [gameHistory, setGameHistory] = useState([])
 
     useEffect(() => {
-        const fetchGameHistory = async () => {
-            const historyCollectionPath = `users/${currentUserID}/history/`
-            const historyRef = collection(db, historyCollectionPath)
-            const historySnapshot = await getDocs(historyRef);
-            const gameHistory = historySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-
-            const data = gameHistory.map(obj => ({
-                when: convertToLocalTime(obj.time),
-                who: obj.opponent,
-                where: obj.addressString,
-                what: `You: ${obj.yourScore} Opp: ${obj.opponentScore}`,
-                ratingDifference: (parseFloat(obj.ratingAfterGame) - parseFloat(obj.ratingBeforeGame)).toFixed(2)
-            }));
-
-            data.sort((a, b) => new Date(b.when) - new Date(a.when));
-
-            setData(data)
-        }
+        const fetchGameHistory = async () => {            
+            const response = await axios.get(`http://localhost:5001/api/getHistory?userID=${currentUserID}`)
+            let data = response.data
+            const updatedData = data.map((obj) => {
+                obj.game_date = convertToLocalTime(obj.game_date);
+                return obj;
+            });
+            updatedData.sort((a, b) => new Date(b.game_date) - new Date(a.game_date));
+            setGameHistory(updatedData)
+        }   
         fetchGameHistory()
      }, [])
      
@@ -68,25 +53,37 @@ const History = ( { currentUser, currentUserID, db}) => {
                 <thead style={tableHeaderStyle}>
                   <tr>
                     <th style={{ ...tableCellStyle, height: '50px' }}>When</th>
-                    <th style={ tableCellStyle } className='hide'>Who</th>
+                    {/*<th style={ tableCellStyle } className='hide'>Who</th>*/}
                     <th style={ tableCellStyle } className='hide'>Where</th>
                     <th style={ tableCellStyle }>What</th> 
                     <th style={ tableCellStyle } className='hide'>Rating</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((row, index) => ( 
+                  {gameHistory.map((row, index) => ( 
                     <tr key={index} style={{ border: '1px solid white' }}>
                         <td style={index === 0 ? { ...tableCellStyle, borderTop: '1px solid white' } : tableCellStyle}>
-                         {row.when}
+                         {row.game_date}
                         </td>
-                        <td style={{ ...tableCellStyle, height: '50px' }} className='hide'>{row.who}</td>
-                        <td style={tableCellStyle} className='hide'>{row.where}</td>
-                        <td style={tableCellStyle}>{row.what}</td>
-                        <td style={{...tableCellStyle, color: row.ratingDifference > 0.0 ? 'green' : 'red', fontSize: '20px'}} className='hide'>
-                            {row.ratingDifference > 0.0 ? `+${row.ratingDifference}` : `-${Math.abs(row.ratingDifference)}`}
+                        {/*<td style={{ ...tableCellStyle, height: '50px' }} className='hide'>{row.who}</td> */} 
+                        <td style={tableCellStyle} className='hide'>{row.game_location}</td>
+                        <td style={tableCellStyle}>{`YOU ${row.my_team_score} : ${row.opponent_team_score} OPP`}</td>
+                        <td style={{...tableCellStyle, color: parseFloat(row.rating) > 0.0 ? 'green' : 'red', fontSize: '20px'}} className='hide'>
+                            {row.rating > 0.0 ? `+${row.rating}` : `-${Math.abs(row.rating)}`}
                         </td>
                     </tr>
+/*
+  game_date: "1/11/2023, 1:07:00 AM"
+  game_location: "2065 Myrtle Ave NE"
+  my_team_score: 21
+  opponent_ids: {player0: '4'}
+  opponent_team_score: 5
+  pk_game_history: 4
+  rating: "-1.67"
+  userID: 2
+*/
+
+
                   ))}
                 </tbody>
               </table>

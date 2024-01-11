@@ -2,11 +2,8 @@ import { Navbar } from '../../components/ui/Navbar'
 import { useState, useEffect } from 'react'
 import { getDistanceFromLatLonInMiles, convertToLocalTime } from '../../utils/locationTimeFunctions';
 import getUserCoordinates from '../../utils/locationServices';
-import { db } from '../../config/firebase';
 import { v4 as uuidv4 } from 'uuid';
-import { getDocs, collection } from 'firebase/firestore'
 import { Card } from './Card'
-import { FirebaseQuery } from '../../utils/FirebaseQuery'
 import axios from 'axios';
 
 import '../../assets/styling/FindGamePage.css'
@@ -16,7 +13,6 @@ function FindGamePage({ props }) {
     const [ games, setGames ] = useState([])
     const [refreshToken, setRefreshToken] = useState(0)
     const [isLoading, setLoading] = useState(true);
-    const query = new FirebaseQuery(null, currentUser)
 
     useEffect(() => {
         const fetchAvailableGames = async () => {
@@ -43,14 +39,11 @@ function FindGamePage({ props }) {
                 return distance1 - distance2;
             });
             
-            console.log(sortedGames)
             sortedGames.forEach((game) => {
                 game.distance = getDistanceFromLatLonInMiles(userLat, userLon, game.latitude, game.longitude);
                 game.time = convertToLocalTime(game.dateOfGameInUTC);
             });
-            console.log(sortedGames)
-        
-    
+            
             return sortedGames;
         };
 
@@ -68,6 +61,16 @@ function FindGamePage({ props }) {
                 ></l-bouncy-arc>
             </div>
         ) 
+    }
+
+    if (games.length === 0) {
+        return (        
+        <section className="card-container">
+            <Navbar />
+            <div id='no-games'>No games to play. Create your own!</div>
+        </section>
+        )
+
     }
 
     return (

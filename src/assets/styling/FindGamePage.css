@@ -126,6 +126,12 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
     background-color: white
 }
 
+#no-games {
+    font-size: 2.2rem;
+    color: white;
+    font-family: var(--font-bold-italic);
+}
+
 @media screen and (max-width: 950px) {
     #card-container {
         grid-template-columns: repeat(2, 1fr); 

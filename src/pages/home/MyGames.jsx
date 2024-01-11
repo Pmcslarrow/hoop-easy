@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getDocs, addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import setGridStyle from '../../utils/setGridStyle';
 import missingImage from '../../assets/images/missingImage.jpg'
-import { FirebaseQuery } from '../../utils/FirebaseQuery'
 import { auth } from '../../config/firebase'
 import axios from 'axios'
 import { convertToLocalTimeWithOptions } from '../../utils/locationTimeFunctions';
@@ -13,7 +11,7 @@ import VerifyGameComponent from './VerifyGameComponent';
 import ScoreInputComponent from './ScoreInputComponent';
 
 const MyGames = ({ props }) => {
-    const { db, setRefreshToken, refreshToken } = props;
+    const { setRefreshToken, refreshToken } = props;
     const [confirmedGames, setMyGames] = useState([])
     const [currentUserID, setCurrentUserID] = useState([])
 
@@ -29,7 +27,6 @@ const MyGames = ({ props }) => {
     };
     
 
-    // Finds the verified games, confirmed games, and pending games from the passed in prop. (sorts in that order for rendering below)
     useEffect(() => {
         const getCurrentUserID = async () => {
             const currentUserEmail = auth?.currentUser?.email

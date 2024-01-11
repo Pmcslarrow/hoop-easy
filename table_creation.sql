@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS games (
 
 DROP TABLE IF EXISTS game_history;
 CREATE TABLE game_history (
+    pk_game_history INT AUTO_INCREMENT PRIMARY KEY,
     userID INT NOT NULL, 
     rating VARCHAR(255) NOT NULL,
     my_team_score INT NOT NULL,

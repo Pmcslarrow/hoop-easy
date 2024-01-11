@@ -1,8 +1,20 @@
 // PlayerOverallRating.jsx
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'
 
-const PlayerOverallRating = ({ overallRating }) => {
+const PlayerOverallRating = ({currentUserID, refreshToken}) => {
+    const [overallRating, setOverallRating] = useState(null)
+
+    useEffect(() => {
+        const getOverallRating = async () => {
+            const response = await axios.get(`http://localhost:5001/api/getUserWithID?userID=${currentUserID}`)
+            setOverallRating(response.data.overall)
+        }
+
+        getOverallRating()
+    }, [refreshToken])
+
     const card = {
         position: 'fixed',
         width: '60px',
@@ -17,13 +29,11 @@ const PlayerOverallRating = ({ overallRating }) => {
 
     const getBackgroundColor = () => {
         const rating = parseFloat(overallRating);
+
         const normalizedRating = (rating - 60) / (99 - 60);
        
         return `linear-gradient(to right, red ${100 - normalizedRating * 100}%, yellow ${100 - normalizedRating * 100}%, green ${100 - normalizedRating * 100}%)`;
     };
-       
-     
-     
 
     const Circle = () => {
         const outerCircleStyle = {

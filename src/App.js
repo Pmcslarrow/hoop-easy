@@ -20,7 +20,6 @@ export const UserIDContext = React.createContext()
 function App() {
   const [isAuthenticated, setAuthenticationStatus] = useState(false);
   const [currentUser, setCurrentUser] = useState({})
-  const [currentUserID, setCurrentUserID] = useState(null);
   const [availableGames, setAvailableGames] = useState([]);
 
 
