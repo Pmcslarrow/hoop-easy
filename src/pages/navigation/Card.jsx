@@ -5,6 +5,7 @@ import { useState, useEffect, useContext } from 'react'
 import { db, auth } from '../../config/firebase.js';
 import { UserContext } from '../../App.js'; 
 import missingImage from '../../assets/images/missingImage.jpg'
+import { convertToLocalTime } from '../../utils/locationTimeFunctions.js';
 import axios from 'axios'
 
 
@@ -134,6 +135,8 @@ const Card = ({ props }) => {
     if ( CURRENT_NUMBER_TEAMMATES <= 0 ) {
         return <div style={{display: 'none'}}></div>
     }
+    
+    const convertedDateTime = convertToLocalTime(game.dateOfGameInUTC)
 
     return (
         <div>
@@ -159,12 +162,10 @@ const Card = ({ props }) => {
             </div>
             <div id='subtext'>
                 <div id='subtext-left'>
-                    <h4>{game.username}</h4>
-                    <p>{game.addressString}</p>
-                    <p>{game.time}</p>
+                    <p>{game.address}</p>
+                    <p>{convertedDateTime}</p>
                 </div>
                 <div id='subtext-right'>
-                    <p>{game.overall} Overall</p>
                     <p>{game.distance.toFixed(2)} Miles</p>
                     <p>{game.gameType}v{game.gameType}</p>
                 </div>

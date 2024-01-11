@@ -72,18 +72,6 @@ const History = ( { currentUserID }) => {
                             {row.rating > 0.0 ? `+${row.rating}` : `-${Math.abs(row.rating)}`}
                         </td>
                     </tr>
-/*
-  game_date: "1/11/2023, 1:07:00 AM"
-  game_location: "2065 Myrtle Ave NE"
-  my_team_score: 21
-  opponent_ids: {player0: '4'}
-  opponent_team_score: 5
-  pk_game_history: 4
-  rating: "-1.67"
-  userID: 2
-*/
-
-
                   ))}
                 </tbody>
               </table>

@@ -9,7 +9,7 @@ const PlayerOverallRating = ({currentUserID, refreshToken}) => {
     useEffect(() => {
         const getOverallRating = async () => {
             const response = await axios.get(`http://localhost:5001/api/getUserWithID?userID=${currentUserID}`)
-            setOverallRating(response.data.overall)
+            setOverallRating(parseFloat(response.data.overall).toFixed(2))
         }
 
         getOverallRating()

@@ -45,7 +45,6 @@ const VerifyGameComponent = ({ props }) => {
      * An example exists below at the return statement
     */
     async function ratingAlgorithm( team_A, team_B, score_A, score_B ) {
-        console.log(team_A, team_B)
         const team_A_values = Object.values(team_A).join(',');
         const team_B_values = Object.values(team_B).join(',');
 
@@ -77,7 +76,7 @@ const VerifyGameComponent = ({ props }) => {
         const team_B_average_games_played = team_B_games_played.reduce((a, b) => a + b) / team_B_games_played.length;
         
 
-        let R_A, R_B, Q_A, Q_B, E_A, E_B, S_A, S_B, new_R_A, new_R_B, player_A, player_B
+        let R_A, R_B, Q_A, Q_B, E_A, E_B, S_A, S_B, new_R_A, new_R_B
         const c = 400
 
         R_A = team_A_average_overall
@@ -89,7 +88,7 @@ const VerifyGameComponent = ({ props }) => {
         E_A = Q_A/(Q_A + Q_B)
         E_B = 1 - E_A
 
-        if ( score_A > score_B ) {
+        if ( parseInt(score_A) > parseInt(score_B) ) {
             S_A = 1
             S_B = 0
         } else if ( score_B > score_A ) {
@@ -108,13 +107,10 @@ const VerifyGameComponent = ({ props }) => {
                     return k_scaler[threshold];
                 }
             }
-
             if ( games_played >= 100 ) {
                 return 0.3
             }
-
             return null
-    
         }
 
         function calculate_l_scale(games_played) {
@@ -324,7 +320,7 @@ const VerifyGameComponent = ({ props }) => {
                 convertedDT,  // "2024-01-17 18:07:00"
                 teamTwoObject.team2,  // "Team B"
                 currentCard.address,  // "2065 Myrtle Ave NE"
-                [teamOneObject.score, teamTwoObject.score],  // [21, 5]
+                [teamOneObject.score, teamTwoObject.score], // [21, 5] 
                 team_A_average_overall_delta  // -1.67
             );            
 
