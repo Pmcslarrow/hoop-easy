@@ -5,6 +5,7 @@ import getUserCoordinates from '../../utils/locationServices';
 import { v4 as uuidv4 } from 'uuid';
 import { Card } from './Card'
 import axios from 'axios';
+import FadeModalDialog from './FilterModal'
 
 import '../../assets/styling/FindGamePage.css'
 
@@ -70,12 +71,12 @@ function FindGamePage({ props }) {
             <div id='no-games'>No games to play. Create your own!</div>
         </section>
         )
-
     }
 
     return (
         <section className="card-container">
             <Navbar />
+            <FadeModalDialog />
             <div id='card-container'>
                 {games && games.map((game) => (
                     <Card 

@@ -33,6 +33,7 @@ font-family: 'Montserrat-Light';
 src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montserrat-Light.ttf');
 }
 
+/* Main card styling */
 #card-container {
     height: 90%;
     padding: 25px;
@@ -132,9 +133,41 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
     font-family: var(--font-bold-italic);
 }
 
+/* Filter model */
+
+#filter-button {
+    font-family: var(--font-family);
+    background-color: white;
+    color:black;
+    width: 100px;
+    height: 40px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    opacity: 1;
+    transition: opacity 200ms;
+}
+
+#filter-button:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+#modal {
+    width: 55%;
+    height: 80%;
+}
+
+/* Media Queries */
+
 @media screen and (max-width: 950px) {
     #card-container {
         grid-template-columns: repeat(2, 1fr); 
+    }
+    #modal {
+        width: 70%;
+        height: 80%;
     }
 }
 
@@ -145,5 +178,9 @@ src: url('/Users/pmcslarrow/Developer/hoop-easy/public/Montserrat/static/Montser
 
     #card-outer {
         height: 400px;
+    }
+    #modal {
+        width: 90%;
+        height: 80%;
     }
 }
