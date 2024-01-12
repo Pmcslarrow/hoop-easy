@@ -1,0 +1,25 @@
+.sidebar-link {
+    animation: fade-in 750ms forwards;
+}
+
+.sidebar-link:nth-child(2) {
+    animation-delay: 100ms;
+}
+
+.sidebar-link:nth-child(3) {
+    animation-delay: 200ms;
+}
+
+.sidebar-link:nth-child(4) {
+    animation-delay: 300ms;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+
+}

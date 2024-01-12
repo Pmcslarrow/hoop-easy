@@ -1,5 +1,6 @@
 import React from 'react';
 import setGridStyle from '../../utils/setGridStyle';
+import ModernButton from '../../components/ui/ModernButton';
 
 const Welcome = () => {
         
@@ -41,7 +42,6 @@ const Welcome = () => {
             <a style={{ ...linkStyle, ...findGamesStyle }} href="#find-game">Find a game</a>
             <a style={{ ...linkStyle, ...historyStyle }} href="#history">My history</a>
             <a style={{ ...linkStyle, ...ratingsStyle }} href="#ratings">My ratings</a>
-
         </div>
       </section>
     );

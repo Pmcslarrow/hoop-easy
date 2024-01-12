@@ -11,7 +11,7 @@ import VerifyGameComponent from './VerifyGameComponent';
 import ScoreInputComponent from './ScoreInputComponent';
 
 const MyGames = ({ props }) => {
-    const { setRefreshToken, refreshToken } = props;
+    const { setRefreshToken, refreshToken, setAnimateOverallRating } = props;
     const [confirmedGames, setMyGames] = useState([])
     const [currentUserID, setCurrentUserID] = useState([])
 
@@ -46,7 +46,7 @@ const MyGames = ({ props }) => {
     }, [])
 
 
-    const Card = ({ currentCard, type }) => {
+    const Card = ({ currentCard, type, setAnimateOverallRating }) => {
         const renderLowerCardSection = () => {
             if (type === 'pending') {
                 return <WaitingForGameAcceptance />
@@ -68,7 +68,7 @@ const MyGames = ({ props }) => {
             const isPendingApproval = checkIfUserIsPendingApproval(searchID)
 
             if (isCurrentUserCaptain && isPendingApproval) {
-                return <VerifyGameComponent props={{currentCard, currentUserID, refreshToken, setRefreshToken}}/>
+                return <VerifyGameComponent props={{currentCard, currentUserID, refreshToken, setRefreshToken, setAnimateOverallRating}}/>
             } else {
                 return <PendingGameApproval />
             }
@@ -155,7 +155,7 @@ const MyGames = ({ props }) => {
             <ul className="cards" >
 
                 {confirmedGames.map((currentCard, i) => (
-                    <Card key={`confirmed-${i}`} currentCard={currentCard} type={currentCard.status}/>  
+                    <Card key={`confirmed-${i}`} currentCard={currentCard} type={currentCard.status} setAnimateOverallRating={setAnimateOverallRating}/>  
                 ))}
     
             </ul>

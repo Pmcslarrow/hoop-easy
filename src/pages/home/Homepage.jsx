@@ -16,16 +16,18 @@ import axios from 'axios'
 
 /* Styling */
 import '../../assets/styling/homepage.css';
+import OverallRatingAnimation from '../../components/ui/OverallRatingAnimation';
 bouncyArc.register()
-
-
 
 const Homepage = ({ props }) => {
     const { setAuthenticationStatus, currentUserID, setCurrentUserID } = props
     const [isCreateGameActive, setCreateGameActive] = useState(false);
     const [refreshToken, setRefreshToken] = useState(0)
     const [isLoading, setLoading] = useState(true);
-
+    const [animateOverallRating, setAnimateOverallRating] = useState({
+        animate: false,        
+        previousOverall: ''
+    });
 
     useEffect(() => {
         const getCurrentUserID = async () => {
@@ -39,11 +41,9 @@ const Homepage = ({ props }) => {
             } finally {
                 setLoading(false); 
             }
-        };
-    
+        };    
         getCurrentUserID();
-    }, [refreshToken]);
-    
+    }, [refreshToken, animateOverallRating]);
 
     /* Show loading animation if loading */
     if (isLoading) {
@@ -56,6 +56,14 @@ const Homepage = ({ props }) => {
                 ></l-bouncy-arc>
             </div>
         ) 
+    }
+
+    if (animateOverallRating.animate) {
+        return <OverallRatingAnimation 
+            currentUserID={currentUserID}
+            animateOverallRating={animateOverallRating} 
+            setAnimateOverallRating={setAnimateOverallRating} 
+        />
     }
 
   return (
@@ -77,7 +85,7 @@ const Homepage = ({ props }) => {
 
         <Welcome />
         
-        <MyGames props={{setRefreshToken, refreshToken,}} />
+        <MyGames props={{setRefreshToken, refreshToken, setAnimateOverallRating}} />
 
         <History currentUserID={currentUserID} />
 

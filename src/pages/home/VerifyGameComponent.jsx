@@ -6,7 +6,7 @@ import axios, { all } from 'axios'
 
 
 const VerifyGameComponent = ({ props }) => {
-    const { currentCard, currentUserID, refreshToken, setRefreshToken } = props
+    const { currentCard, currentUserID, refreshToken, setRefreshToken, setAnimateOverallRating } = props
     const [currentUser, setCurrentUser] = useState([])
     const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
     const isCurrentUserOnTeamOne = Object.values(currentCard.team1).some((obj) => obj.toString() === currentUserID.toString())
@@ -311,7 +311,6 @@ const VerifyGameComponent = ({ props }) => {
             const { team_A_average_overall_delta, team_B_average_overall_delta } = ratingChanges
             const convertedDT = convertToMySQLDatetime(currentCard.dateOfGameInUTC)
 
-
             await updateTeamOverallRatings(teamOneObject.team1, team_A_average_overall_delta)
             await updateTeamOverallRatings(teamTwoObject.team2, team_B_average_overall_delta)
 
@@ -334,6 +333,11 @@ const VerifyGameComponent = ({ props }) => {
             )
 
             await removeGameInstance(currentCard.gameID)
+
+            setAnimateOverallRating({
+                animate: true,
+                previousOverall: currentUser.overall
+            })
         } else {                
             if (isCurrentUserOnTeamOne) {
                 await axios.put(`http://localhost:5001/api/approveScore?team=1&gameID=${currentCard.gameID}`);

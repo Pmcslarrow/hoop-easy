@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 
+import "../../assets/styling/navbar.css"
+
 
 const Navbar = (props) => {
     const navigate = useNavigate()
@@ -80,7 +82,7 @@ const Navbar = (props) => {
         </div>
       </header>
 
-      <AnimatePresence>
+      <AnimatePresence className='outer-nav'>
           {isSidebarOpen && (
             <motion.div
               className="sidebar"
