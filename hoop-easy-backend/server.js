@@ -201,6 +201,26 @@ app.get('/api/getHistory', (req, res) => {
     }
 })
 
+app.get('/api/averageOverall', async (req, res) => {
+    const arrayOfID = req.query.teammates
+
+    const sql = `
+    SELECT AVG(overall)
+    FROM users
+    WHERE id IN (?);
+    `
+
+    connection.query(sql, [arrayOfID], (err, result) => {
+        if (err) {
+            res.status(500).send("Failed to get the average")
+            return
+        }
+
+        res.status(200).send(result)
+    })
+})
+
+
 // POST Route
 app.post('/api/newUser', (req, res) => {
     try {
@@ -413,10 +433,6 @@ app.put('/api/updateProfileData', (req, res) => {
 
     const keys = Object.keys(filteredFields);
     const values = Object.values(filteredFields);
-
-    console.log(filteredFields)
-    console.log(keys)
-    console.log(values)
     
     let setClause = keys.map((key) => `${key} = ?`).join(', ');
 

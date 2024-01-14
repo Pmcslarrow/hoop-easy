@@ -14,6 +14,53 @@ function FindGamePage({ props }) {
     const [ games, setGames ] = useState([])
     const [refreshToken, setRefreshToken] = useState(0)
     const [isLoading, setLoading] = useState(true);
+    const [playerOverallValue, setPlayerOverallValue] = useState([60, 99]);
+    const [gameDistanceValue, setGameDistanceValue] = useState([0, 200]);
+    const [gameTypes, setGameTypes] = useState(['1', '2', '3', '4', '5'])
+
+    async function handleSubmit(e) {
+        const selectedGameTypes = document.getElementsByClassName('selected-values')
+        const gameTypes = []
+        for(let i = 0; i < selectedGameTypes.length; i++) {
+            gameTypes.push(selectedGameTypes[i].innerText[0])
+        }
+
+        setGameTypes(gameTypes)
+        setRefreshToken(refreshToken + 1)
+    }
+
+    async function filterGames(games) {
+        const minOverall = playerOverallValue[0]
+        const maxOverall = playerOverallValue[1]
+        const minDistance = gameDistanceValue[0]
+        const maxDistance = gameDistanceValue[1]
+
+        await Promise.all(games.map(async (game) => {
+            const response = await getAverageOverall(game);
+            game.averageOverall = response[0]['AVG(overall)']
+        }));
+
+        const filteredGames = games.filter((game) => {           
+            return (
+                game.averageOverall >= minOverall &&
+                game.averageOverall <= maxOverall &&
+                game.distance >= minDistance &&
+                game.distance <= maxDistance &&
+                gameTypes.includes(game.gameType.toString())
+            );
+        });
+        
+        return filteredGames
+    }
+
+    async function getAverageOverall(game) {
+        const response = await axios.get("http://localhost:5001/api/averageOverall", {
+            params : {
+                teammates: Object.values(game.teammates).join(',')
+            }
+        })
+        return response.data
+    }
 
     useEffect(() => {
         const fetchAvailableGames = async () => {
@@ -21,7 +68,7 @@ function FindGamePage({ props }) {
     
             try {
                 let games = await axios.get('http://localhost:5001/api/availableGames')
-                games = games.data
+                games = await filterGames(games.data)
                 const sortedGames = await sortGamesByLocationDistance(games);
                 setGames(sortedGames);
             } catch(err) {
@@ -68,6 +115,14 @@ function FindGamePage({ props }) {
         return (        
         <section className="card-container">
             <Navbar />
+            <FadeModalDialog 
+                playerOverallValue={playerOverallValue}
+                setPlayerOverallValue={setPlayerOverallValue}
+                gameDistanceValue={gameDistanceValue}
+                setGameDistanceValue={setGameDistanceValue}
+                gameTypes={gameTypes}
+                handleSubmit={handleSubmit} 
+            />
             <div id='no-games'>No games to play. Create your own!</div>
         </section>
         )
@@ -76,7 +131,14 @@ function FindGamePage({ props }) {
     return (
         <section className="card-container">
             <Navbar />
-            <FadeModalDialog />
+            <FadeModalDialog 
+                playerOverallValue={playerOverallValue}
+                setPlayerOverallValue={setPlayerOverallValue}
+                gameDistanceValue={gameDistanceValue}
+                setGameDistanceValue={setGameDistanceValue}
+                gameTypes={gameTypes}
+                handleSubmit={handleSubmit} 
+            />
             <div id='card-container'>
                 {games && games.map((game) => (
                     <Card 

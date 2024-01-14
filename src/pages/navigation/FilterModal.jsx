@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { Transition } from 'react-transition-group';
 import Button from '@mui/joy/Button';
 import Modal from '@mui/joy/Modal';
@@ -10,24 +10,10 @@ import Slider, { sliderClasses } from '@mui/joy/Slider';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import { Chip } from '@mui/joy';
+import axios from 'axios'
 
-
-export default function FadeModalDialog() {
+export default function FadeModalDialog({ playerOverallValue, setPlayerOverallValue, gameDistanceValue, setGameDistanceValue, gameTypes, handleSubmit }) {
     const [open, setOpen] = useState(false);
-    const [playerOverallValue, setPlayerOverallValue] = useState([60, 99]);
-    const [gameDistanceValue, setGameDistanceValue] = useState([0, 100]);
-
-    function handleSubmit(e) {
-        const selectedGameTypes = document.getElementsByClassName('selected-values')
-        const gameTypes = []
-        for(let i = 0; i < selectedGameTypes.length; i++) {
-            gameTypes.push(selectedGameTypes[i].innerText[0])
-        }
-
-        console.log('Selected game types: ', gameTypes)
-        console.log('Player Overall Value:', playerOverallValue);
-        console.log('Game Distance Value:', gameDistanceValue);
-    }
 
     return (
     <>
@@ -71,7 +57,7 @@ export default function FadeModalDialog() {
               <DialogTitle>Filter Games</DialogTitle>
               <DialogContent>
                 <div>
-                    <SelectMultipleAppearance />
+                    <SelectMultipleAppearance gameTypes={gameTypes}/>
                 </div>
                 <hr />
                 <div>
@@ -85,15 +71,15 @@ export default function FadeModalDialog() {
                 </div>
                 <hr />
                 <div>
-                    Game Distance
+                    Game Distance (Miles)
                     <RangeSlider
                         value={gameDistanceValue}
                         setValue={setGameDistanceValue}
                         minimum={0}
-                        maximum={100}
+                        maximum={200}
                     />                
                 </div>
-                <button onClick={handleSubmit}>Submit</button>
+                <button onClick={handleSubmit} id='filter-button'>Submit</button>
               </DialogContent>
             </ModalDialog>
           </Modal>
@@ -129,12 +115,12 @@ function RangeSlider({ value, setValue, minimum, maximum }) {
     );
 }
 
-function SelectMultipleAppearance() {
+function SelectMultipleAppearance({gameTypes}) {
     return (
       <Select
         id = 'select-multiple'
         multiple
-        defaultValue={['1', '2', '3', '4', '5']}
+        defaultValue={gameTypes}
         renderValue={(selected) => (
           <Box sx={{ display: 'flex', gap: '0.25rem' }}>
             {selected.map((selectedOption) => (
