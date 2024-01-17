@@ -33,14 +33,14 @@ section {
 }
 
 #welcome {
-        background: url("/Users/pmcslarrow/Developer/hoop-easy/public/welcome-back-background.png") no-repeat center center;
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/Users/pmcslarrow/Developer/hoop-easy/public/welcome-back-background.png") no-repeat center center;
         background-size: cover;
         display: flex;
 }
 
 #history {
-    background: url("/Users/pmcslarrow/Developer/hoop-easy/public/history-background.png") no-repeat center center;
-    background-size: cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), /* Black background with 85% opacity */
+    url("/Users/pmcslarrow/Developer/hoop-easy/public/backgrounds/background_history.png") no-repeat center center;    background-size: cover;
     display: flex;
 }
 
@@ -68,15 +68,17 @@ section {
 
         
 #my-games {
-    background: url("/Users/pmcslarrow/Developer/hoop-easy/public/history-background.png") no-repeat center center;
-    background-size: cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), /* Black background with 85% opacity */
+    url("/Users/pmcslarrow/Developer/hoop-easy/public/backgrounds/background_myGames.png") no-repeat center center;    background-size: cover;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
 }
  
 
 #ratings {
-    background-color: black;
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), /* Black background with 85% opacity */
+    url("/Users/pmcslarrow/Developer/hoop-easy/public/backgrounds/background_ratings.png") no-repeat center center;    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .flexbox-row {

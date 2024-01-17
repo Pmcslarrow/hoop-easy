@@ -54,8 +54,8 @@ body { height: 100vh; margin: 0; color: white;}
       justify-content: center;
       align-items: center;
 
-      background: linear-gradient(rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.60)), /* Black background with 85% opacity */
-        url("/Users/pmcslarrow/Developer/hoop-easy/public/login-background.png") no-repeat center center;
+      background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), /* Black background with 85% opacity */
+      url("/Users/pmcslarrow/Developer/hoop-easy/public/backgrounds/background_loginPage.png") no-repeat center center;
         background-size: cover;
 }
 
