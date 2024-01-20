@@ -1,0 +1,545 @@
+
+:root {
+--background-gradient-start: #FA642F;
+--background-dark-orange: #A22A1B;
+--font-bold-italic: 'Montserrat-BoldItalic';
+--font-bold: 'Montserrat-Bold';
+--font-light-italic: 'Montserrat-LightItalic';
+--font-family: 'Montserrat';
+}
+
+
+html, body {
+margin: 0;
+padding: 0;
+font-family: var(--font-family);
+overflow:auto;
+scroll-behavior: smooth;
+}
+
+.disable-scrolling {margin: 0; height: 100%; overflow: hidden}
+
+body {
+margin: 0;
+padding: 0;
+width: 100vw;
+height: 100vh;
+background-color: black;
+}
+
+section {
+        height: 100vh;
+        width: 100vw;
+}
+
+#welcome {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/welcome-back-background.png") no-repeat center center;
+        background-size: cover;
+        display: flex;
+}
+
+#history {
+    background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), /* Black background with 85% opacity */
+    url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/backgrounds/background_history.png") no-repeat center center;    background-size: cover;
+    display: flex;
+}
+
+#find-game {
+    background: url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/find_games_background.png") no-repeat center center;
+    background-size: cover;
+    display: flex;
+}
+
+#welcome-container, #history-container {
+        width: 80%;
+        height: 90%;
+        margin: auto auto; 
+}
+
+#welcome-container a {
+    transition: 100ms linear transform, 100ms linear box-shadow;
+    display: inline-block; 
+}
+
+#welcome-container a[href^="#"]:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 20px 10px rgba(238, 238, 238, 0.3); 
+}
+
+        
+#my-games {
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), /* Black background with 85% opacity */
+    url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/backgrounds/background_myGames.png") no-repeat center center;    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+}
+ 
+
+#ratings {
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), /* Black background with 85% opacity */
+    url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/backgrounds/background_ratings.png") no-repeat center center;    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.flexbox-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        gap: 50px;
+        margin-right: 35px;
+}
+
+#search-bar {
+        border: 1px solid white;
+        width: 200px;
+        height: 30px;
+        padding: 10px;
+        background-color: transparent;
+}
+
+
+::placeholder  { 
+        color: white;
+        font-size: 16px;
+        opacity: 0.8;
+}
+.placeholderStyle::placeholder {
+    color: rgba(0, 0, 0, 0.5); 
+    font-size: 14px;
+}
+
+
+#accept-button,
+#deny-button {
+    width: 100px; 
+    height: 50px; 
+    padding: 50px;
+    border-radius: 12px;
+    border: 1px solid gray;
+    transition: 100ms linear opacity;
+}
+
+#accept-button {
+    color: white;
+    background-color: rgb(0, 95, 0);
+}
+
+#deny-button {
+    color: white;
+    background-color: rgb(95, 0, 0);
+}
+
+#accept-button:hover,
+#deny-button:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+
+
+.cursor {
+    transition: 100ms linear opacity;
+ }
+    
+.cursor:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+
+
+.carousel {
+  position: relative;
+  width: 50%;
+  height: 75%;
+  perspective: 500px;
+  transform-style: preserve-3d;
+}
+
+.card-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: 
+    rotateY(calc(var(--offset) * 50deg)) 
+    scaleY(calc(1 + var(--abs-offset) * -0.4))
+    translateZ(calc(var(--abs-offset) * -28rem))
+    translateX(calc(var(--direction) * -5rem));
+  filter: blur(calc(var(--abs-offset) * 1rem));
+  transition: all 0.3s ease-out;
+}
+
+.carousel .card {
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  border: 1px solid white;
+  background-color: black;
+  border-radius: 1rem;
+  color: white;
+  text-align: center;
+  transition: all 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.nav {
+  color: white;
+  font-size: 5rem;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  z-index: 2;
+  cursor: pointer;
+  user-select: none;
+  background: unset;
+  border: unset;
+  
+  &.left {
+    transform: translateX(-100%) translatey(-50%);
+  }
+  
+  &.right {
+    right: 0;
+    transform: translateX(100%) translatey(-50%);
+  }
+}
+#new-game {
+    transition: 100ms linear opacity, 100ms linear transform;
+}
+
+#new-game:hover {
+    cursor: pointer;
+    opacity: 0.8; 
+    transform: scale(1.05); 
+}
+
+#my-games div, #my-games ul, #my-games li {
+    padding: 0;
+    margin: 0;
+}
+
+
+
+/* H Scroller */
+
+#my-games .cards {
+    display: flex;
+    overflow-x:scroll;
+ }
+
+ #my-games .cards {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 25px;
+    list-style-type: none;
+ }
+
+
+ #my-games .cards::-webkit-scrollbar {
+    width: 10px;
+}
+
+#my-games .cards::-webkit-scrollbar-thumb {
+    background-color: orangered;
+    border: 1px solid white;
+    border-radius: 10px;
+}
+ 
+ #my-games .card {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 33%;
+    justify-content: space-around;
+    height: 50vh;
+    scroll-snap-align: start;
+    padding: 20px;
+    position: relative;
+    background: linear-gradient(to right, #000000, #3b3a3a);
+    border-radius: 20px;
+ }
+
+
+
+ @keyframes waveAnimation {
+    0%, 100% {
+      transform: translateY(12px);
+    }
+    50% {
+      transform: translateY(5px);
+    } 
+  }
+  
+  .el {
+    width: 5px; /* Adjust the width as needed */
+    height: 5px; /* Adjust the height as needed */
+    background-color: white;
+    border-radius: 50%;
+    animation: waveAnimation 2s infinite ease-in-out;
+  }
+  
+  .el:nth-child(2) {
+    animation-delay: 0.1s; /* Adjust the delay for the second element */
+  }
+  
+  .el:nth-child(3) {
+    animation-delay: 0.4s; /* Adjust the delay for the third element */
+  }
+  
+
+  #submitScoreButton, .buttonStyle, #create-button {
+    background: linear-gradient(to right, var(--background-gradient-start), var(--background-dark-orange));
+    border: 1px solid white;
+    transition: 0.1s linear transform;
+    font-size: 1.5rem;
+    font-family: var(--font-bold-italic);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  #submitScoreButton:hover, .buttonStyle:hover, #create-button:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+ }
+ 
+.arrows {
+    transition: transform 0.25s ease-in-out;
+}
+
+#left-arrow:hover {
+    transform: translateX(-5px)
+}
+
+#right-arrow:hover {
+    transform: translateX(5px)
+}
+
+.opponentText {
+    font-size: 30px;
+    font-family: var(--font-bold-italic);
+}
+
+.addressText {
+    color: gray;
+    font-size: 14px;
+}
+
+#userScore, #opponentScore {
+    width: 35%;
+    height: 25px;
+    background: linear-gradient(to right, #000000, #3b3a3a);
+    border: 1px solid white;
+    color: white;
+    padding: 5px;
+}
+
+#userScore::placeholder, #opponentScore::placeholder {
+    color: #adadad;
+}
+
+.enterText {
+    font-family: var(--font-bold-italic);
+    font-size: 18px;
+    color: var(--background-gradient-start);
+}
+
+.profile-button {
+    transition: 100ms linear transform;
+}
+
+.profile-button:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+
+
+@keyframes ping {
+    0% {
+      transform: scale(0.5);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.5;
+    }
+    75%, 100% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+  }
+
+  .ping {
+    animation: ping 1.5s ease-in-out infinite;
+  }
+  
+
+  /* New game and Exit buttons */
+  .fade-in {
+    animation: fadeIn 1s linear forwards, 
+  }
+
+  .rotateIn {
+    animation: rotateIn 300ms linear forwards;
+  }
+  .fade-in:hover {
+    cursor: pointer;
+  }
+
+  .fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0s 0.35s, opacity 0.35s linear;
+ }
+ 
+   .fade-out.fade-out-active {
+    opacity: 0;
+   }
+
+   .display-none {
+    opacity: 1;
+    background: red;
+   }
+   
+  
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes rotateIn {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(90deg);
+    }
+  }
+  
+  .gridContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    }
+
+#createGameForm {
+    padding: '50px';
+    padding-top: '100px';
+    padding-bottom: '100px';
+    box-shadow: '0px 0px 20px 10px rgba(250, 70, 47, 0.625)';
+}
+
+.gridContainer div input, .gridContainer div select {
+    padding: 12px;
+    font-size: '16px';
+}
+  
+#create-button{
+    padding: 25px;
+    font-size: 40px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
+    border: 1px solid white;
+}
+
+#right-arrow {
+    position: relative;
+    left: 65px;
+    width: 50px;
+  }
+
+#left-arrow {
+    position: relative;
+    width: 50px;
+}
+
+#rank:hover {
+    cursor: pointer;
+}
+
+
+
+
+  @media screen and (max-width: 1000px) {
+
+    #search-bar, .hide {
+        display: none;
+    }
+
+    a {
+        min-width: 100px;
+    }
+
+    #createGameForm {
+        font-size: small;
+        min-width: 60%;
+        min-height: 75%;
+        padding: '100px';
+        padding-top: '10px';
+        padding-bottom: '10px';
+        box-shadow: '0px 0px 10px 5px rgba(250, 70, 47, 0.625)';
+    }
+
+    .gridContainer {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .gridContainer div input {
+        padding: 3px;
+        font-size: '12px';
+    }
+
+    #create-button {
+        padding: 10px;
+        font-size: 30px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
+        border: 1px solid white;
+    }
+     
+     #my-games .card {
+        font-size: 16px;
+        flex: 0 0 65%;
+        height: 50vh;
+        scroll-snap-align: start;
+        padding: 20px;
+        position: relative;
+     }
+
+     .carousel {
+        position: relative;
+        width: 50%;
+        height: 75%;
+        perspective: 500px;
+        transform-style: preserve-3d;
+      }
+
+     .carousel .card {
+        width: 225px;
+        height: 100%;
+        padding: 1.25rem;
+        font-size: 12px;
+      }
+
+      #right-arrow {
+        left: '150px'
+      }
+  }
