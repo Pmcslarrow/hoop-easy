@@ -2,7 +2,7 @@
 
 import React from 'react';
 import addButton from '../../assets/images/add.png';
-import exitButton from '../../assets/images/remove.png';
+import exitButton from '../../assets/images/icons/icon_exitButton.png';
 
 const CreateGameButton = ({ setCreateGameActive, isCreateGameActive }) => {
 

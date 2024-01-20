@@ -1,7 +1,7 @@
 import React from 'react';
 import hoopEasyLogo from '../../assets/images/hoop-easy.png';
-import profileImg from '../../assets/images/icons8-male-user-48.png'
-import navButtonImg from '../../assets/images/269dd16fa1f5ff51accd09e7e1602267.png';
+import profileImg from '../../assets/images/icons/icon_missingProfile.png'
+import navButtonImg from '../../assets/images/icons/icon_navigation.png';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
@@ -71,12 +71,12 @@ const Navbar = (props) => {
 
             { profilePic === true && 
                 <div className='profile-button'>
-                    <img src={profileImg} alt='Profile Icon' onClick={navigateProfile}/>
+                    <img src={profileImg} alt='Profile Icon' onClick={navigateProfile} style={{width: '40px', height: '40px'}}/>
                 </div>
             }
 
             <div className="logo">
-                <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
+                <img src={navButtonImg} style={{width: '40px', height: '40px'}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
             </div>
             
         </div>

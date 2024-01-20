@@ -238,8 +238,18 @@ section {
     scroll-snap-type: x mandatory;
     gap: 25px;
     list-style-type: none;
-
  }
+
+
+ #my-games .cards::-webkit-scrollbar {
+    width: 10px;
+}
+
+#my-games .cards::-webkit-scrollbar-thumb {
+    background-color: orangered;
+    border: 1px solid white;
+    border-radius: 10px;
+}
  
  #my-games .card {
     display: flex;
