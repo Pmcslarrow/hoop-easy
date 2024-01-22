@@ -24,7 +24,19 @@ function Profile({ props }) {
     const [preview, setPreview] = useState("");
     const [profileInformation, setProfileInformation] = useState({})
     const currentUser = useContext(UserContext);
-    const userProfileRef = doc(db, `users/${currentUser.id}`);  
+    const userProfileRef = doc(db, `users/${currentUser.id}`); 
+    const [flexOuter, setFlexOuter] = useState({})
+    const [flexInner, setFlexInner] = useState({})
+
+    const handleResize = () => {
+        if ( window.innerWidth < 950 ) {
+            setFlexOuter({display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'})
+            setFlexInner({ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' })
+        } else {
+            setFlexOuter({ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' })
+            setFlexInner({display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'})
+        }
+    } 
 
     const [refreshData, setRefresh] = useState(0)
     
@@ -49,6 +61,7 @@ function Profile({ props }) {
         }
         getUserProfilePic()
         getUserProfileInformation()
+        window.addEventListener("resize", handleResize, false);
     }, [refreshData]);
        
     const [formData, setFormData] = useState({
@@ -139,7 +152,7 @@ function Profile({ props }) {
     return (
     <>
     <Navbar searchBar={false} setAuthenticationStatus={setAuthenticationStatus} />
-    <div style={{...flexRow, height: '90vh'}}>
+    <div style={{...flexOuter, height: '90vh'}}>
 
         <div style={flexCol}>
             <div>

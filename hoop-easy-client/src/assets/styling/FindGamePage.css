@@ -170,8 +170,9 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
         height: 80%;
     }
 
-    #card-text {
+    #accept-text {
         opacity: 0;
+        color: aqua;
     }
 }
 

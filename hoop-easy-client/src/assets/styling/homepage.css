@@ -549,4 +549,8 @@ section {
       #right-arrow {
         left: '150px'
       }
+
+      .mobile-none {
+        display: none;
+      }
   }

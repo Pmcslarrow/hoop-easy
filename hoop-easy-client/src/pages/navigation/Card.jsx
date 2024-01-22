@@ -17,9 +17,23 @@ const Card = ({ props }) => {
     const [opacity, setOpacity] = useState(0)
     const [profilePic, setProfilePic] = useState([])
     const [currentUserID, setCurrentUserID] = useState([])
+    const [dimensions, setDimensions] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+
+    const handleResize = () => {
+        setDimensions({
+            width: window.innerWidth,
+            height: window.innerHeight,
+        });
+
+        if ( window.innerWidth < 950 ) {
+            setOpacity(1)
+        }
+    }
 
     useEffect(() => {
-        // Later on get the creator image if you want, or just design the card
         const getArrayOfTeammates = async () => {
             try {
                 const result = await axios.get('http://localhost:5001/api/getTeammates', { params: game });        
@@ -46,6 +60,7 @@ const Card = ({ props }) => {
                 
         getArrayOfTeammates()
         getCurrentUserID()
+        window.addEventListener("resize", handleResize, false);
     }, [refreshToken]);
     
 

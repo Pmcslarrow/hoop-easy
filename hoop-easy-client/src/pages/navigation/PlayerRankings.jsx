@@ -83,7 +83,7 @@ const Leaderboard = ({ currentUser }) => {
                         <th onClick={handleSort} id='rank'>Rank {sortOrder ? downArrow : upArrow }</th>
                         <th>Overall</th>
                         <th>Username</th>
-                        <th>Games Played</th>
+                        <th className='mobile-none'>Games Played</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,7 +95,7 @@ const Leaderboard = ({ currentUser }) => {
                                 </td>
                                 <td style={tableCellStyle}>{row.overall}</td>
                                 <td style={tableCellStyle}>{row.username}</td>
-                                <td style={tableCellStyle}>{row.gamesPlayed}</td>
+                                <td style={tableCellStyle} className='mobile-none'>{row.gamesPlayed}</td>
                             </tr>
                         ))
                         : data.map((row, index) => (
@@ -105,7 +105,7 @@ const Leaderboard = ({ currentUser }) => {
                                 </td>
                                 <td style={tableCellStyle}>{row.overall}</td>
                                 <td style={tableCellStyle}>{row.username}</td>
-                                <td style={tableCellStyle}>{row.gamesPlayed}</td>
+                                <td style={tableCellStyle} className='mobile-none'>{row.gamesPlayed}</td>
                             </tr>
                         ))}
                 </tbody>
