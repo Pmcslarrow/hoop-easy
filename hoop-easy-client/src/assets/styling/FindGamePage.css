@@ -169,6 +169,10 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
         width: 70%;
         height: 80%;
     }
+
+    #card-text {
+        opacity: 0;
+    }
 }
 
 @media screen and (max-width: 550px) {

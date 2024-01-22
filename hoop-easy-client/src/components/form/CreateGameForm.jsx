@@ -186,19 +186,7 @@ const CreateGameForm = ( props ) => {
 
 
         const styling = {
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            height: '60%',
-            width: '40%',
-            borderRadius: '30px',
-            backgroundColor: 'black',
-            border: '1px solid white',
-            transition: 'opacity 0.35s ease-in-out, transform 200s ease-in',
             opacity: isVisible ? 1 : 0,
-            zIndex: '999',
-            padding: '50px'
         } ;
         const inputBoxStyling = {
             border: '1px solid #ccc',
@@ -289,8 +277,7 @@ const CreateGameForm = ( props ) => {
                   required
                 />
               </div>
-            </div>
-            <div className='gridContainer'>
+              <div className='gridContainer'>
                 <div>
                     <label htmlFor="gameType">Game Type</label>
                     <select
@@ -313,6 +300,8 @@ const CreateGameForm = ( props ) => {
                     <button id='create-button'>Create</button>
                 </div>
             </div>
+            </div>
+
             </form>
     );
 };

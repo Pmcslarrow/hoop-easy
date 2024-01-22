@@ -433,10 +433,18 @@ section {
     }
 
 #createGameForm {
-    padding: '50px';
-    padding-top: '100px';
-    padding-bottom: '100px';
-    box-shadow: '0px 0px 20px 10px rgba(250, 70, 47, 0.625)';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 60%;
+    width: 40%;
+    border-radius: 30px;
+    background-color: black;
+    border: 1px solid white;
+    transition: opacity 0.35s ease-in-out, transform 200s ease-in;
+    z-index: 999;
+    padding: 50px;
 }
 
 .gridContainer div input, .gridContainer div select {
@@ -474,7 +482,7 @@ section {
 
 
 
-  @media screen and (max-width: 1000px) {
+  @media screen and (max-width: 600px) {
 
     #search-bar, .hide {
         display: none;
@@ -487,25 +495,24 @@ section {
     #createGameForm {
         font-size: small;
         min-width: 60%;
-        min-height: 75%;
-        padding: '100px';
-        padding-top: '10px';
-        padding-bottom: '10px';
+        min-height: max-content;
+        padding: 30px;
         box-shadow: '0px 0px 10px 5px rgba(250, 70, 47, 0.625)';
     }
 
     .gridContainer {
         grid-template-columns: repeat(1, 1fr);
+        gap: 0;
     }
 
     .gridContainer div input {
-        padding: 3px;
+        padding: 2px;
         font-size: '12px';
     }
 
     #create-button {
-        padding: 10px;
-        font-size: 30px;
+        padding: 5px;
+        font-size: 20px;
         text-align: center;
         display: flex;
         align-items: center;

@@ -66,16 +66,16 @@ body { height: 100vh; margin: 0; color: white;}
     background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
 
     border-radius: 20px;
-      height: 50%;
-      width: 40%;
+    height: 50%;
+    width: 40%;
 
-      display: flex;
-      flex-direction: column;
-      justify-content: space-evenly;
-      align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
 
-      min-width: 450px;
-      min-height: 350px;
+    min-width: 450px;
+    min-height: 350px;
   }
 
   .col span {
@@ -153,7 +153,7 @@ body { height: 100vh; margin: 0; color: white;}
 
     .col {
         min-width: 300px;
-        min-height: 250px;
+        min-height: 400px;
     }
 
   }
