@@ -10,27 +10,27 @@
 
 @font-face {
 font-family: 'Montserrat-BoldItalic';
-src: url('/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/Montserrat/static/Montserrat-BoldItalic.ttf');
+src: url('../../../public/Montserrat/static/Montserrat-BoldItalic.ttf');
 font-weight: bold;
 font-style: italic;
 }
 @font-face {
 font-family: 'Montserrat';
-src: url('/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/Montserrat/static/Montserrat-Regular.ttf');
+src: url('../../../public/Montserrat/static/Montserrat-Regular.ttf');
 font-weight: bold;
 font-style: italic;
 }
 @font-face {
 font-family: 'Montserrat-Bold';
-src: url('/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/Montserrat/static/Montserrat-Bold.ttf');
+src: url('../../../public/Montserrat/static/Montserrat-Bold.ttf');
 }
 @font-face {
 font-family: 'Montserrat-LightItalic';
-src: url('/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/Montserrat/static/Montserrat-LightItalic.ttf');
+src: url('../../../public/Montserrat/static/Montserrat-LightItalic.ttf');
 }
 @font-face {
 font-family: 'Montserrat-Light';
-src: url('/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/Montserrat/static/Montserrat-Light.ttf');
+src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
 }
 
 /* Main card styling */

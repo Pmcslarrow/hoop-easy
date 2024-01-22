@@ -33,19 +33,19 @@ section {
 }
 
 #welcome {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/welcome-back-background.png") no-repeat center center;
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../../public/welcome-back-background.png") no-repeat center center;
         background-size: cover;
         display: flex;
 }
 
 #history {
     background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), /* Black background with 85% opacity */
-    url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/backgrounds/background_history.png") no-repeat center center;    background-size: cover;
+    url("../../../public/backgrounds/background_history.png") no-repeat center center;    background-size: cover;
     display: flex;
 }
 
 #find-game {
-    background: url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/find_games_background.png") no-repeat center center;
+    background: url("../../../public/find_games_background.png") no-repeat center center;
     background-size: cover;
     display: flex;
 }
@@ -69,7 +69,7 @@ section {
         
 #my-games {
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), /* Black background with 85% opacity */
-    url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/backgrounds/background_myGames.png") no-repeat center center;    background-size: cover;
+    url("../../../public/backgrounds/background_myGames.png") no-repeat center center;    background-size: cover;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
 }
@@ -77,7 +77,7 @@ section {
 
 #ratings {
     background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), /* Black background with 85% opacity */
-    url("/Users/pmcslarrow/Developer/hoop-easy/hoop-easy-client/public/backgrounds/background_ratings.png") no-repeat center center;    background-size: cover;
+    url("../../../public/backgrounds/background_ratings.png") no-repeat center center;    background-size: cover;
     background-color: rgba(0, 0, 0, 0.5);
 }
 

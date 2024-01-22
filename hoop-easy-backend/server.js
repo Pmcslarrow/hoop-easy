@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+//const mysql = require('mysql');
 const mysql = require('mysql2');
 
 // Initialize Express App
@@ -12,20 +13,40 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Connecting to Database
-const connection = mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'Loly2012!',
-    database: 'hoop_easy_db'
-});
+const maxTries = 10;
+let tryCount = 0;
+let connection; 
 
-connection.connect((err) => {
-    if (err) {
-        console.error('Error connecting to database: ' + err.stack);
-        return;
-    }
-    console.log('Connected to database with id ' + connection.threadId);
-});
+async function attemptConnection() {
+    connection = mysql.createConnection({
+        host: 'hoop-easy-mysql-container-1',
+        user: 'root',
+        password: 'rootpass123',
+        database: 'hoop-easy-database'
+    });
+
+  function connectAndHandleError() {
+    connection.connect((err) => {
+      if (err) {
+        tryCount++;
+        console.error('Error connecting to MySQL:', err);
+        console.log(`Retrying (${tryCount}/${maxTries}) in 3 seconds...`);
+
+        if (tryCount < maxTries) {
+          setTimeout(attemptConnection, 3000);
+        } else {
+          console.error(`Failed to connect after ${maxTries} attempts`);
+        }
+      } else {
+        console.log('\n\n\n\n\n\nConnected to MySQL database\n\n\n\n\n\n');
+      }
+    });
+  }
+  connectAndHandleError();
+}
+
+attemptConnection();
+console.log("\n\n\n\n\n\\n\n\n", connection)
 
 // GET Routes
 app.get('/api/users', (req, res) => {
@@ -41,6 +62,7 @@ app.get('/api/users', (req, res) => {
 app.get('/api/games', (req, res) => {
     connection.query('SELECT * FROM games;', (err, result, fields) => {
         if (err) {
+            console.log(err)
             res.status(500).json({ message: 'Internal server error' });
             return;
         }
@@ -224,11 +246,12 @@ app.get('/api/averageOverall', async (req, res) => {
 // POST Route
 app.post('/api/newUser', (req, res) => {
     try {
+        console.log("Creating new user...")
         const user = req.body;
         const { username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall } = user;
         const sql = `INSERT INTO users (username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall, profilePic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-        connection.query(sql, [username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall, 'nullstring'], (err, result) => {
+        connection.query(sql, [username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt || null, heightInches || null, weight , overall, 'nullstring'], (err, result) => {
             if (err) {
                 console.error('Error inserting user:', err);
                 res.status(500).json({ message: 'Failed to create user' });
@@ -249,7 +272,6 @@ app.post('/api/newGame', async (req, res) => {
         const game = req.body;
         const { userID, address, latitude, longitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone } = game;
 
-        console.log("Inserting dateOfGame as: ", dateOfGame)
         const addNewGameToGamesTable = async () => {
             const sql = `INSERT INTO games (userID, address, longitude, latitude, dateOfGameInUTC, timeOfGame, gameType, playerCreatedID, userTimeZone, status, teammates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             const teammates = `{"teammate0" : "${userID}"}`

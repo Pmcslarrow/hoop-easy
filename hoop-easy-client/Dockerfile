@@ -1,0 +1,15 @@
+FROM node:18-alpine AS Production
+
+ENV NODE_ENV=production
+
+WORKDIR /app/src/hoop-easy-backend
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+CMD ["npm", "start"]

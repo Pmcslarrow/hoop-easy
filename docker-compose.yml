@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  cleanup-data:
+    image: busybox:latest
+    restart: unless-stopped
+    command: ["rm", "-rf", "/var/lib/mysql/*"]
+    volumes:
+      - ./mysql-db:/var/lib/mysql
+
+  mysql-container:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'hoop-easy-database'  
+      MYSQL_USER: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - 3306:3306
+    networks:
+      - shared-network
+    volumes:
+      - ./mysql-db:/var/lib/mysql
+    depends_on:
+      - cleanup-data
+
+
+  hoop-easy-backend:
+    container_name: hoop-easy-backend-c
+    restart: unless-stopped
+    build: 
+      context: ./hoop-easy-backend
+      target: production
+      dockerfile: Dockerfile
+    ports:
+      - 5001:5001
+    networks:
+      - shared-network
+    depends_on:
+      - mysql-container
+
+
+  hoop-easy-client:
+    container_name: hoop-easy-client-c
+    restart: unless-stopped
+    build: 
+      context: ./hoop-easy-client
+      target: production
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - shared-network
+    depends_on:
+      - hoop-easy-backend
+
+networks:
+  shared-network:
