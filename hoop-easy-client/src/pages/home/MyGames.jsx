@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import setGridStyle from '../../utils/setGridStyle';
-import missingImage from '../../assets/images/missingImage.jpg'
 import { auth } from '../../config/firebase'
 import axios from 'axios'
 import { convertToLocalTime } from '../../utils/locationTimeFunctions';

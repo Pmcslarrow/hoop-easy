@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { auth, db } from '../../config/firebase';
-import { getDocs, collection, updateDoc, doc, deleteDoc, addDoc } from 'firebase/firestore'
 import { localToUTC } from '../../utils/locationTimeFunctions';
-import axios, { all } from 'axios'
+import axios from 'axios'
 
 
 const VerifyGameComponent = ({ props }) => {

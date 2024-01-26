@@ -1,6 +1,5 @@
 import React from 'react';
 import setGridStyle from '../../utils/setGridStyle';
-import ModernButton from '../../components/ui/ModernButton';
 
 const Welcome = () => {
         

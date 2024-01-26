@@ -6,11 +6,10 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import Box from '@mui/joy/Box';
-import Slider, { sliderClasses } from '@mui/joy/Slider';
+import Slider from '@mui/joy/Slider';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import { Chip } from '@mui/joy';
-import axios from 'axios'
 
 export default function FadeModalDialog({ playerOverallValue, setPlayerOverallValue, gameDistanceValue, setGameDistanceValue, gameTypes, handleSubmit }) {
     const [open, setOpen] = useState(false);

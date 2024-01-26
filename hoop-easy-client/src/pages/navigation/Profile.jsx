@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, storage } from "../../config/firebase.js";
 import { handleError } from '../../utils/ErrorHandler.js';
 import { db } from '../../config/firebase.js';
-import { updateDoc, collection, Timestamp, doc, getDoc} from 'firebase/firestore';
+import { doc} from 'firebase/firestore';
 import {
     ref,
     uploadBytesResumable,

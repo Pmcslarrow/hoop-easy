@@ -1,9 +1,7 @@
 // PlayerOverallRating.jsx
 import React from 'react';
-import { FirebaseQuery } from '../../utils/FirebaseQuery.js'
-import { useState, useEffect, useContext } from 'react'
-import { db, auth } from '../../config/firebase.js';
-import { UserContext } from '../../App.js'; 
+import { useState, useEffect } from 'react'
+import { auth } from '../../config/firebase.js';
 import missingImage from '../../assets/images/missingImage.jpg'
 import { convertToLocalTime } from '../../utils/locationTimeFunctions.js';
 import axios from 'axios'

@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useCallback} from 'react';
-import { auth, db } from '../../config/firebase';
-import { getDocs, collection, updateDoc, doc, deleteDoc, addDoc } from 'firebase/firestore'
-import missingImage from '../../assets/images/missingImage.jpg'
-import exitButton from '../../assets/images/remove.png'
+import { db } from '../../config/firebase';
 import ScoreDrawer from '../../components/form/Drawer'
-import Teammates from '../../components/ui/Teammates';
 import axios from 'axios'
 
 import '../../assets/styling/ScoreInput.css'

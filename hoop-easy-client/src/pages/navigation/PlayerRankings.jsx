@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from "../../components/ui/Navbar";
-import { getDocs, collection } from 'firebase/firestore'
-import { auth, db } from '../../config/firebase';
 import axios from 'axios'
 
 import '../../assets/styling/homepage.css'
