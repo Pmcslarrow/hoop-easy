@@ -3,7 +3,7 @@ import setGridStyle from '../../utils/setGridStyle';
 import missingImage from '../../assets/images/missingImage.jpg'
 import { auth } from '../../config/firebase'
 import axios from 'axios'
-import { convertToLocalTimeWithOptions } from '../../utils/locationTimeFunctions';
+import { convertToLocalTime } from '../../utils/locationTimeFunctions';
 
 /* Components */
 import Teammates  from '../../components/ui/Teammates'
@@ -90,11 +90,7 @@ const MyGames = ({ props }) => {
             }
         }
 
-        const convertedTime = convertToLocalTimeWithOptions(currentCard.dateOfGameInUTC, {
-            timeZone: 'America/New_York',
-            dateFormat: { year: 'numeric', month: 'numeric', day: 'numeric' },
-            timeFormat: { hour: 'numeric', minute: 'numeric' },
-        });
+        const convertedTime = convertToLocalTime(currentCard.dateOfGameInUTC)
         
         const [dateOfGame, timeOfGame] = convertedTime.split(',');
         const trimmedDateOfGame = dateOfGame.trim();
@@ -144,7 +140,6 @@ const MyGames = ({ props }) => {
             </div>
         )        
     }
-
 
     return (
         <section id="my-games" style={gridStyle}>

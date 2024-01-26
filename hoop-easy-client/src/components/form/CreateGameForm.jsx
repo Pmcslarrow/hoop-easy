@@ -85,17 +85,18 @@ const CreateGameForm = ( props ) => {
                 });
          }
 
-         function formatToLocalDatetimeString(localDateTimeString) {
+
+         function localToUTC( localDateTimeString ) {
             const dateObj = new Date(localDateTimeString);
-        
-            const year = dateObj.getFullYear();
-            const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
-            const day = String(dateObj.getDate()).padStart(2, '0');
-            const hours = String(dateObj.getHours()).padStart(2, '0');
-            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-            const seconds = String(dateObj.getSeconds()).padStart(2, '0');
-        
-            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            const year = dateObj.getUTCFullYear();
+            const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+            const day = dateObj.getUTCDate().toString().padStart(2, '0');
+            const hours = dateObj.getUTCHours().toString().padStart(2, '0');
+            const minutes = dateObj.getUTCMinutes().toString().padStart(2, '0');
+            const seconds = dateObj.getUTCSeconds().toString().padStart(2, '0');
+            const formattedUtcDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            
+            return formattedUtcDate
         }
                 
          const createNewGameInstance = async (longitude, latitude, loggedInUser) => {
@@ -104,11 +105,11 @@ const CreateGameForm = ( props ) => {
             const time = formData.timeOfGame;
             const gameType = formData.gameType;
             const playerID = loggedInUser.data.id;
-            const userDateTime = new Date(`${date}T${time}`);
-            const dateOfGame = formatToLocalDatetimeString(userDateTime)
+            const userDateTime = new Date(`${date} ${time}`);
+            const dateOfGame = localToUTC(userDateTime)
             const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const teammates = { playerID };
-
+            
             if (userDateTime < new Date()) {
                 console.log("Cannot add game in the past");
                 return;
@@ -129,61 +130,6 @@ const CreateGameForm = ( props ) => {
             axios.post('http://localhost:5001/api/newGame', data)
         };
         
-
-
-        
-         
-        /*
-        const addGameToPlayersConfirmedGames = async ( longitude, latitude, gamesCollectionRef, pendingGamesCollectionRef, currentPlayerDocumentID, currentPlayerOverall ) => {
-
-            const coordinates = new GeoPoint(Number(latitude), Number(longitude));
-            const addressString = formData.streetAddress;
-            const date = formData.dateOfGame;
-            const time = formData.timeOfGame;
-            const gameType = formData.gameType;
-            const playerID = currentPlayerDocumentID
-            const userDateTime = new Date(`${date}T${time}`);
-            const utcDateTime = userDateTime.toUTCString();     
-            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-            if (userDateTime < new Date()) {
-                console.log("Cannot add game in the past");
-                return;
-            }
-        
-            const addTeammatesToGame = async (gameCollectionRef, playerID) => {
-                try {
-                    await addDoc(gameCollectionRef, {
-                        coordinates, 
-                        addressString, 
-                        dateOfGame: utcDateTime, 
-                        userTimeZone, 
-                        gameType,
-                        playerID,
-                        overall: currentPlayerOverall,
-                        time: time,
-                        maxSpotsAvailable: gameType,
-                        numSpotsTaken: 1,
-                        teammates: [ playerID ]
-                    });
-            
-                    // const teammatesCollectionRef = collection(mainDocRef, 'teammates');
-                    //await addDoc(teammatesCollectionRef, { username: playerID });
-                } catch (error) {
-                    console.error("Error adding document: ", error);
-                }
-            };
-
-            try {
-                await addTeammatesToGame(gamesCollectionRef, playerID);
-                await addTeammatesToGame(pendingGamesCollectionRef, playerID);
-                setRefreshToken(refreshToken + 1);    
-            } catch (error) {
-                console.error("Error adding document: ", error);
-            }
-        }
-        */
-
 
         const styling = {
             opacity: isVisible ? 1 : 0,

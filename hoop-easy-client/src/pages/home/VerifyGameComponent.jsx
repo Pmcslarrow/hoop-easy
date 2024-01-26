@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../config/firebase';
 import { getDocs, collection, updateDoc, doc, deleteDoc, addDoc } from 'firebase/firestore'
-import { convertToMySQLDatetime } from '../../utils/toJSON';
+import { localToUTC } from '../../utils/locationTimeFunctions';
 import axios, { all } from 'axios'
 
 
@@ -161,155 +161,12 @@ const VerifyGameComponent = ({ props }) => {
         return { team_A_average_overall_delta, team_B_average_overall_delta }
     } /* ratingAlgorithm() */
 
-    /*
-    const handleAccept = async () => {
-        let opponentCard = currentCard
-        const opponentDocRef = doc(db, `users/${opponentCard.playerID}`);
-        const currentUserDocRef = doc(db, `users/${currentUser.id}`);
-        const opponentHistoryRef = collection(db, `users/${opponentCard.playerID}/history`);
-        const currentUserHistoryRef = collection(db, `users/${currentUser.id}/history`);
-        const opponentConfirmedGamesRef = collection(db, `users/${opponentCard.opponentID}/confirmedGames`)
-        const currentUserConfirmedGamesRef = collection(db,  `users/${currentUser.id}/confirmedGames`)
-
-        let opponentScore = parseInt(opponentCard?.score?.opponentScore)
-        let currentUserScore = parseInt(opponentCard?.score?.playerScore)
-
-        let newOverallRatings = ratingAlgorithm(currentUser, opponentCard, currentUserScore, opponentScore)
-        let currentUserNewOverallRating = Math.max(60, Math.min(99, newOverallRatings.new_R_A));
-        let opponentNewOverallRating = Math.max(60, Math.min(99, newOverallRatings.new_R_B));
-
-
-        const {
-            addressString,
-            coordinates,
-            dateOfGame,
-            time,
-            opponentID,
-        } = opponentCard;
-
-        const dataForOpponentCollection = {
-            //...restOpponentCard,
-            gamesAccepted: String(parseInt(opponentCard.gamesAccepted) + 1),
-            gamesPlayed: String(parseInt(opponentCard.gamesPlayed) + 1),
-            overall: String(opponentNewOverallRating) 
-        };
-        const dataForCurrentUserCollection = {
-            //...currentUser,
-            gamesAccepted: String(parseInt(currentUser.gamesAccepted) + 1),
-            gamesPlayed: String(parseInt(currentUser.gamesPlayed) + 1),
-            overall: String(currentUserNewOverallRating) 
-        };
-        const dataForOpponentHistoryCollection = {
-            addressString,
-            coordinates,
-            dateOfGame,
-            time,
-            yourScore: opponentCard.score.opponentScore,
-            opponentScore: opponentCard.score.playerScore,
-            ratingBeforeGame: opponentCard.overall,
-            ratingAfterGame: opponentNewOverallRating,
-            opponent: currentUser.username
-        }
-        const dataForCurrentPlayerHistoryCollection = {
-            addressString,
-            coordinates,
-            dateOfGame,
-            time,
-            yourScore: opponentCard.score.playerScore,
-            opponentScore: opponentCard.score.opponentScore,
-            ratingBeforeGame: currentUser.overall,
-            ratingAfterGame: currentUserNewOverallRating,
-            opponent: opponentCard.username
-        }
-
-        // Update user data
-        const updatingUserData = async () => {
-            try {
-                await updateDoc(opponentDocRef, dataForOpponentCollection);
-                await updateDoc(currentUserDocRef, dataForCurrentUserCollection);
-                console.log("Data updated successfully");
-            } catch (error) {
-                console.error("Error updating user data:", error);
-            }
-        };
-        
     
-        // Add entry into history collection
-        const addingHistory = async () => {
-            try {
-                await addDoc(opponentHistoryRef, dataForOpponentHistoryCollection);
-                await addDoc(currentUserHistoryRef, dataForCurrentPlayerHistoryCollection);
-        
-                console.log("History added successfully");
-            } catch (error) {
-                console.error("Error adding history:", error);
-            }
-        };
-        
-        Promise.all([
-            updatingUserData(), 
-            addingHistory(), 
-            deletingConfirmedGames(opponentCard, currentUserConfirmedGamesRef, opponentConfirmedGamesRef, coordinates, dateOfGame, time, opponentID)])
-        .then(() => {
-            setRefreshToken(refreshToken + 1);
-        })
-        .catch((error) => {
-            console.error("Error in one or more async functions:", error);
-        });   
-
-    } 
-
-    const handleDeny = async () => {
-        let opponentCard = currentCard
-        const opponentDocRef = doc(db, `users/${opponentCard.playerID}`);
-        const currentUserDocRef = doc(db, `users/${currentUser.id}`);
-        const opponentConfirmedGamesRef = collection(db, `users/${opponentCard.opponentID}/confirmedGames`)
-        const currentUserConfirmedGamesRef = collection(db,  `users/${currentUser.id}/confirmedGames`)
-
-        const dataForOpponentCollection = {
-            gamesDenied : String(parseInt(opponentCard.gamesDenied) + 1)
-        }
-        
-        const dataForCurrentUserCollection = {
-            gamesDenied : String(parseInt(currentCard.gamesDenied) + 1)
-        }
-
-        const {
-            coordinates,
-            dateOfGame,
-            time,
-            opponentID,
-        } = opponentCard;
-
-
-        const updatingUserData = async () => {
-            try {
-                await updateDoc(opponentDocRef, dataForOpponentCollection);
-                await updateDoc(currentUserDocRef, dataForCurrentUserCollection);
-                console.log("Data updated successfully");
-            } catch (error) {
-                console.error("Error updating user data:", error);
-            }
-        };
-
-        Promise.all([
-            updatingUserData(), 
-            deletingConfirmedGames(opponentCard, currentUserConfirmedGamesRef, opponentConfirmedGamesRef, coordinates, dateOfGame, time, opponentID)
-        ])
-        .then(() => {
-            setRefreshToken(refreshToken + 1);
-        })
-        .catch((error) => {
-            console.error("Error in one or more async functions:", error);
-        }); 
-    } 
-    */
-
     const handleAccept = async () => {
         if (currentCard.teamOneApproval || currentCard.teamTwoApproval) {
             const ratingChanges = await ratingAlgorithm(teamOneObject.team1, teamTwoObject.team2, teamOneObject.score, teamTwoObject.score)
             const { team_A_average_overall_delta, team_B_average_overall_delta } = ratingChanges
-            const convertedDT = convertToMySQLDatetime(currentCard.dateOfGameInUTC)
+            const convertedDT = localToUTC(currentCard.dateOfGameInUTC)
 
             await updateTeamOverallRatings(teamOneObject.team1, team_A_average_overall_delta)
             await updateTeamOverallRatings(teamTwoObject.team2, team_B_average_overall_delta)

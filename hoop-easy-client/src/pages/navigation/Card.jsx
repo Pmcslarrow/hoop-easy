@@ -151,6 +151,8 @@ const Card = ({ props }) => {
         return <div style={{display: 'none'}}></div>
     }
     
+    // Expecting 2024-01-28 01:40:00 which is 5:40pm in my time
+    console.log("Converting to local time: ", game.dateOfGameInUTC)
     const convertedDateTime = convertToLocalTime(game.dateOfGameInUTC)
 
     return (
