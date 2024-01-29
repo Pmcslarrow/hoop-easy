@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, GeoPoint, addDoc, getDocs } from 'firebase/firestore';
+import {localToUTC} from '../../utils/locationTimeFunctions'
 import axios from 'axios';
 
 const CreateGameForm = ( props ) => {
@@ -84,20 +85,6 @@ const CreateGameForm = ( props ) => {
                     throw error; 
                 });
          }
-
-
-         function localToUTC( localDateTimeString ) {
-            const dateObj = new Date(localDateTimeString);
-            const year = dateObj.getUTCFullYear();
-            const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
-            const day = dateObj.getUTCDate().toString().padStart(2, '0');
-            const hours = dateObj.getUTCHours().toString().padStart(2, '0');
-            const minutes = dateObj.getUTCMinutes().toString().padStart(2, '0');
-            const seconds = dateObj.getUTCSeconds().toString().padStart(2, '0');
-            const formattedUtcDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-            
-            return formattedUtcDate
-        }
                 
          const createNewGameInstance = async (longitude, latitude, loggedInUser) => {
             const addressString = formData.streetAddress;

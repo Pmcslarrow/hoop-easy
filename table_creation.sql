@@ -1,4 +1,4 @@
-USE `hoop-easy-database`;
+USE `railway`;
 /*
 ALTER TABLE games DROP FOREIGN KEY games_ibfk_1;
 ALTER TABLE confirmedGames DROP FOREIGN KEY confirmedgames_ibfk_1;

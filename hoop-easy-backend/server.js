@@ -12,17 +12,18 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// Connecting to Database
+/*
 const maxTries = 10;
 let tryCount = 0;
 let connection; 
 
 async function attemptConnection() {
-    connection = mysql.createConnection({
-        host: 'hoop-easy-mysql-container-1',
+    const connection = mysql.createConnection({
+        host: 'monorail.proxy.rlwy.net',
         user: 'root',
-        password: 'rootpass123',
-        database: 'hoop-easy-database'
+        password: 'HA2FcFd1AfDEAg4gghb3hHeg414AfADH',
+        database: 'railway',
+        port: 23250,
     });
 
   function connectAndHandleError() {
@@ -46,7 +47,26 @@ async function attemptConnection() {
 }
 
 attemptConnection();
-console.log("\n\n\n\n\n\\n\n\n", connection)
+*/
+const connection = mysql.createConnection({
+    host: 'monorail.proxy.rlwy.net',
+    user: 'root',
+    password: 'HA2FcFd1AfDEAg4gghb3hHeg414AfADH',
+    database: 'railway',
+    port: 23250,
+});
+
+connection.connect((err) => {
+    if (err) {
+      console.error('Error connecting to MySQL:', err);
+      return
+    } else {
+      console.log('\n\n\n\n\n\nConnected to MySQL database\n\n\n\n\n\n');
+      return
+    }
+});
+
+console.log("\n\n\n\n\n\\n\n\nConnection: ", connection)
 
 // GET Routes
 app.get('/api/users', (req, res) => {
@@ -250,7 +270,6 @@ app.post('/api/newUser', (req, res) => {
         const user = req.body;
         const { username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall } = user;
         const sql = `INSERT INTO users (username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall, profilePic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
         connection.query(sql, [username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt || null, heightInches || null, weight , overall, 'nullstring'], (err, result) => {
             if (err) {
                 console.error('Error inserting user:', err);
@@ -500,12 +519,10 @@ app.delete('/api/deleteGame', (req, res) => {
 });
 
 
-
-
-
-
+/*
 // Server Setup
 const PORT = 5001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+*/

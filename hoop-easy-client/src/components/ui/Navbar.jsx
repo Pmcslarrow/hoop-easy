@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import "../../assets/styling/navbar.css"
 
-
 const Navbar = (props) => {
     const navigate = useNavigate()
     const { setAuthenticationStatus, searchBar, profilePic } = props
@@ -21,7 +20,6 @@ const Navbar = (props) => {
             document.body.classList.remove('disable-scrolling');
         }
     }
-    
     
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen);
@@ -50,7 +48,6 @@ const Navbar = (props) => {
         } else {
             navigate("/homepage")
         }
-        
     }
 
     const navigateRankings = () => {
@@ -67,7 +64,7 @@ const Navbar = (props) => {
         <img src={hoopEasyLogo} alt="Logo" className='profile-button' style={{width: '200px', height: '100px', marginLeft: '10px'}} onClick={navigateHome} />
 
         <div className='flexbox-row'>
-            { searchBar === true && <SearchBar />}
+            {/* searchBar === true && <SearchBar /> */}
 
             { profilePic === true && 
                 <div className='profile-button'>

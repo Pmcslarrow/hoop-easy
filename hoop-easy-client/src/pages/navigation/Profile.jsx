@@ -27,6 +27,7 @@ function Profile({ props }) {
     const userProfileRef = doc(db, `users/${currentUser.id}`); 
     const [flexOuter, setFlexOuter] = useState({})
     const [flexInner, setFlexInner] = useState({})
+    const [refreshData, setRefresh] = useState(0)
 
     const handleResize = () => {
         if ( window.innerWidth < 950 ) {
@@ -37,9 +38,10 @@ function Profile({ props }) {
             setFlexInner({display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'})
         }
     } 
-
-    const [refreshData, setRefresh] = useState(0)
     
+    useEffect(() => {
+        handleResize()
+    }, [])
 
     useEffect(() => {
         console.log(currentUserID)
