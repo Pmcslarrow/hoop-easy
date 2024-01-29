@@ -66,8 +66,6 @@ connection.connect((err) => {
     }
 });
 
-console.log("\n\n\n\n\n\\n\n\nConnection: ", connection)
-
 // GET Routes
 app.get('/api/users', (req, res) => {
     connection.query('SELECT * FROM users;', (err, result, fields) => {
