@@ -12,42 +12,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-/*
-const maxTries = 10;
-let tryCount = 0;
-let connection; 
-
-async function attemptConnection() {
-    const connection = mysql.createConnection({
-        host: 'monorail.proxy.rlwy.net',
-        user: 'root',
-        password: 'HA2FcFd1AfDEAg4gghb3hHeg414AfADH',
-        database: 'railway',
-        port: 23250,
-    });
-
-  function connectAndHandleError() {
-    connection.connect((err) => {
-      if (err) {
-        tryCount++;
-        console.error('Error connecting to MySQL:', err);
-        console.log(`Retrying (${tryCount}/${maxTries}) in 3 seconds...`);
-
-        if (tryCount < maxTries) {
-          setTimeout(attemptConnection, 3000);
-        } else {
-          console.error(`Failed to connect after ${maxTries} attempts`);
-        }
-      } else {
-        console.log('\n\n\n\n\n\nConnected to MySQL database\n\n\n\n\n\n');
-      }
-    });
-  }
-  connectAndHandleError();
-}
-
-attemptConnection();
-*/
 const connection = mysql.createConnection({
     host: 'monorail.proxy.rlwy.net',
     user: 'root',
@@ -517,10 +481,10 @@ app.delete('/api/deleteGame', (req, res) => {
 });
 
 
-/*
+
 // Server Setup
 const PORT = 5001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-*/
+
