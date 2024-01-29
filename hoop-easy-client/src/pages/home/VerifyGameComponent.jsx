@@ -22,7 +22,7 @@ const VerifyGameComponent = ({ props }) => {
 
     useEffect(() => {
         const getCurrentUser = async () => {
-            const response = await axios.get(`http://localhost:5001/api/getUserWithID?userID=${currentUserID}`)
+            const response = await axios.get(`https://hoop-easy-production.up.railway.app/api/getUserWithID?userID=${currentUserID}`)
             const currentUser = response?.data
             setCurrentUser(currentUser)
         }
@@ -46,13 +46,13 @@ const VerifyGameComponent = ({ props }) => {
         const team_A_values = Object.values(team_A).join(',');
         const team_B_values = Object.values(team_B).join(',');
 
-        const team_A_JSON = await axios.get('http://localhost:5001/api/teamData', {
+        const team_A_JSON = await axios.get('https://hoop-easy-production.up.railway.app/api/teamData', {
             params: {
               values: team_A_values
             }
         })
 
-        const team_B_JSON = await axios.get('http://localhost:5001/api/teamData', {
+        const team_B_JSON = await axios.get('https://hoop-easy-production.up.railway.app/api/teamData', {
             params: {
               values: team_B_values
             }
@@ -195,9 +195,9 @@ const VerifyGameComponent = ({ props }) => {
             })
         } else {                
             if (isCurrentUserOnTeamOne) {
-                await axios.put(`http://localhost:5001/api/approveScore?team=1&gameID=${currentCard.gameID}`);
+                await axios.put(`https://hoop-easy-production.up.railway.app/api/approveScore?team=1&gameID=${currentCard.gameID}`);
             } else {
-                await axios.put(`http://localhost:5001/api/approveScore?team=2&gameID=${currentCard.gameID}`);
+                await axios.put(`https://hoop-easy-production.up.railway.app/api/approveScore?team=2&gameID=${currentCard.gameID}`);
             }
         }
         setRefreshToken(refreshToken + 1)
@@ -210,7 +210,7 @@ const VerifyGameComponent = ({ props }) => {
     }
 
     const updateTeamOverallRatings = async (team, delta) => {
-        await axios.put(`http://localhost:5001/api/updateTeamOverallRatings?overallChange=${delta}`, {
+        await axios.put(`https://hoop-easy-production.up.railway.app/api/updateTeamOverallRatings?overallChange=${delta}`, {
             params : {
                 values: Object.values(team).join(',')
             }
@@ -227,7 +227,7 @@ const VerifyGameComponent = ({ props }) => {
             what,
             rating,
         }
-        await axios.post('http://localhost:5001/api/createHistoryInstance', {
+        await axios.post('https://hoop-easy-production.up.railway.app/api/createHistoryInstance', {
             params: {
                 values: data
             }
@@ -235,13 +235,13 @@ const VerifyGameComponent = ({ props }) => {
     }
 
     const removeGameInstance = async(gameID) => {
-        await axios.delete(`http://localhost:5001/api/deleteGame?gameID=${gameID}`)
+        await axios.delete(`https://hoop-easy-production.up.railway.app/api/deleteGame?gameID=${gameID}`)
     }
     
 
     const updateDeniedGames = async () => {
         const allPlayersInGame = Object.values(currentCard.teammates)
-        await axios.put(`http://localhost:5001/api/updateDeniedGames`, {
+        await axios.put(`https://hoop-easy-production.up.railway.app/api/updateDeniedGames`, {
             params: {
                 values: allPlayersInGame
             }

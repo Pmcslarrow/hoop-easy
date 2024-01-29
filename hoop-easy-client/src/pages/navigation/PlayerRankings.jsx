@@ -10,7 +10,7 @@ const Leaderboard = ({ currentUser }) => {
 
     useEffect(() => {
         const fetchGameHistory = async () => {
-            const response = await axios.get("http://localhost:5001/api/users")
+            const response = await axios.get("https://hoop-easy-production.up.railway.app/api/users")
             const users = response.data
             users.forEach((user) => {console.log(user)})
             

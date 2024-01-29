@@ -8,32 +8,8 @@ const RatingsSection = ({ currentUserID }) => {
     const [data, setData] = useState([])
 
     useEffect(() => {
-        /*
-        const fetchGameHistory = async () => {
-            const historyCollectionPath = `users/${currentUserID}/history/`
-            const historyRef = collection(db, historyCollectionPath)
-     
-            const historySnapshot = await getDocs(historyRef);
-     
-            const gameHistory = historySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-
-            const data = gameHistory.map(obj => ({
-                when: obj.dateOfGame,
-                who: obj.opponent,
-                where: obj.addressString,
-                ratingDifference: (parseFloat(obj.ratingAfterGame) - parseFloat(obj.ratingBeforeGame)).toFixed(2),
-                ratingBefore: obj.ratingBeforeGame,
-                ratingAfter: obj.ratingAfterGame
-            }));
-            const sortedData = data.sort((a, b) => new Date(a.when) - new Date(b.when));
-            const simplifiedData = sortedData.map(({ when, ratingAfter }) => ({ when, ratingAfter }));
-            setData(simplifiedData)
-        }
-        fetchGameHistory()
-        */
-
         const fetchGameHistory = async () => {            
-            const response = await axios.get(`http://localhost:5001/api/getHistory?userID=${currentUserID}`)
+            const response = await axios.get(`https://hoop-easy-production.up.railway.app/api/getHistory?userID=${currentUserID}`)
             let data = response.data
             const updatedData = data.map((obj) => {
                 obj.game_date = convertToLocalTime(obj.game_date);

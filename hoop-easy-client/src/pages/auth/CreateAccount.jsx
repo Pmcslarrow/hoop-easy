@@ -312,7 +312,7 @@ function PlayerCustomizationForm({ formToggle }) {
         overall: '60',
         date: currentDate
     }
-    axios.post('http://localhost:5001/api/newUser', request)
+    axios.post('https://hoop-easy-production.up.railway.app/api/newUser', request)
   };
 
   return (

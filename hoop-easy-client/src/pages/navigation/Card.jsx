@@ -34,7 +34,7 @@ const Card = ({ props }) => {
     useEffect(() => {
         const getArrayOfTeammates = async () => {
             try {
-                const result = await axios.get('http://localhost:5001/api/getTeammates', { params: game });        
+                const result = await axios.get('https://hoop-easy-production.up.railway.app/api/getTeammates', { params: game });        
                 if (result.data && result.data[0] && result.data[0].teammates) {
                     const teammates = result.data[0].teammates;
                     const teammatesArray = Object.keys(teammates).map(key => teammates[key]);
@@ -51,7 +51,7 @@ const Card = ({ props }) => {
         const getCurrentUserID = async () => {
             const currentUserEmail = auth?.currentUser?.email
             if (currentUserEmail !== undefined) {
-                const result = await axios.get(`http://localhost:5001/api/getCurrentUserID?email=${currentUserEmail}`);
+                const result = await axios.get(`https://hoop-easy-production.up.railway.app/api/getCurrentUserID?email=${currentUserEmail}`);
                 setCurrentUserID(result.data)
             }
         }
@@ -75,10 +75,10 @@ const Card = ({ props }) => {
             teammatesIdArray.push(currentUserID)
             const newTeammatesIdArray = teammatesIdArray
             const newJSONTeammates = createTeammateJsonFromArray(newTeammatesIdArray)
-            await axios.put(`http://localhost:5001/api/updateTeammates?gameID=${game.gameID}&teammateJson=${newJSONTeammates}`)
+            await axios.put(`https://hoop-easy-production.up.railway.app/api/updateTeammates?gameID=${game.gameID}&teammateJson=${newJSONTeammates}`)
             
             if (isFull(newSizeOfTeammates)){
-                await axios.put(`http://localhost:5001/api/updateStatus?gameID=${game.gameID}&status=confirmed`)
+                await axios.put(`https://hoop-easy-production.up.railway.app/api/updateStatus?gameID=${game.gameID}&status=confirmed`)
             }
             setRefreshToken(refreshToken + 1)
             return
@@ -93,13 +93,13 @@ const Card = ({ props }) => {
         const newTeammatesIdArray = teammatesIdArray.filter(id => id.toString() !== currentUserID.toString());
         
         if (isEmpty(sizeOfArrayAfterRemoval)) {
-            await axios.delete(`http://localhost:5001/api/deleteGame?gameID=${game.gameID}`)
+            await axios.delete(`https://hoop-easy-production.up.railway.app/api/deleteGame?gameID=${game.gameID}`)
             setRefreshToken(refreshToken + 1)
             return
         }
 
         const newJSONTeammates = createTeammateJsonFromArray(newTeammatesIdArray)
-        await axios.put(`http://localhost:5001/api/updateTeammates?gameID=${game.gameID}&teammateJson=${newJSONTeammates}`);
+        await axios.put(`https://hoop-easy-production.up.railway.app/api/updateTeammates?gameID=${game.gameID}&teammateJson=${newJSONTeammates}`);
         setRefreshToken(refreshToken + 1)
         return
     }

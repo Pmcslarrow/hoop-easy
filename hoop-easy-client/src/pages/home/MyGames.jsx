@@ -30,14 +30,14 @@ const MyGames = ({ props }) => {
         const getCurrentUserID = async () => {
             const currentUserEmail = auth?.currentUser?.email
             if (currentUserEmail !== undefined) {
-                const result = await axios.get(`http://localhost:5001/api/getCurrentUserID?email=${currentUserEmail}`);
+                const result = await axios.get(`https://hoop-easy-production.up.railway.app/api/getCurrentUserID?email=${currentUserEmail}`);
                 setCurrentUserID(result.data)
                 return result.data
             }
         }
         const getMyGames = async() => {
             const id = await getCurrentUserID()
-            const games = await axios.get(`http://localhost:5001/api/myGames?userID=${id}`)
+            const games = await axios.get(`https://hoop-easy-production.up.railway.app/api/myGames?userID=${id}`)
             setMyGames(games?.data)
         }
 

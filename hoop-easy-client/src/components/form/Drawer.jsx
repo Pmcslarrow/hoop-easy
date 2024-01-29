@@ -84,7 +84,7 @@ function ScoreInput({props}) {
     useEffect(() => {
         const fetchTeammates = async () => {
             const teammateIdArray = Object.values(currentCard.teammates)
-            const profiles = await axios.get(`http://localhost:5001/api/getProfiles?arrayOfID=${teammateIdArray}`)
+            const profiles = await axios.get(`https://hoop-easy-production.up.railway.app/api/getProfiles?arrayOfID=${teammateIdArray}`)
             setProfiles(profiles.data)
         }
 
@@ -275,7 +275,7 @@ function ScoreInput({props}) {
         const teamOne = createTeamJsonFromArray(teamOneArray)
         const teamTwo = createTeamJsonFromArray(teamTwoArray)
 
-        await axios.put('http://localhost:5001/api/handleGameSubmission', {
+        await axios.put('https://hoop-easy-production.up.railway.app/api/handleGameSubmission', {
             params: {
               status: 'verification',
               teamOne: teamOne,  

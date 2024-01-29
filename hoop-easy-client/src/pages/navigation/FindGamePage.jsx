@@ -54,7 +54,7 @@ function FindGamePage({ props }) {
     }
 
     async function getAverageOverall(game) {
-        const response = await axios.get("http://localhost:5001/api/averageOverall", {
+        const response = await axios.get("https://hoop-easy-production.up.railway.app/api/averageOverall", {
             params : {
                 teammates: Object.values(game.teammates).join(',')
             }
@@ -67,7 +67,7 @@ function FindGamePage({ props }) {
             setLoading(true);
     
             try {
-                let games = await axios.get('http://localhost:5001/api/availableGames')
+                let games = await axios.get('https://hoop-easy-production.up.railway.app/api/availableGames')
                 games = await filterGames(games.data)
                 const sortedGames = await sortGamesByLocationDistance(games);
                 setGames(sortedGames);

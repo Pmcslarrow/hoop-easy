@@ -8,7 +8,7 @@ const PlayerOverallRating = ({currentUserID, refreshToken}) => {
 
     useEffect(() => {
         const getOverallRating = async () => {
-            const response = await axios.get(`http://localhost:5001/api/getUserWithID?userID=${currentUserID}`)
+            const response = await axios.get(`https://hoop-easy-production.up.railway.app/api/getUserWithID?userID=${currentUserID}`)
             setOverallRating(parseFloat(response.data.overall).toFixed(2))
         }
 

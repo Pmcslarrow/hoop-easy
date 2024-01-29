@@ -8,7 +8,7 @@ const History = ( { currentUserID }) => {
 
     useEffect(() => {
         const fetchGameHistory = async () => {            
-            const response = await axios.get(`http://localhost:5001/api/getHistory?userID=${currentUserID}`)
+            const response = await axios.get(`https://hoop-easy-production.up.railway.app/api/getHistory?userID=${currentUserID}`)
             let data = response.data
             const updatedData = data.map((obj) => {
                 obj.game_date = convertToLocalTime(obj.game_date);

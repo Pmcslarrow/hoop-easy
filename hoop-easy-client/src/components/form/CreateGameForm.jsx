@@ -38,7 +38,7 @@ const CreateGameForm = ( props ) => {
             let userLoggedIn = auth?.currentUser;
 
             if (userLoggedIn) {
-                const loggedInUser = await axios.get(`http://localhost:5001/api/getUser?email=${userLoggedIn?.email}`);
+                const loggedInUser = await axios.get(`https://hoop-easy-production.up.railway.app/api/getUser?email=${userLoggedIn?.email}`);
                 fetchLocationCoordinates()
                     .then(({ longitude, latitude }) => {
                         createNewGameInstance( longitude, latitude, loggedInUser )
@@ -114,7 +114,7 @@ const CreateGameForm = ( props ) => {
                 userTimeZone,
             };
 
-            axios.post('http://localhost:5001/api/newGame', data)
+            axios.post('https://hoop-easy-production.up.railway.app/api/newGame', data)
         };
         
 

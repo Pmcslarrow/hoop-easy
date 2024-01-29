@@ -58,7 +58,7 @@ function Profile({ props }) {
         }
 
         const getUserProfileInformation = async () => {
-            const response = await axios.get(`http://localhost:5001/api/getUserWithID?userID=${currentUserID}`)
+            const response = await axios.get(`https://hoop-easy-production.up.railway.app/api/getUserWithID?userID=${currentUserID}`)
             setProfileInformation(response.data)
         }
         getUserProfilePic()
@@ -129,7 +129,7 @@ function Profile({ props }) {
           console.log(updatedFields)
           
           if (Object.keys(updatedFields).length > 0) {
-            await axios.put("http://localhost:5001/api/updateProfileData", {
+            await axios.put("https://hoop-easy-production.up.railway.app/api/updateProfileData", {
                 params: {
                     values: updatedFields,
                     userID: currentUserID

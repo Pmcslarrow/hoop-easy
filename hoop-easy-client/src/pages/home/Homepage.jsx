@@ -34,7 +34,7 @@ const Homepage = ({ props }) => {
             setLoading(true); 
             try {
                 const currentUserEmail = auth?.currentUser?.email
-                const response = await axios.get(`http://localhost:5001/api/getCurrentUserID?email=${currentUserEmail}`)
+                const response = await axios.get(`https://hoop-easy-production.up.railway.app/api/getCurrentUserID?email=${currentUserEmail}`)
                 setCurrentUserID(response.data)
             } catch (err) {
                 console.log(err)
