@@ -3,7 +3,6 @@ FROM node:18-alpine AS Production
 ENV NODE_ENV=production
 
 WORKDIR /app/src/hoop-easy-client
-#WORKDIR /app/src/hoop-easy-backend
 
 COPY package*.json ./
 
@@ -13,4 +12,4 @@ COPY . .
 
 RUN npm run build
 
-CMD ["npm", "start"]
+CMD ["npx", "serve", "-s", "build"]
