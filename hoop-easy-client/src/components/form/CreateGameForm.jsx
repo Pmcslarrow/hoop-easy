@@ -63,9 +63,7 @@ const CreateGameForm = ( props ) => {
                 api_key: '658aebd0c64fa653030796mdh9457e3'
             };
             const API_START = 'https://geocode.maps.co/search'
-         
-            console.log(params)
-         
+                  
             return axios.get(API_START, { params: params })
                 .then((response) => {
                     const data = response.data;

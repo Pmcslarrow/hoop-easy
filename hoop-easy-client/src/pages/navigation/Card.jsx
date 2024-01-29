@@ -64,7 +64,6 @@ const Card = ({ props }) => {
 
     useEffect(() => {
         setProfilePic(missingImage)
-        console.log("should be showing card with gameId ", game.gameID)
     }, [])
 
 
@@ -117,7 +116,6 @@ const Card = ({ props }) => {
     // @return: '{"teammate0": "1", "teammate1": "2"}'
     const createTeammateJsonFromArray = (array) => {
         const jsonArray = []
-        console.log(array)
         for (let i=0; i<array.length; i++) {
             if (array[i] !== undefined) {
                 const string = `"teammate${i}": "${array[i]}"`

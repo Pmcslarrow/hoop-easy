@@ -30,6 +30,7 @@ const Homepage = ({ props }) => {
     });
 
     useEffect(() => {
+        document.title = 'HoopEasy/homepage';
         const getCurrentUserID = async () => {
             setLoading(true); 
             try {

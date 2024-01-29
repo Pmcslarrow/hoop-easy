@@ -28,6 +28,7 @@ function CreateAccount({ props }) {
   const [showCustomizationForm, setShowCustomizationForm] = useState(false);
 
   useEffect(() => {
+    document.title = 'HoopEasy';
     logout();
     setAuthenticationStatus(false);
   }, []);

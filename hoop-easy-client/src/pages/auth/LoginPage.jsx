@@ -21,6 +21,7 @@ function LoginPage({ props }) {
       const [errorMessage, setMessage] = useState('')
 
       useEffect(() => {
+        document.title = 'HoopEasy/login';
         logout()
         setAuthenticationStatus(false)
       }, [])

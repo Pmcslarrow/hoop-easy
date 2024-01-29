@@ -44,7 +44,6 @@ function Profile({ props }) {
     }, [])
 
     useEffect(() => {
-        console.log(currentUserID)
         const getUserProfilePic = async () => {
             const storageRef = ref(storage,`/files/${currentUserID}/profilePic`);
             getDownloadURL(storageRef)
@@ -126,7 +125,6 @@ function Profile({ props }) {
           if (heightFt !== currentUser.heightFt) updatedFields.heightFt = heightFt;
           if (heightInches !== currentUser.heightInches) updatedFields.heightInches = heightInches;
           if (weight !== currentUser.weight) updatedFields.weight = weight;
-          console.log(updatedFields)
           
           if (Object.keys(updatedFields).length > 0) {
             await axios.put("https://hoop-easy-production.up.railway.app/api/updateProfileData", {

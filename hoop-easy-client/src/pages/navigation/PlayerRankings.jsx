@@ -12,7 +12,6 @@ const Leaderboard = ({ currentUser }) => {
         const fetchGameHistory = async () => {
             const response = await axios.get("https://hoop-easy-production.up.railway.app/api/users")
             const users = response.data
-            users.forEach((user) => {console.log(user)})
             
             const data = users.map(obj => ({
                 username: obj.username,
@@ -22,7 +21,6 @@ const Leaderboard = ({ currentUser }) => {
 
             data.sort((a, b) =>  parseFloat(b.overall) - parseFloat(a.overall));
 
-            console.log(data)
             setData(data)
         }
         fetchGameHistory()

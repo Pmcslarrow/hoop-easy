@@ -64,6 +64,7 @@ function FindGamePage({ props }) {
 
     useEffect(() => {
         const fetchAvailableGames = async () => {
+            document.title = 'HoopEasy/findGame';
             setLoading(true);
     
             try {
@@ -80,7 +81,6 @@ function FindGamePage({ props }) {
         const sortGamesByLocationDistance = async (games) => {
             const userCoordinates = await getUserCoordinates();
             const { latitude: userLat, longitude: userLon } = userCoordinates;
-            console.log("Trying to sort games by location distance...")
             const sortedGames = games.sort((game1, game2) => {
                 const distance1 = getDistanceFromLatLonInMiles(userLat, userLon, game1.latitude, game1.longitude);
                 const distance2 = getDistanceFromLatLonInMiles(userLat, userLon, game2.latitude, game2.longitude);
