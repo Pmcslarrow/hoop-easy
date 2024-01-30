@@ -2,26 +2,35 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from "firebase/storage";
+const {
+    APIKEY,
+    DOMAIN,
+    PROJECTID,
+    BUCKET,
+    MSI,
+    APPID,
+    MEASUREMENT
+} = process.env
 
 console.log(
     "LOGGING THE FIREBASE VARIABLES: ",
-    process.env.APIKEY,
-    process.env.DOMAIN,
-    process.env.PROJECTID,
-    process.env.BUCKET,
-    process.env.MSI,
-    process.env.APPID,
-    process.env.MEASUREMENT
+    APIKEY,
+    DOMAIN,
+    PROJECTID,
+    BUCKET,
+    MSI,
+    APPID,
+    MEASUREMENT
 )
 
 const firebaseConfig = {
-    apiKey: process.env.APIKEY,
-    authDomain: process.env.DOMAIN,
-    projectId: process.env.PROJECTID,
-    storageBucket: process.env.BUCKET,
-    messagingSenderId: process.env.MSI,
-    appId: process.env.APPID,
-    measurementId: process.env.MEASUREMENT
+    apiKey: APIKEY,
+    authDomain: DOMAIN,
+    projectId: PROJECTID,
+    storageBucket: BUCKET,
+    messagingSenderId: MSI,
+    appId: APPID,
+    measurementId: MEASUREMENT
 };
 
 const app = initializeApp(firebaseConfig);
