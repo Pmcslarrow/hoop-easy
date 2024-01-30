@@ -4,13 +4,13 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-apiKey: "AIzaSyBmsbmk53EnltYsNE6cVrJSKJuNrPwzVnI",
-authDomain: "hoopeasy-c7c25.firebaseapp.com",
-projectId: "hoopeasy-c7c25",
-storageBucket: "hoopeasy-c7c25.appspot.com",
-messagingSenderId: "492922655536",
-appId: "1:492922655536:web:066ca23ea0ae2ae29beef5",
-measurementId: "G-VNCRPP69MC"
+    apiKey: process.env.apiKey,
+    authDomain: process.env.authDomain,
+    projectId: process.env.projectId,
+    storageBucket: process.env.storageBucket,
+    messagingSenderId: process.env.messagingSenderId,
+    appId: process.env.appId,
+    measurementId: process.env.measurementId
 };
 
 const app = initializeApp(firebaseConfig);
