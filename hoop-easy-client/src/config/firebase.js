@@ -3,6 +3,17 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from "firebase/storage";
 
+console.log(
+    "LOGGING THE FIREBASE VARIABLES: ",
+    process.env.APIKEY,
+    process.env.DOMAIN,
+    process.env.PROJECTID,
+    process.env.BUCKET,
+    process.env.MSI,
+    process.env.APPID,
+    process.env.MEASUREMENT
+)
+
 const firebaseConfig = {
     apiKey: process.env.APIKEY,
     authDomain: process.env.DOMAIN,
