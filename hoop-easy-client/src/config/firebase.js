@@ -12,17 +12,6 @@ const {
     REACT_APP_MEASUREMENT
 } = process.env
 
-console.log(
-    "LOGGING THE FIREBASE VARIABLES REACT_APP_: ",
-    REACT_APP_APIKEY,
-    REACT_APP_DOMAIN,
-    REACT_APP_PROJECTID,
-    REACT_APP_BUCKET,
-    REACT_APP_MSI,
-    REACT_APP_APPID,
-    REACT_APP_MEASUREMENT
-)
-
 const firebaseConfig = {
     apiKey: REACT_APP_APIKEY,
     authDomain: REACT_APP_DOMAIN,
