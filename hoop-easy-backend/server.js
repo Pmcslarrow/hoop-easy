@@ -12,6 +12,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+console.log("Checking env vars: ", process.env.TEST)
+
 const connection = mysql.createConnection({
     host: 'monorail.proxy.rlwy.net',
     user: 'root',
