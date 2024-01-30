@@ -12,13 +12,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-console.log("Checking env vars: ", process.env.TEST)
-
 const connection = mysql.createConnection({
-    host: 'monorail.proxy.rlwy.net',
-    user: 'root',
-    password: 'HA2FcFd1AfDEAg4gghb3hHeg414AfADH',
-    database: 'railway',
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DB,
     port: 23250,
 });
 
