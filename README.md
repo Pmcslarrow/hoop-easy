@@ -1,8 +1,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="hoop-easy-client/src/assets/images/hoop-easy.png" alt="Logo" width="80" height="80">
+  <a>
+    <img src="hoop-easy-client/src/assets/images/hoop-easy.png" alt="Logo" width="250px" height="125px">
   </a>
 
   <h3 align="center">Hoop Easy</h3>
