@@ -10,9 +10,9 @@
     <br />
     <a href="#">View Demo</a>
     ·
-    <a href="https://github.com/Pmcslarrow/hoop-easy/issues">Report Bug</a>
+    <a href="https://github.com/Pmcslarrow/hoop-easy/issues">Report Bug / Request Feature</a>
     ·
-    <a href="https://github.com/Pmcslarrow/hoop-easy/issues">Request Feature</a>
+    <a href="https://hoop-easy-client-production.up.railway.app/">Website</a>
   </p>
 </div>
 
