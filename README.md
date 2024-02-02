@@ -5,8 +5,6 @@
     <img src="hoop-easy-client/src/assets/images/hoop-easy.png" alt="Logo" width="250px" height="125px">
   </a>
 
-  <h3 align="center">Hoop Easy</h3>
-
   <p align="center">
     An application built to make finding and playing pickup basketball games, easy. 
     <br />
