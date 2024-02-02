@@ -146,7 +146,7 @@ Don't forget to give the project a star! Thanks again!
 
 <b>Developer</b> -- Paul McSlarrow -- pmcslarrow@icloud.com
 <b>UI Design</b> -- Sarah Smith -- sarahjeansmith014@gmail.com 
-<b>Business Administration</b> -- Jack Boydell-- pmcslarrow@icloud.com
+<b>Business Administration</b> -- Jack Boydell-- jacboydell@gmail.com
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
