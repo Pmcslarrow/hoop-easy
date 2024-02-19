@@ -12,6 +12,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+/*
+
 const connection = mysql.createConnection({
     host: process.env.HOST,
     user: process.env.USER,
@@ -30,9 +32,21 @@ connection.connect((err) => {
     }
 });
 
+*/
+
+
+const pool = mysql.createPool({
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DB,
+    port: 23250,
+    connectionLimit: 10,
+});
+
 // GET Routes
 app.get('/api/users', (req, res) => {
-    connection.query('SELECT * FROM users;', (err, result, fields) => {
+    pool.query('SELECT * FROM users;', (err, result, fields) => {
         if (err) {
             res.status(500).json({ message: 'Internal server error' });
             return;
@@ -42,7 +56,7 @@ app.get('/api/users', (req, res) => {
 });
 
 app.get('/api/games', (req, res) => {
-    connection.query('SELECT * FROM games;', (err, result, fields) => {
+    pool.query('SELECT * FROM games;', (err, result, fields) => {
         if (err) {
             console.log(err)
             res.status(500).json({ message: 'Internal server error' });
@@ -59,7 +73,7 @@ app.get('/api/getUser', async (req, res) => {
             return res.status(400).json({ message: 'Email parameter is required' });
         }
         const sql = 'SELECT * FROM users WHERE email = ?';
-        connection.query(sql, [userEmail], (err, result) => {
+        pool.query(sql, [userEmail], (err, result) => {
             if (err) {
                 console.error('Error fetching user:', err);
                 return res.status(500).json({ message: 'Failed to fetch user' });
@@ -82,7 +96,7 @@ app.get('/api/getUserWithID', async (req, res) => {
             return res.status(400).json({ message: 'UserID parameter is required' });
         }
         const sql = 'SELECT * FROM users WHERE id = ?';
-        connection.query(sql, [userID], (err, result) => {
+        pool.query(sql, [userID], (err, result) => {
             if (err) {
                 console.error('Error fetching user:', err);
                 return res.status(500).json({ message: 'Failed to fetch user' });
@@ -104,7 +118,7 @@ app.get('/api/getProfiles', async (req, res) => {
 
     const sql = `SELECT * FROM users WHERE id IN (${array.join(', ')})`;
     console.log(sql)
-    connection.query(sql, (err, result) => {
+    pool.query(sql, (err, result) => {
         if (err) {
             res.status(500).send("Error getting profiles")
             return
@@ -123,7 +137,7 @@ app.get('/api/myGames', async (req, res) => {
     WHERE JSON_SEARCH(g.teammates, 'one', '${userID}') IS NOT NULL;
     `
 
-    connection.query(sql, (err, result) => {
+    pool.query(sql, (err, result) => {
         if (err) {
             res.status(500).send("Error getting myGames")
             return
@@ -134,7 +148,7 @@ app.get('/api/myGames', async (req, res) => {
 
 app.get('/api/availableGames', async (req, res) => {
     const sql = `SELECT * FROM games WHERE status = 'pending';`
-    connection.query(sql, (err, result, fields) => {
+    pool.query(sql, (err, result, fields) => {
         if (err) {
             console.error('Error inserting user:', err);
             return res.status(500).json({ message: 'Failed to get available games' });
@@ -151,7 +165,7 @@ app.get('/api/getTeammates', async (req, res) => {
         const game = req.query; 
         const gameID = game.gameID
         const sql = `SELECT teammates FROM games WHERE gameID = ${gameID}`
-        connection.query(sql, (err, result, fields) => {
+        pool.query(sql, (err, result, fields) => {
             res.status(200).send(result)
         })
     } catch (err) {
@@ -164,7 +178,7 @@ app.get('/api/getCurrentUserID', async(req, res) => {
     try {
         const currentUserEmail = req.query.email
         const sql = 'SELECT * FROM users WHERE email = ?';
-        connection.query(sql, [currentUserEmail], (err, result) => {
+        pool.query(sql, [currentUserEmail], (err, result) => {
             if (err) {
                 console.error('Error fetching user:', err);
                 return res.status(500).json({ message: 'Failed to fetch user' });
@@ -183,7 +197,7 @@ app.get('/api/getCurrentUserID', async(req, res) => {
 app.get('/api/teamData', async(req, res) => {
     const team = req.query.values;
     const query = `SELECT * FROM users WHERE id IN (?)`;
-    connection.query(query, [team], (err, result) => {
+    pool.query(query, [team], (err, result) => {
         if (err) {
             res.status(500).send("Failed to get team data for verifying a game")
             return
@@ -196,7 +210,7 @@ app.get('/api/getHistory', (req, res) => {
     const userID = req.query.userID
     const sql = `SELECT * FROM game_history WHERE userID = ?;`
     if (userID) {
-        connection.query(sql, [userID], (err, result) => {
+        pool.query(sql, [userID], (err, result) => {
             if (err) {
                 res.status(500).send("Error getting player history. Please remember to insert userID parameter")
             }
@@ -214,7 +228,7 @@ app.get('/api/averageOverall', async (req, res) => {
     WHERE id IN (?);
     `
 
-    connection.query(sql, [arrayOfID], (err, result) => {
+    pool.query(sql, [arrayOfID], (err, result) => {
         if (err) {
             res.status(500).send("Failed to get the average")
             return
@@ -232,7 +246,7 @@ app.post('/api/newUser', (req, res) => {
         const user = req.body;
         const { username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall } = user;
         const sql = `INSERT INTO users (username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt, heightInches, weight, overall, profilePic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        connection.query(sql, [username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt || null, heightInches || null, weight , overall, 'nullstring'], (err, result) => {
+        pool.query(sql, [username, email, firstName, middleInitial, lastName, gamesAccepted, gamesDenied, gamesPlayed, heightFt || null, heightInches || null, weight , overall, 'nullstring'], (err, result) => {
             if (err) {
                 console.error('Error inserting user:', err);
                 res.status(500).json({ message: 'Failed to create user' });
@@ -256,7 +270,7 @@ app.post('/api/newGame', async (req, res) => {
         const addNewGameToGamesTable = async () => {
             const sql = `INSERT INTO games (userID, address, longitude, latitude, dateOfGameInUTC, timeOfGame, gameType, playerCreatedID, userTimeZone, status, teammates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             const teammates = `{"teammate0" : "${userID}"}`
-            connection.query(sql, [userID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone, 'pending', teammates], (err, result) => {
+            pool.query(sql, [userID, address, longitude, latitude, dateOfGame, timeOfGame, gameType, playerCreatedID, userTimeZone, 'pending', teammates], (err, result) => {
                 if (err) {
                     console.error('Error inserting new game:', err);
                     return res.status(500).json({ message: 'Failed to create new game', error: err.message });
@@ -296,7 +310,7 @@ app.post('/api/createHistoryInstance', async (req, res) => {
     `;
 
     for (let userID of team) {
-        connection.query(sql, [userID, rating, my_team_score, opponent_team_score, game_date, game_location, opponent_ids], (err, result) => {
+        pool.query(sql, [userID, rating, my_team_score, opponent_team_score, game_date, game_location, opponent_ids], (err, result) => {
             if (err) {
                 return res.status(500).send("Failed adding history data");
             }            
@@ -311,7 +325,7 @@ app.put('/api/updateTeammates', (req, res) => {
     const gameID = req.query.gameID
     const JSON = req.query.teammateJson
     const sql = `UPDATE games SET teammates = '${JSON}' WHERE gameID = ${gameID}`
-    connection.query(sql, (err, result) => {
+    pool.query(sql, (err, result) => {
         if (err) {
             res.status(500).send("Error updating teammates (query)")
             return
@@ -325,7 +339,7 @@ app.put('/api/updateStatus', (req, res) => {
     const status = req.query.status
     const sql = `UPDATE games SET status = '${status}' WHERE gameID = ${gameID};`
 
-    connection.query(sql, (err, result) => {
+    pool.query(sql, (err, result) => {
         if (err) {
             res.status(500).send("Error updating status")
             return
@@ -355,7 +369,7 @@ app.put('/api/handleGameSubmission', (req, res) => {
         WHERE gameID = ?
     `;
 
-    connection.query(sql, [status, captainJSON, scoreJSON, teamOne, teamTwo, gameID], (err, result) => {
+    pool.query(sql, [status, captainJSON, scoreJSON, teamOne, teamTwo, gameID], (err, result) => {
         if (err) {
             console.error("Error handling game submission:", err);
             res.status(500).send("Error handling game submission");
@@ -377,7 +391,7 @@ app.put('/api/approveScore', (req, res) => {
     WHERE gameID = ?
     `
 
-    connection.query(sql, [gameID], (err, result) => {
+    pool.query(sql, [gameID], (err, result) => {
         if (err) {
             res.status(500).send("Failed approving game score")
             return
@@ -399,7 +413,7 @@ app.put('/api/updateTeamOverallRatings', (req, res) => {
     WHERE id IN (?);
     `
 
-    connection.query(sql, [ratingChange, team], (err, result) => {
+    pool.query(sql, [ratingChange, team], (err, result) => {
         if (err) {
             res.status(500).send("Failed to update team overall ratings")
             return
@@ -416,7 +430,7 @@ app.put('/api/updateDeniedGames', (req, res) => {
 	SET gamesDenied = gamesDenied + 1
     WHERE id IN (?);
     `
-    connection.query(sql, [players], (err, result) => {
+    pool.query(sql, [players], (err, result) => {
         if (err) {
             return res.status(500).send("Failed to updateDeniedGames")
         }
@@ -444,7 +458,7 @@ app.put('/api/updateProfileData', (req, res) => {
         SET ${setClause}
         WHERE id = ?`;  
     
-    connection.query(sql, [...values, userID], (err, result) => {
+    pool.query(sql, [...values, userID], (err, result) => {
         if (err) {
             console.error("Error executing SQL query:", err);
             return res.status(500).send("Failed to update profile information");
@@ -466,7 +480,7 @@ app.delete('/api/deleteGame', (req, res) => {
         }
 
         const sql = 'DELETE FROM games WHERE gameID = ?';
-        connection.query(sql, [gameID], (err, result) => {
+        pool.query(sql, [gameID], (err, result) => {
             if (err) {
                 console.error("Error deleting game:", err);
                 return res.status(500).send("Error trying to delete game");
