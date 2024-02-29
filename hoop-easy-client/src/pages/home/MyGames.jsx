@@ -62,7 +62,7 @@ const MyGames = ({ props }) => {
 
         const handleVerificationStage = () => {
             const searchID = currentUserID.toString()
-            const captainsArray = Object.values(currentCard.captains)
+            const captainsArray = Object.values(currentCard?.captains)
             const isCurrentUserCaptain = captainsArray.some((obj) => obj.toString() === searchID.toString())
             const isPendingApproval = checkIfUserIsPendingApproval(searchID)
 
