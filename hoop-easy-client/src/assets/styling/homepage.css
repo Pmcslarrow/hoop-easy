@@ -108,6 +108,10 @@ section {
     color: rgba(0, 0, 0, 0.5); 
     font-size: 14px;
 }
+input[type="date"]::placeholder,
+input[type="time"]::placeholder {
+    color: black; 
+}
 
 
 #accept-button,

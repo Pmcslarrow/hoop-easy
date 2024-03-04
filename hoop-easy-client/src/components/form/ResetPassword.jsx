@@ -24,7 +24,7 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="App">
+    <div className="App" style={{padding: '50px'}}>
       <h1>Forgot Password</h1>
       <form onSubmit={(e) => handleSubmit(e)}>
         <label>
@@ -34,11 +34,12 @@ function ForgotPassword() {
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            style={{width: '300px', padding: '5px'}}
           />
           <br />
           <br />
         </label>
-        <button type="submit">Reset</button>
+        <button type="submit" id="submit-button" style={{width: '100px'}}>Reset</button>
       </form>
     </div>
   );

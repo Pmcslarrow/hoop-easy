@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from "../../config/firebase";
 import { createUserWithEmailAndPassword, signOut, sendEmailVerification } from 'firebase/auth';
 import { handleError } from '../../utils/ErrorHandler.js';
+import { Navbar } from '../../components/ui/Navbar'
 import { db } from '../../config/firebase';
 import { collection, Timestamp } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,7 +11,6 @@ import { FaRegCircle } from "react-icons/fa6";
 import axios from 'axios';
 import hoopEasyLogo from '../../assets/images/hoop-easy.png';
 import navButtonImg from '../../assets/images/269dd16fa1f5ff51accd09e7e1602267.png';
-
 import carouselImage1 from '../../assets/images/CAROUSEL IMAGES/1.png'
 import carouselImage2 from '../../assets/images/CAROUSEL IMAGES/2.png'
 import carouselImage3 from '../../assets/images/CAROUSEL IMAGES/3.png'
@@ -112,9 +112,6 @@ function CreateAccount({ props }) {
       </>
     );
   };
-  
-  
-    
    
 
   function RightPanel() {
@@ -132,7 +129,7 @@ function CreateAccount({ props }) {
             </div>
 
             <div>
-                <p onClick={navigateLogin} >already have an account? login <b id='here' className="bold">here</b>.</p>
+                <p onClick={navigateLogin} >Already have an account? Login <b id='here' className="bold">here</b>.</p>
             </div>
         </div>
       </div>
@@ -141,7 +138,7 @@ function CreateAccount({ props }) {
 
   return (
     <div className="App">
-      <Header />
+      <Navbar setAuthenticationStatus={setAuthenticationStatus} searchBar={true} profilePic={true}/>
       <main>
         {showCustomizationForm ? (
           <PlayerCustomizationForm formToggle={toggleCustomizationForm}/>
@@ -155,61 +152,6 @@ function CreateAccount({ props }) {
     </div>
   );
 }
-
-{ /* HEADER */}
-function Header() {
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-  const Navbar = () => {
-    return (
-      <header>
-        <img src={hoopEasyLogo} alt="Logo" className='profile-button' style={{width: '200px', height: '100px', marginLeft: '10px'}}/>
-        <div className="spacer"></div>
-        <div className="logo">
-          <img src={navButtonImg} style={{"width": "50px"}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
-        </div>
-      </header>
-    );
-  }
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
-  };
-
-  return (
-    <>
-      <Navbar />
-
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div
-            className="sidebar"
-            initial={{ width: '100%', height: '0%', zIndex: 2  }} // Add a higher z-index
-            animate={{ width: '100%', height: '88%', zIndex: 2 }} // Add a higher z-index
-            exit={{
-              width: '100%',
-              height: '0%',
-              transition: { duration: 0.3 },
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.1 } }}
-            >
-              <a href="#" className="sidebar-link">ABOUT HOOP:EASY</a>
-              <a href="#" className="sidebar-link">Rankings</a>
-              <a href="#" className="sidebar-link">FAQs</a>
-              <a href="#" className="sidebar-link">HELP</a>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
-}
-
-
-
 
 { /* PLAYER CUSTOMIZATION FORM */}
 function PlayerCustomizationForm({ formToggle }) {
