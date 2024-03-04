@@ -59,7 +59,7 @@ const CreateGameForm = ( props ) => {
                 const data = {
                     userID: playerID,
                     address: addressString,
-                    longtitude: coordinates.longitude,
+                    longitude: coordinates.longitude,
                     latitude: coordinates.latitude,
                     dateOfGame: dateOfGame,
                     timeOfGame: time,
