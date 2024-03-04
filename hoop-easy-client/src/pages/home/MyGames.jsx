@@ -5,7 +5,6 @@ import axios from 'axios'
 import { convertToLocalTime } from '../../utils/locationTimeFunctions';
 
 /* Components */
-import Teammates  from '../../components/ui/Teammates'
 import VerifyGameComponent from './VerifyGameComponent';
 import ScoreInputComponent from './ScoreInputComponent';
 

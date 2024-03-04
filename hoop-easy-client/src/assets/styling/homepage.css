@@ -100,7 +100,7 @@ section {
 
 
 ::placeholder  { 
-        color: white;
+        color: black;
         font-size: 16px;
         opacity: 0.8;
 }
@@ -437,7 +437,7 @@ section {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 60%;
+    height: 40%;
     width: 40%;
     border-radius: 30px;
     background-color: black;
@@ -453,8 +453,8 @@ section {
 }
   
 #create-button{
-    padding: 25px;
-    font-size: 40px;
+    padding: 10px;
+    font-size: 35px;
     text-align: center;
     display: flex;
     align-items: center;

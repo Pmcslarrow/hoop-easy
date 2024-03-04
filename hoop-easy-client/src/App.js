@@ -10,6 +10,7 @@ import ResetPassword from './components/form/ResetPassword';
 import Profile from './pages/navigation/Profile';
 import PlayerRankings from './pages/navigation/PlayerRankings';
 import FindGamePage from './pages/navigation/FindGamePage';
+import GoogleNavigation from './components/form/GoogleNavigation';
 
 /* Context */
 export const UserContext = React.createContext();
@@ -40,6 +41,7 @@ function App() {
             <Route path="/profile" element={isAuthenticated ? <Profile props={{ setAuthenticationStatus, currentUserID }} /> : <Navigate to="/" />} />
             <Route path='/rankings' element={isAuthenticated ? <PlayerRankings props={{ setAuthenticationStatus, currentUser }} /> : <Navigate to="/" />} />
             <Route path='/findGame' element={isAuthenticated ? <FindGamePage props={{ setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames }} /> : <Navigate to="/" />} />
+            <Route path='/googleTest' element={isAuthenticated ? <GoogleNavigation /> : <Navigate to="/" />} />
         </Routes>
 
         </Router>

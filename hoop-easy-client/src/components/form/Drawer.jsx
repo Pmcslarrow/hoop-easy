@@ -9,10 +9,6 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
-import Teammates from '../ui/Teammates';
-import { FirebaseQuery } from '../../utils/FirebaseQuery'
-import { getDocs, collection, updateDoc, doc } from 'firebase/firestore'
-import {db} from '../../config/firebase'
 import {createCaptainJsonFromArray, createScoreJsonFromArray, createTeamJsonFromArray} from '../../utils/toJSON'
 import axios from 'axios'
 

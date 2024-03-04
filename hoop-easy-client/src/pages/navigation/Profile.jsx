@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, storage } from "../../config/firebase.js";
+import { storage } from "../../config/firebase.js";
 import { handleError } from '../../utils/ErrorHandler.js';
-import { db } from '../../config/firebase.js';
-import { doc} from 'firebase/firestore';
 import {
     ref,
     uploadBytesResumable,
@@ -24,7 +22,6 @@ function Profile({ props }) {
     const [preview, setPreview] = useState("");
     const [profileInformation, setProfileInformation] = useState({})
     const currentUser = useContext(UserContext);
-    const userProfileRef = doc(db, `users/${currentUser.id}`); 
     const [flexOuter, setFlexOuter] = useState({})
     const [flexInner, setFlexInner] = useState({})
     const [refreshData, setRefresh] = useState(0)
@@ -44,23 +41,11 @@ function Profile({ props }) {
     }, [])
 
     useEffect(() => {
-        const getUserProfilePic = async () => {
-            const storageRef = ref(storage,`/files/${currentUserID}/profilePic`);
-            getDownloadURL(storageRef)
-            .then((url) => {
-                setPreview(url);
-            })
-            .catch((error) => {
-                setPreview(missingPhoto)
-                console.error("Error fetching image: ", error);
-            });
-        }
-
         const getUserProfileInformation = async () => {
             const response = await axios.get(`https://hoop-easy-production.up.railway.app/api/getUserWithID?userID=${currentUserID}`)
             setProfileInformation(response.data)
         }
-        getUserProfilePic()
+
         getUserProfileInformation()
         window.addEventListener("resize", handleResize, false);
     }, [refreshData]);
@@ -155,24 +140,6 @@ function Profile({ props }) {
     <div style={{...flexOuter, height: '90vh'}}>
 
         <div style={flexCol}>
-            <div>
-            <img
-              src={preview}
-              alt={'Profile img'}
-              style={{
-                borderRadius: '5px',
-                overflow: 'hidden',
-                width: '275px',
-                height: '275px',
-                padding: '5px',
-                background: `linear-gradient(135deg, rgba(250, 70, 47, 1) 0%, rgba(0, 0, 0, 0.55) 100%)`
-              }}
-            />
-            <div>
-                <input type="file" id="imageUpload" name="imageUpload" accept="image/*" onChange={handleImageUpload} />
-            </div>
-            </div>
-
             <div>
                 <h1 style={{fontFamily: 'var(--font-bold-italic)', fontSize: '4vw', margin: '0', marginTop: '50px'}}>{profileInformation.firstName} {profileInformation.lastName}</h1>
                 <h3 style={{fontFamily: 'var(--font-light-italic)', fontSize: '3vw', margin: '0'}}>{profileInformation.heightFt}'{profileInformation.heightInches}" {profileInformation.weight ? profileInformation.weight : "0"}lbs</h3>

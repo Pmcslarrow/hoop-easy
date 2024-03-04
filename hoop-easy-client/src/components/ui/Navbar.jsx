@@ -58,6 +58,10 @@ const Navbar = (props) => {
         navigate('/findGame')
     }
 
+    const navigateGoogleTest = () => {
+        navigate('/googleTest')
+    }
+
     return (
       <>
       <header>
@@ -95,7 +99,7 @@ const Navbar = (props) => {
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0, transition: { duration: 0.1 } }}
               >
-                <a href="#" className="sidebar-link">ABOUT HOOP:EASY</a>
+                <a href="#" className="sidebar-link" onClick={navigateGoogleTest}>ABOUT HOOP:EASY</a>
                 <a href="#" className="sidebar-link" onClick={navigateRankings}>Rankings</a>
                 <a href="#" className="sidebar-link" onClick={navigateFindGame}>FIND A GAME</a>
                 <a href="#" className="sidebar-link">HELP</a>
