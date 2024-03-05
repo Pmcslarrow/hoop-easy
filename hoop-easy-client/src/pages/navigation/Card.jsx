@@ -5,7 +5,7 @@ import { auth } from '../../config/firebase.js';
 import missingImage from '../../assets/images/missingImage.jpg'
 import { convertToLocalTime } from '../../utils/locationTimeFunctions.js';
 import axios from 'axios'
-
+import {APIProvider, Map, Marker} from '@vis.gl/react-google-maps';
 
 const Card = ({ props }) => {
     const { game, refreshToken, setRefreshToken } = props;
@@ -19,6 +19,7 @@ const Card = ({ props }) => {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+    const { REACT_APP_GOOGLE_API } = process.env
 
     const handleResize = () => {
         setDimensions({
@@ -142,27 +143,34 @@ const Card = ({ props }) => {
 
     // We disable the player's ability to join a game if they are already a teammate of the game -- So they can leave the game instead
     const disablePlayerAbilityToJoinGame = teammatesIdArray ? teammatesIdArray.some((player) => player.toString() === currentUserID.toString()) : false;
-
+    
     if ( CURRENT_NUMBER_TEAMMATES <= 0 ) {
         return <div style={{display: 'none'}}></div>
     }
     
     // Expecting 2024-01-28 01:40:00 which is 5:40pm in my time
-    console.log("Converting to local time: ", game.dateOfGameInUTC)
     const convertedDateTime = convertToLocalTime(game.dateOfGameInUTC)
+    const {latitude, longitude} = game
 
+    console.log(game)
     return (
         <div>
             <div 
-                id='card-outer' onMouseEnter={hover} onMouseLeave={hover} onClick={disablePlayerAbilityToJoinGame? handleLeaveGame : handleJoinGame} 
-                style={{ 
-                    backgroundImage: `url(${profilePic})`,
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
-                    borderRadius: '10px'
-                }}              
+                id='card-outer' 
+                onMouseEnter={hover} 
+                onMouseLeave={hover} 
+                onClick={disablePlayerAbilityToJoinGame? handleLeaveGame : handleJoinGame}           
             >
+                <APIProvider apiKey={REACT_APP_GOOGLE_API}>
+                    <Map 
+                        zoom={10} 
+                        center={{lat: parseFloat(latitude), lng: parseFloat(longitude)}}  
+                        disableDefaultUI={true}                     
+                        style={{ width: '100%', height: '100%', position: 'absolute', borderRadius: '10px'}}
+                    >
+                        <Marker position={{lat: parseFloat(latitude), lng: parseFloat(longitude)}}/>
+                    </Map>
+                </APIProvider>
                 <div>
                     <span className="card-text" style={{opacity: opacity === 0 ? 1 : 0}}></span>
                     <span className='accept-text' style={{opacity: opacity === 0 ? 0 : 1}}>

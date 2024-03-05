@@ -73,6 +73,7 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
 .accept-text {
     font-family: var(--font-bold-italic);
     font-size: 3rem;
+    color: black;
 }
 
 .accept-text, .card-text {
@@ -172,7 +173,6 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
 
     #accept-text {
         opacity: 0;
-        color: aqua;
     }
 }
 

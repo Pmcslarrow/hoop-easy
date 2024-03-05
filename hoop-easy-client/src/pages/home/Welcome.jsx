@@ -1,7 +1,9 @@
 import React from 'react';
 import setGridStyle from '../../utils/setGridStyle';
+import { useNavigate } from 'react-router-dom';
 
 const Welcome = () => {
+    const navigate = useNavigate()
         
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
     const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
@@ -27,6 +29,10 @@ const Welcome = () => {
       color: 'white',
       borderRadius: '15px'
     };
+
+    const navigateFindGame = () => {
+        navigate('/findGame')
+    }
   
     return (
       <section id="welcome">
@@ -36,9 +42,8 @@ const Welcome = () => {
           <p style={paragraph} className='hide'>
             Here you’ll find everything you need to keep hooping easy.
           </p>
-
             <a style={{ ...linkStyle, ...myGamesStyle }} href="#my-games">My games</a>
-            <a style={{ ...linkStyle, ...findGamesStyle }} href="#find-game">Find a game</a>
+            <a style={{ ...linkStyle, ...findGamesStyle }} href="#" onClick={navigateFindGame}>Find a game</a>
             <a style={{ ...linkStyle, ...historyStyle }} href="#history">My history</a>
             <a style={{ ...linkStyle, ...ratingsStyle }} href="#ratings">My ratings</a>
         </div>
