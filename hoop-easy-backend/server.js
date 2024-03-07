@@ -12,29 +12,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-/*
-
-const connection = mysql.createConnection({
-    host: process.env.HOST,
-    user: process.env.USER,
-    password: process.env.PASSWORD,
-    database: process.env.DB,
-    port: 23250,
-});
-
-connection.connect((err) => {
-    if (err) {
-      console.error('Error connecting to MySQL:', err);
-      return
-    } else {
-      console.log('\n\n\n\n\n\nConnected to MySQL database\n\n\n\n\n\n');
-      return
-    }
-});
-
-*/
-
-
 const pool = mysql.createPool({
     host: process.env.HOST,
     user: process.env.USER,
@@ -493,6 +470,13 @@ app.delete('/api/deleteGame', (req, res) => {
         res.status(500).send("Error trying to delete game.");
     }
 });
+
+/* 
+EMAIL CONFIRMATION HANDLING
+
+- The next step here below is to implement call backs to send an email to the two captains with the score of the games 
+- Then they can click the link to accept or deny in the email which reconnects to the callback link defined here
+*/
 
 
 
