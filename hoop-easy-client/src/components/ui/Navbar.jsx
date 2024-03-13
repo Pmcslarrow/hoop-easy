@@ -72,12 +72,12 @@ const Navbar = (props) => {
 
             { profilePic === true && 
                 <div className='profile-button'>
-                    <img src={profileImg} alt='Profile Icon' onClick={navigateProfile} style={{width: '40px', height: '40px'}}/>
+                    <img src={profileImg} alt='Profile Icon' onClick={navigateProfile} style={{width: '30px', height: '30px'}}/>
                 </div>
             }
 
             <div className="logo">
-                <img src={navButtonImg} style={{width: '40px', height: '40px'}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
+                <img src={navButtonImg} style={{width: '30px', height: '30px'}} onClick={toggleSidebar} id='drop-down' alt="Navigation button (three lines)" />
             </div>
             
         </div>

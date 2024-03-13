@@ -1,0 +1,5 @@
+.stepNodes:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+    border: 1px solid white;
+}

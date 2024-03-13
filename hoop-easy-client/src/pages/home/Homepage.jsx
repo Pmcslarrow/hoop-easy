@@ -90,7 +90,7 @@ const Homepage = ({ props }) => {
 
         <History currentUserID={currentUserID} />
 
-        <RatingsSection currentUserID={currentUserID}  />
+        {/* <RatingsSection currentUserID={currentUserID}  /> */ }
     </div>
   );
   

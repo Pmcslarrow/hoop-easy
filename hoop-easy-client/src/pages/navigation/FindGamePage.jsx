@@ -123,7 +123,7 @@ function FindGamePage({ props }) {
                 gameTypes={gameTypes}
                 handleSubmit={handleSubmit} 
             />
-            <div id='no-games'>No games to play. Create your own!</div>
+            <div id='no-games' style={{position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)'}}>No games to play. Create your own!</div>
         </section>
         )
     }

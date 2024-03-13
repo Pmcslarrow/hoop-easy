@@ -18,7 +18,7 @@ const Card = ({ props }) => {
     const [dimensions, setDimensions] = useState({
         width: window.innerWidth,
         height: window.innerHeight,
-      });
+    });
     const { REACT_APP_GOOGLE_API } = process.env
 
     const handleResize = () => {

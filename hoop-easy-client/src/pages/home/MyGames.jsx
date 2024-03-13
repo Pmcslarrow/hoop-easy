@@ -145,14 +145,16 @@ const MyGames = ({ props }) => {
             <div style={horizontalLine}></div>
 
             <div id='myGamesContainer' style={myGamesLocation}>
-            <ul className="cards" >
-
-                {confirmedGames.map((currentCard, i) => (
-                    <Card key={`confirmed-${i}`} currentCard={currentCard} type={currentCard.status} setAnimateOverallRating={setAnimateOverallRating}/>  
-                ))}
-    
+            <ul className="cards">
+            {confirmedGames.map((currentCard, i) => (
+                <Card 
+                    key={`confirmed-${i}`} 
+                    currentCard={currentCard} 
+                    type={currentCard.status} 
+                    setAnimateOverallRating={setAnimateOverallRating} 
+                />)) 
+            }
             </ul>
-
             </div>
         </section>
     )

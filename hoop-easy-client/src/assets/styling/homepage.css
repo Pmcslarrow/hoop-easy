@@ -61,10 +61,6 @@ section {
     display: inline-block; 
 }
 
-#welcome-container a[href^="#"]:hover {
-    transform: scale(1.04);
-    box-shadow: 0 0 20px 10px rgba(238, 238, 238, 0.3); 
-}
 
         
 #my-games {
