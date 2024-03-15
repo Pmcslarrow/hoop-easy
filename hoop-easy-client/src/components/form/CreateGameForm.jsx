@@ -11,6 +11,15 @@ const CreateGameForm = ( props ) => {
         longitude: 0,
         latitude: 0
     })
+    const [placeSelection, handlePlaceSelection] = useState({})
+    
+    useEffect(() => {
+        setGameLocation(placeSelection.formatted_address)
+        setCoordinates({
+            longitude: placeSelection?.geometry?.location?.lng(),
+            latitude: placeSelection?.geometry?.location?.lat()
+        })
+    }, [placeSelection])
 
     function toggleCreateGame() {
         setCreateGameActive(!isCreateGameActive)
@@ -91,10 +100,7 @@ const CreateGameForm = ( props ) => {
         return (
             <form style={styling} onSubmit={handleNewGameSubmission} id='createGameForm'>              
                     <div>
-                        <GoogleNavigation 
-                            setGameLocation={setGameLocation}
-                            setCoordinates={setCoordinates}
-                        />
+                        <GoogleNavigation handlePlaceSelection={handlePlaceSelection}/>
                     </div>
                     <div>
                         <input

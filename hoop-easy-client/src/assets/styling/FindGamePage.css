@@ -54,7 +54,6 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
     justify-content: center;  
     align-items: center; 
     position: relative; 
-    background: var(--background-gradient-start);
 }
 
 #card-outer:hover {
@@ -90,8 +89,8 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 10px;
-    gap:10px;
+    margin-top: 12px;
+    gap: 20px;
 }
 
 #subtext-left h4,
@@ -103,9 +102,21 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
 #subtext-right h4,
 #subtext-left p,
 #subtext-right p {
-    font-size: 16px;
+    font-size: 14px;
     margin: 0;
-    line-height: 1.35rem;
+    line-height: 1.5rem;
+}
+
+#subtext-left {
+    text-align: left;
+}
+
+#subtext-right {
+    text-align: right;
+}
+
+.my-google-map:hover {
+    opacity: 1;
 }
 
 .slots {

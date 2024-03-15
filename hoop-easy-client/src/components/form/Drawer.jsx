@@ -11,6 +11,8 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {createCaptainJsonFromArray, createScoreJsonFromArray, createTeamJsonFromArray} from '../../utils/toJSON'
 import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid';
+
 
 import '../../assets/styling/ScoreInput.css'
 
@@ -35,8 +37,8 @@ export default function ScoreDrawer({props}) {
   
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center' }} >
-      <Button variant="outlined" color="neutral" onClick={toggleDrawer(true)} id='submitScoreButton'>
+    <Box sx={{ display: 'flex', justifyContent: 'center'}} >
+      <Button variant="plain" color="neutral" onClick={toggleDrawer(true)}>
         Submit Score
       </Button>
       <Drawer open={open} onClose={toggleDrawer(false)} anchor="bottom" size="lg">
@@ -120,7 +122,7 @@ function ScoreInput({props}) {
   
     const renderProfilesForCurrentPage = ( callback ) => {
         return profiles.map((obj) => (
-            <ListItem key={obj.userID}>
+            <ListItem key={uuidv4()}>
                 <Checkbox
                     disabled={false}
                     label={obj.username}
@@ -232,7 +234,7 @@ function ScoreInput({props}) {
     });
     
     if ( team1.length !== team2.length || teamOneCaptain.username === '' || teamTwoCaptain.username === '' ) {
-        return <div>Please make sure you complete step 1 and step 2</div>
+        return <div>Please complete step 1 and step 2 first</div>
     }
 
     const renderTeamOne = team1.map((player) => {
@@ -322,7 +324,14 @@ function ScoreInput({props}) {
 
             </div>
             <br />
-            <button onClick={() => handleScoreSubmission(currentCard, scoreData)} >Submit Scores</button>
+            <Button 
+                onClick={() => handleScoreSubmission(currentCard, scoreData)} 
+                color="primary"
+                size="medium"
+                variant="filled"
+            >
+                Submit Scores
+            </Button>
         </div>
     )
   }

@@ -1,41 +1,34 @@
-import React, { useRef } from "react";
-import { StandaloneSearchBox, LoadScript } from "@react-google-maps/api";
-
-const libraries = ["places"];
+import React, { useRef, useEffect, useState } from 'react';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
 const { REACT_APP_GOOGLE_API } = process.env
 
-export default function GoogleNavigation({ setGameLocation, setCoordinates }) {
-    const inputRef = useRef();
+export default function GoogleNavigation ({handlePlaceSelection}) {
+  const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
+  const inputRef = useRef(null);
+  const places = useMapsLibrary('places');
 
-    const handlePlaceChanged = () => {
-        const [place] = inputRef.current.getPlaces();
-        if (place) {
-            setGameLocation(place.formatted_address);
-            setCoordinates({
-                longitude: place.geometry.location.lng(),
-                latitude: place.geometry.location.lat()
-            });
-        }
+  useEffect(() => {
+    if (!places || !inputRef.current) return;
+
+    const options = {
+      fields: ['geometry', 'name', 'formatted_address']
     };
 
-    return (
-        <LoadScript
-            googleMapsApiKey={REACT_APP_GOOGLE_API}
-            libraries={libraries} 
-        >
-            <StandaloneSearchBox
-                onLoad={ref => {
-                    inputRef.current = ref;
-                }}
-                onPlacesChanged={handlePlaceChanged}
-            >
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter Game Location"
-                    style={{ width: "95%", padding: "10px" }}
-                />
-            </StandaloneSearchBox>
-        </LoadScript>
-    );
-}
+    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
+  }, [places]);
+
+  useEffect(() => {
+    if (!placeAutocomplete) return;
+
+    placeAutocomplete.addListener('place_changed', () => {
+        handlePlaceSelection(placeAutocomplete.getPlace())
+    });
+  }, [handlePlaceSelection, placeAutocomplete]);
+
+  return (
+    <div className="autocomplete-container" >
+      <input ref={inputRef} style={{ width: "95%", padding: "10px" }}/>
+    </div>
+  );
+};
+

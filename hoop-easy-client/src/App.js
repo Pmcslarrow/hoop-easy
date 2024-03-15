@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
-
+import {APIProvider} from '@vis.gl/react-google-maps';
 
 /* Routes */
 import CreateAccount from './pages/auth/CreateAccount';
@@ -30,22 +30,24 @@ function App() {
   }, [isAuthenticated]);
 
   return (
-    <UserContext.Provider value={currentUser}>
-        <Router>
-        <Routes>
-            <Route path="/" element={isAuthenticated ? <Homepage props={{ setAuthenticationStatus }} /> : <CreateAccount props={{ setAuthenticationStatus }} />} />
-            <Route path="/createAccount" element={<CreateAccount props={{ setAuthenticationStatus }} />} />
-            <Route path="/login" element={<LoginPage props={{ setAuthenticationStatus }} />} />
-            <Route path="/resetPassword" element={<ResetPassword />} />
-            <Route path="/homepage" element={isAuthenticated ? <Homepage props={{ setAuthenticationStatus, currentUser, setCurrentUser, currentUserID, setCurrentUserID }} /> : <Navigate to="/" />} />
-            <Route path="/profile" element={isAuthenticated ? <Profile props={{ setAuthenticationStatus, currentUserID }} /> : <Navigate to="/" />} />
-            <Route path='/rankings' element={isAuthenticated ? <PlayerRankings props={{ setAuthenticationStatus, currentUser }} /> : <Navigate to="/" />} />
-            <Route path='/findGame' element={isAuthenticated ? <FindGamePage props={{ setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames }} /> : <Navigate to="/" />} />
-            <Route path='/construction' element={<UnderConstruction />} />
-        </Routes>
+    <APIProvider apiKey={"AIzaSyD-qamxgHTK8gbNFAp5hhq43-HIN6wCcRs"}>
+        <UserContext.Provider value={currentUser}>
+            <Router>
+            <Routes>
+                <Route path="/" element={isAuthenticated ? <Homepage props={{ setAuthenticationStatus }} /> : <CreateAccount props={{ setAuthenticationStatus }} />} />
+                <Route path="/createAccount" element={<CreateAccount props={{ setAuthenticationStatus }} />} />
+                <Route path="/login" element={<LoginPage props={{ setAuthenticationStatus }} />} />
+                <Route path="/resetPassword" element={<ResetPassword />} />
+                <Route path="/homepage" element={isAuthenticated ? <Homepage props={{ setAuthenticationStatus, currentUser, setCurrentUser, currentUserID, setCurrentUserID }} /> : <Navigate to="/" />} />
+                <Route path="/profile" element={isAuthenticated ? <Profile props={{ setAuthenticationStatus, currentUserID }} /> : <Navigate to="/" />} />
+                <Route path='/rankings' element={isAuthenticated ? <PlayerRankings props={{ setAuthenticationStatus, currentUser }} /> : <Navigate to="/" />} />
+                <Route path='/findGame' element={isAuthenticated ? <FindGamePage props={{ setAuthenticationStatus, currentUser, setCurrentUser, availableGames, setAvailableGames }} /> : <Navigate to="/" />} />
+                <Route path='/construction' element={<UnderConstruction />} />
+            </Routes>
 
-        </Router>
-    </UserContext.Provider>
+            </Router>
+        </UserContext.Provider>
+    </APIProvider>
   );
 }
 

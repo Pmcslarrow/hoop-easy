@@ -5,7 +5,7 @@ import { auth } from '../../config/firebase.js';
 import missingImage from '../../assets/images/missingImage.jpg'
 import { convertToLocalTime } from '../../utils/locationTimeFunctions.js';
 import axios from 'axios'
-import {APIProvider, Map, Marker} from '@vis.gl/react-google-maps';
+import MapContainer from '../../components/ui/MapContainer.jsx';
 
 const Card = ({ props }) => {
     const { game, refreshToken, setRefreshToken } = props;
@@ -152,7 +152,6 @@ const Card = ({ props }) => {
     const convertedDateTime = convertToLocalTime(game.dateOfGameInUTC)
     const {latitude, longitude} = game
 
-    console.log(game)
     return (
         <div>
             <div 
@@ -161,16 +160,10 @@ const Card = ({ props }) => {
                 onMouseLeave={hover} 
                 onClick={disablePlayerAbilityToJoinGame? handleLeaveGame : handleJoinGame}           
             >
-                <APIProvider apiKey={REACT_APP_GOOGLE_API}>
-                    <Map 
-                        zoom={10} 
-                        center={{lat: parseFloat(latitude), lng: parseFloat(longitude)}}  
-                        disableDefaultUI={true}                     
-                        style={{ width: '100%', height: '100%', position: 'absolute', borderRadius: '10px'}}
-                    >
-                        <Marker position={{lat: parseFloat(latitude), lng: parseFloat(longitude)}}/>
-                    </Map>
-                </APIProvider>
+                <MapContainer
+                    longitude={parseFloat(longitude)}
+                    latitude={parseFloat(latitude)}
+                />
                 <div>
                     <span className="card-text" style={{opacity: opacity === 0 ? 1 : 0}}></span>
                     <span className='accept-text' style={{opacity: opacity === 0 ? 0 : 1}}>

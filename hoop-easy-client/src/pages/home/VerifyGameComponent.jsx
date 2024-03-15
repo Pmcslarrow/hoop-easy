@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { localToUTC } from '../../utils/locationTimeFunctions';
 import axios from 'axios'
+import Button from '@mui/joy/Button';
 
 
 const VerifyGameComponent = ({ props }) => {
@@ -18,6 +19,12 @@ const VerifyGameComponent = ({ props }) => {
     }
     const flexRow = {
         display: 'flex', flexDirection: 'row', justifyContent: 'space-around', gap: '5px'
+    }
+    const buttonStyling = {
+        backgroundColor: 'var(--background-gradient-start)',
+        '&:hover': {
+            backgroundColor: 'var(--background-dark-orange)'
+        }
     }
 
     useEffect(() => {
@@ -269,16 +276,8 @@ const VerifyGameComponent = ({ props }) => {
                 </div>
             </div>
             <div style={flexRow}>
-                <div id='accept-button' onClick={handleAccept}>
-                    <div style={center}>
-                        Accept
-                    </div>
-                </div>
-                <div id='deny-button' onClick={handleDeny}>
-                    <div style={center}>
-                        Deny
-                    </div>
-                </div>
+                <Button onClick={handleAccept} sx={buttonStyling}>Accept Score</Button>
+                <Button onClick={handleDeny} sx={buttonStyling}>Deny Score</Button>
             </div>
         </div>
     )

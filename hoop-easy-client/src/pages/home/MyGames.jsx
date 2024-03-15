@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import setGridStyle from '../../utils/setGridStyle';
 import { auth } from '../../config/firebase'
 import axios from 'axios'
 import { convertToLocalTime } from '../../utils/locationTimeFunctions';
+import {APIProvider, Map} from '@vis.gl/react-google-maps';
+import MapContainer from '../../components/ui/MapContainer';
+
+/* Material UI */
+import Card from '@mui/joy/Card';
+import CardContent from '@mui/joy/CardContent';
+import Typography from '@mui/joy/Typography';
+import Divider from '@mui/material/Divider'
 
 /* Components */
 import VerifyGameComponent from './VerifyGameComponent';
@@ -10,12 +18,9 @@ import ScoreInputComponent from './ScoreInputComponent';
 
 const MyGames = ({ props }) => {
     const { setRefreshToken, refreshToken, setAnimateOverallRating } = props;
-    const [confirmedGames, setMyGames] = useState([])
-    const [currentUserID, setCurrentUserID] = useState([])
-
-    const boldItalicStyle = { fontFamily: 'var(--font-bold-italic)'}
+    const [confirmedGames, setMyGames] = React.useState([])
+    const [currentUserID, setCurrentUserID] = React.useState([])
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
-    const horizontalLine = setGridStyle(6, 4, 9, 4, "#da3c28", undefined, false);
     const myGamesLocation = setGridStyle(2, 6, 12, 30, undefined, undefined, undefined)
     const gridStyle = {
         display: 'grid',
@@ -25,7 +30,7 @@ const MyGames = ({ props }) => {
     };
     
 
-    useEffect(() => {
+    React.useEffect(() => {
         const getCurrentUserID = async () => {
             const currentUserEmail = auth?.currentUser?.email
             if (currentUserEmail !== undefined) {
@@ -44,7 +49,7 @@ const MyGames = ({ props }) => {
     }, [])
 
 
-    const Card = ({ currentCard, type, setAnimateOverallRating }) => {
+    const MyGamesCard = ({ currentCard, type, setAnimateOverallRating }) => {
         const renderLowerCardSection = () => {
             if (type === 'pending') {
                 return <WaitingForGameAcceptance />
@@ -87,74 +92,69 @@ const MyGames = ({ props }) => {
                 return true
             }
         }
-
-        const convertedTime = convertToLocalTime(currentCard.dateOfGameInUTC)
-        
-        const [dateOfGame, timeOfGame] = convertedTime.split(',');
-        const trimmedDateOfGame = dateOfGame.trim();
-        const trimmedTimeOfGame = timeOfGame.trim();
-        
+        const convertedTime = convertToLocalTime(currentCard?.dateOfGameInUTC)
+        const indexOfCountry = currentCard.address.lastIndexOf(',')
+        const address = currentCard.address.slice(0, indexOfCountry)
         return (
-          <li className='card'>
-            <div style={{ display: 'flex', justifyContent: 'space-between', ...boldItalicStyle }}>
-              <div>{currentCard.gameType}v{currentCard.gameType}</div>
-              <div>
-                <div>{trimmedDateOfGame}</div> {/* Date */}
-                <div>{trimmedTimeOfGame}</div> {/* Time */}
-              </div>
-            </div>
-            <div className='opponentText' style={{ padding: '20px'}}>
-                {/*<Teammates game={currentCard}/>*/}
-            </div>
-            <div className='addressText'>{currentCard.addressString}</div>
-            {renderLowerCardSection()}
-          </li>
-        );
+            <Card
+                variant="outlined"
+                orientation="vertical"
+                sx={{
+                    width: 320,
+                    height: 350,
+                    '&:hover': { boxShadow: 'lg', borderColor: 'neutral.outlinedHoverBorder' },
+                }}
+            >
+                <MapContainer
+                    longitude={parseFloat(currentCard.longitude)}
+                    latitude={parseFloat(currentCard.latitude)}
+                />
+                {/*
+                <Map 
+                    zoom={12} 
+                    center={{lat: parseFloat(currentCard.latitude), lng: parseFloat(currentCard.longitude)}} 
+                    disableDefaultUI={true} 
+                    style={{ width: '95%', height: '50%', position: 'relative', borderRadius: '10px', margin: '2.5%'}}>
+                </Map>
+                */}   
+                <CardContent style={{textAlign: 'left', marginLeft: '5%', marginRight: '5%'}}>
+                    <Typography level="body-xs" variant="plain">1v1</Typography>
+                    <Typography level="title-sm" variant="plain">{address}</Typography>
+                    <Typography level="body-sm" aria-describedby="card-description" mb={1} sx={{ color: 'text.tertiary' }}>
+                        {convertedTime}
+                    </Typography>
+                    <Divider />
+                    {renderLowerCardSection()}
+                </CardContent>
+            </Card>
+        )
     };
 
     const WaitingForGameAcceptance = () => {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-              <div>Waiting for the game to be accepted by other players</div>
-              <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px' }}>
-                <div className='el'></div>
-                <div className='el'></div>
-                <div className='el'></div>
-              </div>
-            </div>
+            <Typography level="body-xs" variant="plain">Waiting for the game to be accepted by other players</Typography>
         );
     }
-
     const PendingGameApproval = () => {
         return ( 
-            <div style={{display: 'flex', justifyContent: 'center', gap: '10px'} }>
-                <div>Waiting for the score to be approved by your opponent...</div>
-
-                <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'end', gap: '5px'}}>
-                    <div className='el'></div>
-                    <div className='el'></div>
-                    <div className='el'></div>
-                </div>
-            </div>
+            <Typography level="body-xs" variant="plain">Waiting for the score to be approved by your opponent</Typography>
         )        
     }
+
+    const renderedGames = confirmedGames.map((currentCard, i) => (
+        <MyGamesCard
+          key={`confirmed-${i}`}
+          currentCard={currentCard}
+          type={currentCard.status}
+          setAnimateOverallRating={setAnimateOverallRating}
+        />
+    ));
 
     return (
         <section id="my-games" style={gridStyle}>
             <h1 style={h1Style}>My Games</h1>
-            <div style={horizontalLine}></div>
-
-            <div id='myGamesContainer' style={myGamesLocation}>
-            <ul className="cards">
-            {confirmedGames.map((currentCard, i) => (
-                <Card 
-                    key={`confirmed-${i}`} 
-                    currentCard={currentCard} 
-                    type={currentCard.status} 
-                    setAnimateOverallRating={setAnimateOverallRating} 
-                />)) 
-            }
-            </ul>
+            <div style={myGamesLocation}>
+                <ul className="cards">{renderedGames}</ul>
             </div>
         </section>
     )
