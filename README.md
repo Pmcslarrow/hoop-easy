@@ -53,21 +53,11 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+HoopEasy is an application created to make finding pickup basketball games easy and fun. The app uses geocoding to calculate the distance of games from your location, and utlizes the Google Maps API to help setup and find games where you desire. We use an ELO rating system in which affects the overall rating of a player after each game played. 
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
+In the near future we plan on creating an in-app marketplace for leveling up your character as you play. As you begin to play more games we we attempt to increase your XP level and separately your overall rating based on wins. Each will help generate an in-app currency that can be exchanged to personalize your experience!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 ## Built With
