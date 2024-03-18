@@ -8,11 +8,10 @@
   <p align="center">
     An application built to make finding and playing pickup basketball games, easy. 
     <br />
-    <a href="#">View Demo</a>
     ·
     <a href="https://github.com/Pmcslarrow/hoop-easy/issues">Report Bug / Request Feature</a>
     ·
-    <a href="https://hoop-easy-client-production.up.railway.app/">Website</a>
+    <a href="https://hoop-easy-client-production.up.railway.app/">Website (currently down for maintenance)</a>
   </p>
 </div>
 
