@@ -89,7 +89,7 @@ const Leaderboard = ({ currentUser }) => {
                                 <td style={tableCellStyle}>
                                     {data.length - index}
                                 </td>
-                                <td style={tableCellStyle}>{row.overall}</td>
+                                <td style={tableCellStyle}>{parseFloat(row.overall).toFixed(2)}</td>
                                 <td style={tableCellStyle}>{row.username}</td>
                                 <td style={tableCellStyle} className='mobile-none'>{row.gamesPlayed}</td>
                             </tr>
@@ -99,7 +99,7 @@ const Leaderboard = ({ currentUser }) => {
                                 <td style={tableCellStyle}>
                                     {index + 1}
                                 </td>
-                                <td style={tableCellStyle}>{row.overall}</td>
+                                <td style={tableCellStyle}>{parseFloat(row.overall).toFixed(2)}</td>
                                 <td style={tableCellStyle}>{row.username}</td>
                                 <td style={tableCellStyle} className='mobile-none'>{row.gamesPlayed}</td>
                             </tr>

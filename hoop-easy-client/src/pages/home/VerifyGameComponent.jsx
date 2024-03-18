@@ -255,7 +255,6 @@ const VerifyGameComponent = ({ props }) => {
         })
     }
 
-    const center = { position: 'relative', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', ...boldItalicStyle}
     return (
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', gap: '10px'}}>
             <div style={flexRow}>

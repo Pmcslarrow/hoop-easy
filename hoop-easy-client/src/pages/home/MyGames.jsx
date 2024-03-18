@@ -1,10 +1,11 @@
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import setGridStyle from '../../utils/setGridStyle';
 import { auth } from '../../config/firebase'
 import axios from 'axios'
 import { convertToLocalTime } from '../../utils/locationTimeFunctions';
 import {APIProvider, Map} from '@vis.gl/react-google-maps';
 import MapContainer from '../../components/ui/MapContainer';
+import { v4 as uuidv4 } from 'uuid';
 
 /* Material UI */
 import Card from '@mui/joy/Card';
@@ -18,8 +19,8 @@ import ScoreInputComponent from './ScoreInputComponent';
 
 const MyGames = ({ props }) => {
     const { setRefreshToken, refreshToken, setAnimateOverallRating } = props;
-    const [confirmedGames, setMyGames] = React.useState([])
-    const [currentUserID, setCurrentUserID] = React.useState([])
+    const [confirmedGames, setMyGames] = useState([])
+    const [currentUserID, setCurrentUserID] = useState([])
     const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
     const myGamesLocation = setGridStyle(2, 6, 12, 30, undefined, undefined, undefined)
     const gridStyle = {
@@ -30,7 +31,7 @@ const MyGames = ({ props }) => {
     };
     
 
-    React.useEffect(() => {
+    useEffect(() => {
         const getCurrentUserID = async () => {
             const currentUserEmail = auth?.currentUser?.email
             if (currentUserEmail !== undefined) {
@@ -92,43 +93,42 @@ const MyGames = ({ props }) => {
                 return true
             }
         }
+        
         const convertedTime = convertToLocalTime(currentCard?.dateOfGameInUTC)
         const indexOfCountry = currentCard.address.lastIndexOf(',')
         const address = currentCard.address.slice(0, indexOfCountry)
+
         return (
-            <Card
-                variant="outlined"
-                orientation="vertical"
-                sx={{
-                    width: 320,
-                    height: 350,
-                    '&:hover': { boxShadow: 'lg', borderColor: 'neutral.outlinedHoverBorder' },
-                }}
-            >
-                <MapContainer
-                    longitude={parseFloat(currentCard.longitude)}
-                    latitude={parseFloat(currentCard.latitude)}
-                />
-                {/*
-                <Map 
-                    zoom={12} 
-                    center={{lat: parseFloat(currentCard.latitude), lng: parseFloat(currentCard.longitude)}} 
-                    disableDefaultUI={true} 
-                    style={{ width: '95%', height: '50%', position: 'relative', borderRadius: '10px', margin: '2.5%'}}>
-                </Map>
-                */}   
-                <CardContent style={{textAlign: 'left', marginLeft: '5%', marginRight: '5%'}}>
-                    <Typography level="body-xs" variant="plain">1v1</Typography>
-                    <Typography level="title-sm" variant="plain">{address}</Typography>
-                    <Typography level="body-sm" aria-describedby="card-description" mb={1} sx={{ color: 'text.tertiary' }}>
-                        {convertedTime}
-                    </Typography>
-                    <Divider />
-                    {renderLowerCardSection()}
-                </CardContent>
-            </Card>
+            <div class = "card-item">
+                <Card
+                    variant="outlined"
+                    orientation="vertical"
+                    sx={{
+                        width: 350,
+                        height: 400,
+                        '&:hover': { boxShadow: 'lg', borderColor: 'neutral.outlinedHoverBorder' },
+                    }} 
+                >
+                    <MapContainer
+                        longitude={parseFloat(currentCard.longitude)}
+                        latitude={parseFloat(currentCard.latitude)}
+                    />
+                    <CardContent style={{textAlign: 'left'}}>
+                        <Typography level="body-xs" variant="plain">{currentCard.gameType}v{currentCard.gameType}</Typography>
+                        <Typography level="title-sm" variant="plain">{address}</Typography>
+                        <Typography level="body-sm" aria-describedby="card-description" mb={1} sx={{ color: 'text.tertiary' }}>
+                            {convertedTime}
+                        </Typography>
+                    </CardContent>
+                    <CardContent>
+                        <Divider />
+                        {renderLowerCardSection()}
+                    </CardContent>  
+                </Card>
+            </div>
+            
         )
-    };
+    }
 
     const WaitingForGameAcceptance = () => {
         return (
@@ -143,7 +143,7 @@ const MyGames = ({ props }) => {
 
     const renderedGames = confirmedGames.map((currentCard, i) => (
         <MyGamesCard
-          key={`confirmed-${i}`}
+          key={uuidv4()}
           currentCard={currentCard}
           type={currentCard.status}
           setAnimateOverallRating={setAnimateOverallRating}
@@ -151,10 +151,10 @@ const MyGames = ({ props }) => {
     ));
 
     return (
-        <section id="my-games" style={gridStyle}>
-            <h1 style={h1Style}>My Games</h1>
-            <div style={myGamesLocation}>
-                <ul className="cards">{renderedGames}</ul>
+        <section id='my-games' style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
+            <h1 style={{fontSize: '8vw', margin: '30px'}}>My Games</h1>
+            <div className='wrapper'>
+                {renderedGames}
             </div>
         </section>
     )

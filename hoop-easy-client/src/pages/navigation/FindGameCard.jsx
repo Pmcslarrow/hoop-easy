@@ -7,30 +7,19 @@ import { convertToLocalTime } from '../../utils/locationTimeFunctions.js';
 import axios from 'axios'
 import MapContainer from '../../components/ui/MapContainer.jsx';
 
-const Card = ({ props }) => {
+/* Material UI */
+import Card from '@mui/joy/Card';
+import CardContent from '@mui/joy/CardContent';
+import Typography from '@mui/joy/Typography';
+import Divider from '@mui/material/Divider'
+import { Button } from '@mui/material';
+
+const FindGameCard = ({ props }) => {
     const { game, refreshToken, setRefreshToken } = props;
     const [teammatesIdArray, setTeammatesIdArray] = useState([]);
     const MAX_PLAYERS = parseInt(game.gameType) * 2
     const CURRENT_NUMBER_TEAMMATES = teammatesIdArray && teammatesIdArray.length > 0 ? teammatesIdArray.length : 0;
-    const [opacity, setOpacity] = useState(0)
-    const [profilePic, setProfilePic] = useState([])
     const [currentUserID, setCurrentUserID] = useState([])
-    const [dimensions, setDimensions] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight,
-    });
-    const { REACT_APP_GOOGLE_API } = process.env
-
-    const handleResize = () => {
-        setDimensions({
-            width: window.innerWidth,
-            height: window.innerHeight,
-        });
-
-        if ( window.innerWidth < 950 ) {
-            setOpacity(1)
-        }
-    }
 
     useEffect(() => {
         const getArrayOfTeammates = async () => {
@@ -59,14 +48,8 @@ const Card = ({ props }) => {
                 
         getArrayOfTeammates()
         getCurrentUserID()
-        window.addEventListener("resize", handleResize, false);
     }, [refreshToken]);
     
-
-    useEffect(() => {
-        setProfilePic(missingImage)
-    }, [])
-
 
     const handleJoinGame = async () => {
         try {
@@ -128,14 +111,6 @@ const Card = ({ props }) => {
         return json
     }
   
-    const hover = () => {
-        if ( opacity === 0 ) {
-            setOpacity(1)
-        } else {
-            setOpacity(0)
-        }
-    }
-
     const playerSlots = Array.from({ length: MAX_PLAYERS }, (_, index) => {
         const className = index < CURRENT_NUMBER_TEAMMATES ? 'taken' : 'open';        
         return <div key={index} className={className}></div>;
@@ -152,40 +127,57 @@ const Card = ({ props }) => {
     const convertedDateTime = convertToLocalTime(game.dateOfGameInUTC)
     const {latitude, longitude} = game
 
+    // Removes the country so that it fits well in the card
+    const indexOfCountry = game.address.lastIndexOf(',')
+    const address = game.address.slice(0, indexOfCountry)
+
+    const buttonStyling = {
+        backgroundColor: 'var(--background-gradient-start)',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: 'var(--background-dark-orange)'
+        }
+    }
+
     return (
-        <div>
-            <div 
-                id='card-outer' 
-                onMouseEnter={hover} 
-                onMouseLeave={hover} 
-                onClick={disablePlayerAbilityToJoinGame? handleLeaveGame : handleJoinGame}           
-            >
-                <MapContainer
-                    longitude={parseFloat(longitude)}
-                    latitude={parseFloat(latitude)}
-                />
-                <div>
-                    <span className="card-text" style={{opacity: opacity === 0 ? 1 : 0}}></span>
-                    <span className='accept-text' style={{opacity: opacity === 0 ? 0 : 1}}>
-                        {disablePlayerAbilityToJoinGame ? 'LEAVE' : 'JOIN'}
-                        <div className='slots'>
-                            {playerSlots}
-                        </div>
-                    </span>
-                </div>
-            </div>
-            <div id='subtext'>
-                <div id='subtext-left'>
-                    <p>{game.address}</p>
-                    <p>{convertedDateTime}</p>
-                </div>
-                <div id='subtext-right'>
-                    <p>{game.distance.toFixed(2)} Miles</p>
-                    <p>{game.gameType}v{game.gameType}</p>
-                </div>
-            </div>
-        </div>
-    );
+        <Card
+            variant="outlined"
+            orientation="vertical"
+            sx={{
+                width: '90%',
+                height: 350,
+                '&:hover': { boxShadow: 'lg', borderColor: 'neutral.outlinedHoverBorder' },
+            }}
+        >
+            <MapContainer
+                longitude={parseFloat(longitude)}
+                latitude={parseFloat(latitude)}
+            />
+            <CardContent style={{textAlign: 'left'}}>
+                <Typography level="body-xs" variant="plain">{game.gameType}v{game.gameType}</Typography>
+                <Typography level="title-sm" variant="plain">{address}</Typography>
+                <Typography level="body-sm" aria-describedby="card-description" mb={1} sx={{ color: 'text.tertiary' }}>
+                    {convertedDateTime}
+                </Typography>
+            </CardContent>
+                <Divider />
+            <CardContent orientation="horizontal" style={{gap: '5px', justifyContent: 'space-between'}}>
+                <CardContent orientation="vertical" style={{gap: '5px'}}>
+                    <Typography level="body-sm" variant="plain">Player Slots</Typography>
+                    <CardContent orientation='horizontal' style={{gap: '5px'}}>
+                        {playerSlots}
+                    </CardContent>
+                </CardContent>
+                <Button 
+                    onClick={disablePlayerAbilityToJoinGame? handleLeaveGame : handleJoinGame}  
+                    sx={buttonStyling}
+                    size='small'
+                >
+                    {disablePlayerAbilityToJoinGame ? 'LEAVE GAME' : 'JOIN GAME'}
+                </Button>
+            </CardContent>  
+        </Card>
+    )
 };
 
-export { Card };
+export { FindGameCard };

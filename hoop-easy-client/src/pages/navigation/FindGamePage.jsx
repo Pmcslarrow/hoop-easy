@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { getDistanceFromLatLonInMiles, convertToLocalTime } from '../../utils/locationTimeFunctions';
 import getUserCoordinates from '../../utils/locationServices';
 import { v4 as uuidv4 } from 'uuid';
-import { Card } from './Card'
+import { FindGameCard } from './FindGameCard'
 import axios from 'axios';
 import FadeModalDialog from './FilterModal'
 
@@ -141,7 +141,7 @@ function FindGamePage({ props }) {
             />
             <div id='card-container'>
                 {games && games.map((game) => (
-                    <Card 
+                    <FindGameCard
                         key={uuidv4()}
                         props={{
                             game, 

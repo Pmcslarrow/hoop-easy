@@ -45,7 +45,6 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
 
 #card-outer {
     border: 1px solid #e0e0e0;
-    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
@@ -126,9 +125,10 @@ src: url('../../../public/Montserrat/static/Montserrat-Light.ttf');
 }
 
 .taken, .open {
-    width: 25px;
-    height: 25px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
+    border: 1px solid black;
 }
 
 .taken {

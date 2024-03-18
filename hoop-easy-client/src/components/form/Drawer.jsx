@@ -13,8 +13,16 @@ import {createCaptainJsonFromArray, createScoreJsonFromArray, createTeamJsonFrom
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
 
-
 import '../../assets/styling/ScoreInput.css'
+
+const buttonStyling = {
+    backgroundColor: 'var(--background-gradient-start)',
+    color: 'white',
+    '&:hover': {
+        backgroundColor: 'var(--background-dark-orange)'
+    }
+}
+
 
 export default function ScoreDrawer({props}) {
     const {currentCard, currentUser, refreshToken, setRefreshToken} = props
@@ -34,30 +42,29 @@ export default function ScoreDrawer({props}) {
     
         setOpen(inOpen);
     };
-  
 
-  return (
-    <Box sx={{ display: 'flex', justifyContent: 'center'}} >
-      <Button variant="plain" color="neutral" onClick={toggleDrawer(true)}>
-        Submit Score
-      </Button>
-      <Drawer open={open} onClose={toggleDrawer(false)} anchor="bottom" size="lg">
-        <Box
-          role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
-        >
-            <ScoreInput props={{
-                currentCard,
-                currentUser,
-                refreshToken,
-                setRefreshToken
-                }}
-            />
+    return (
+        <Box sx={{ display: 'flex', justifyContent: 'center'}} >
+        <Button sx={buttonStyling} onClick={toggleDrawer(true)}>
+            Submit Score
+        </Button>
+        <Drawer open={open} onClose={toggleDrawer(false)} anchor="bottom" size="lg">
+            <Box
+            role="presentation"
+            onClick={toggleDrawer(false)}
+            onKeyDown={toggleDrawer(false)}
+            >
+                <ScoreInput props={{
+                    currentCard,
+                    currentUser,
+                    refreshToken,
+                    setRefreshToken
+                    }}
+                />
+            </Box>
+        </Drawer>
         </Box>
-      </Drawer>
-    </Box>
-  );
+    );
 }
 
 
@@ -326,9 +333,7 @@ function ScoreInput({props}) {
             <br />
             <Button 
                 onClick={() => handleScoreSubmission(currentCard, scoreData)} 
-                color="primary"
-                size="medium"
-                variant="filled"
+                sx={buttonStyling}
             >
                 Submit Scores
             </Button>
