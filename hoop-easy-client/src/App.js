@@ -16,7 +16,8 @@ import UnderConstruction from './pages/navigation/UnderConstruction';
 export const UserContext = React.createContext();
 export const UserIDContext = React.createContext()
 
-
+/* Private env variables */
+const { REACT_APP_GOOGLE_API } = process.env
 
 function App() {
   const [isAuthenticated, setAuthenticationStatus] = useState(false);
@@ -30,7 +31,7 @@ function App() {
   }, [isAuthenticated]);
 
   return (
-    <APIProvider apiKey={"AIzaSyD-qamxgHTK8gbNFAp5hhq43-HIN6wCcRs"}>
+    <APIProvider apiKey={REACT_APP_GOOGLE_API}>
         <UserContext.Provider value={currentUser}>
             <Router>
             <Routes>
