@@ -39,7 +39,6 @@
       </ul>
     </li>
     <li><a href="#user-guide">User's Guide</a></li>
-    <li><a href="#developer-guide">Developer's Guide</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -77,36 +76,41 @@ This section should list any major frameworks/libraries used to bootstrap your p
 ## User Guide
 
 #### Creating an Account
-#### Verifying your email
-#### Logging in
+When you load into HoopEasy you should see the following page:
+<img width="1394" alt="Screenshot 2024-03-19 at 9 39 16 AM" src="https://github.com/Pmcslarrow/hoop-easy/assets/74205136/ddd46357-f563-4567-af40-5f23b3cf015f">
+Click on the "Create Account" button and it will take you through the process of necessary user inputs. Height and weight are optional parameters that can be changed later on. 
+
+#### Verifying your email and Logging In
+We utilize Google Firebase to help secure your account well, and you will receive an email containing a link to verify your email. Once you click the link, make way back to the application as it should have redirected to the login page where you can now try your new login.
+
 #### Understanding the homepage
+<img width="1204" alt="Screenshot 2024-03-19 at 9 44 22 AM" src="https://github.com/Pmcslarrow/hoop-easy/assets/74205136/e28ed5a4-e488-4733-bce4-10ae36a68ecd">
+
+The homepage is where you as the user can get started with finding or creating new games. At the very top you have the HoopEasy logo which you can click to go back a page always, a profile page to update your user's information, and a navigation bar that will help you get to places like the rankings or finding a game page. 
+
+Lower on the page, you have the "My Games" section. At the creation of your account this will be empty, but as you create games, or join other games, this is the hub you will use to see upcoming games, or where you can verify the end result of games. Going further into this process, the most user intensive process is when verifying a game. Let's say that you have two players, yourself and a stranger who played 1v1 one day. If you want to submit a score, the card will show your game and the button "submit score". You click this process to go through the process of selecting the two team captains who must verify (accept) the game's score is accurate and then this will trigger the ELO rating algorithm. 
+
 #### Creating a game
+To create a game, click the "+" icon at the bottom right of the homepage. You will get a form that uses the familiar feeling Google Maps API to search for an address that you want to use (the location of the game), and then select the time and date of this game. 
+
 #### Finding a game
+To find a game, you can either click the first circle on the top of the homepage, or you can go to the top right of your screen to the navigation bar and go to "FIND A GAME". This page will have a very similar UI as the My Games cards, but the card should show the number of players that are in the game, and the slots left. You can both leave games and join games if need be. 
+
 #### Looking at global rankings
+To look at the global rankings, go to the navigation bar and click "RANKINGS". 
+
 #### Updating your profile
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+To update any information about your profile like your first name, last name, middle initial (MI), username, height, and weight. 
 
-
-<!-- DEVELOPERS GUIDE -->
-## Developer Guide
-If you are a developer who is curious to understand the logic of the project without looking at every line written, then you are in the right place!
-
-#### Creating an Account
-#### Verifying your email
-#### Logging in
-#### Understanding the homepage
-#### Creating a game
-#### Finding a game
-#### Global Rankings
-#### Updating a profile
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Creating a map to see games
+- [ ] Creating a map to see games and find games
 - [ ] Creating a groups section for consistent teams that play looking for other teams to challenge
-- [ ] More to come...
+- [ ] XP Bar and Gamifying HoopEasy to rank up a player's XP no matter a win/ loss (different from your overall rating).
+- [ ] An in-app marketplace that you can redeem points for the XP earned over time to purchase things to customize your character / page. 
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
 
