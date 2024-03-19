@@ -84,23 +84,30 @@ Click on the "Create Account" button and it will take you through the process of
 We utilize Google Firebase to help secure your account well, and you will receive an email containing a link to verify your email. Once you click the link, make way back to the application as it should have redirected to the login page where you can now try your new login.
 
 #### Understanding the homepage
-<img width="1204" alt="Screenshot 2024-03-19 at 9 44 22 AM" src="https://github.com/Pmcslarrow/hoop-easy/assets/74205136/e28ed5a4-e488-4733-bce4-10ae36a68ecd">
-
 The homepage is where you as the user can get started with finding or creating new games. At the very top you have the HoopEasy logo which you can click to go back a page always, a profile page to update your user's information, and a navigation bar that will help you get to places like the rankings or finding a game page. 
 
 Lower on the page, you have the "My Games" section. At the creation of your account this will be empty, but as you create games, or join other games, this is the hub you will use to see upcoming games, or where you can verify the end result of games. Going further into this process, the most user intensive process is when verifying a game. Let's say that you have two players, yourself and a stranger who played 1v1 one day. If you want to submit a score, the card will show your game and the button "submit score". You click this process to go through the process of selecting the two team captains who must verify (accept) the game's score is accurate and then this will trigger the ELO rating algorithm. 
 
+<img width="1204" alt="Screenshot 2024-03-19 at 9 44 22 AM" src="https://github.com/Pmcslarrow/hoop-easy/assets/74205136/e28ed5a4-e488-4733-bce4-10ae36a68ecd">
+
 #### Creating a game
-To create a game, click the "+" icon at the bottom right of the homepage. You will get a form that uses the familiar feeling Google Maps API to search for an address that you want to use (the location of the game), and then select the time and date of this game. 
+To create a game, click the "+" icon at the bottom right of the homepage. You will get a form that uses the familiar feeling Google Maps API to search for an address that you want to use (the location of the game), select the time and date of this game, and the type of game you are wanting to play (1v1, 2v2...5v5).
+
+<img width="607" alt="Screenshot 2024-03-19 at 9 59 48 AM" src="https://github.com/Pmcslarrow/hoop-easy/assets/74205136/ef83d1d5-a5e4-4eff-a81c-08d253c98ec9">
 
 #### Finding a game
 To find a game, you can either click the first circle on the top of the homepage, or you can go to the top right of your screen to the navigation bar and go to "FIND A GAME". This page will have a very similar UI as the My Games cards, but the card should show the number of players that are in the game, and the slots left. You can both leave games and join games if need be. 
 
+<img width="383" alt="Screenshot 2024-03-19 at 10 01 27 AM" src="https://github.com/Pmcslarrow/hoop-easy/assets/74205136/29f1de29-c571-46ea-b9bc-630284ee9b67">
+
 #### Looking at global rankings
 To look at the global rankings, go to the navigation bar and click "RANKINGS". 
+<img width="920" alt="Screenshot 2024-03-19 at 10 01 51 AM" src="https://github.com/Pmcslarrow/hoop-easy/assets/74205136/81ebe44d-10c8-487b-bfdf-396388f68ae0">
 
 #### Updating your profile
-To update any information about your profile like your first name, last name, middle initial (MI), username, height, and weight. 
+To update any information about your profile like your first name, last name, middle initial (MI), username, height, and weight. Soon will work on adding a system that works with profile pictures.
+
+<img width="1167" alt="Screenshot 2024-03-19 at 10 02 08 AM" src="https://github.com/Pmcslarrow/hoop-easy/assets/74205136/759e1e12-2815-4956-809b-1850c2261563">
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
