@@ -31,7 +31,7 @@ function App() {
   }, [isAuthenticated]);
 
   return (
-    <APIProvider apiKey={REACT_APP_GOOGLE_API}>
+    <APIProvider apiKey={"AIzaSyD-qamxgHTK8gbNFAp5hhq43-HIN6wCcRs"}>
         <UserContext.Provider value={currentUser}>
             <Router>
             <Routes>

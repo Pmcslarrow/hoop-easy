@@ -50,6 +50,12 @@ const CreateGameForm = ( props ) => {
 
             if (userLoggedIn) {
                 const loggedInUser = await axios.get(`https://hoop-easy-production.up.railway.app/api/getUser?email=${userLoggedIn?.email}`);
+            
+                if (!gameLocation || !formData.dateOfGame || !formData.timeOfGame || !formData.gameType) {
+                    console.log("Required fields are empty");
+                    return;
+                }
+                
                 const addressString = gameLocation;
                 const date = formData.dateOfGame;
                 const time = formData.timeOfGame;

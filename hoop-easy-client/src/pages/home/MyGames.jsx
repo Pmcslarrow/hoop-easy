@@ -95,8 +95,8 @@ const MyGames = ({ props }) => {
         }
         
         const convertedTime = convertToLocalTime(currentCard?.dateOfGameInUTC)
-        const indexOfCountry = currentCard.address.lastIndexOf(',')
-        const address = currentCard.address.slice(0, indexOfCountry)
+        const indexOfCountry = currentCard?.address?.lastIndexOf(',') ?? -1
+        const address = indexOfCountry === -1 ? currentCard?.address?.slice(0, indexOfCountry) : currentCard.address
 
         return (
             <div class = "card-item">
@@ -110,8 +110,8 @@ const MyGames = ({ props }) => {
                     }} 
                 >
                     <MapContainer
-                        longitude={parseFloat(currentCard.longitude)}
-                        latitude={parseFloat(currentCard.latitude)}
+                        longitude={currentCard.longitude}
+                        latitude={currentCard.latitude}
                     />
                     <CardContent style={{textAlign: 'left'}}>
                         <Typography level="body-xs" variant="plain">{currentCard.gameType}v{currentCard.gameType}</Typography>

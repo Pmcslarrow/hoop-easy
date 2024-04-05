@@ -6,7 +6,7 @@ import Checkbox from '@mui/joy/Checkbox';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import Tab  from '@mui/material/Tab';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {createCaptainJsonFromArray, createScoreJsonFromArray, createTeamJsonFromArray} from '../../utils/toJSON'
