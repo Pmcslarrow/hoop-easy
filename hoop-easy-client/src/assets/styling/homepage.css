@@ -28,336 +28,298 @@ background-color: black;
 }
 
 section {
-        height: 100vh;
-        width: 100vw;
-}
-
-#welcome {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../../public/welcome-back-background.png") no-repeat center center;
-        background-size: cover;
-        display: flex;
-}
-
-#history {
-    background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), /* Black background with 85% opacity */
-    url("../../../public/backgrounds/background_history.png") no-repeat center center;    background-size: cover;
-    display: flex;
-}
-
-#find-game {
-    background: url("../../../public/find_games_background.png") no-repeat center center;
-    background-size: cover;
-    display: flex;
+height: 100vh;
+width: 100vw;
 }
 
 #welcome-container, #history-container {
-        width: 80%;
-        height: 90%;
-        margin: auto auto; 
+width: 80%;
+height: 90%;
+margin: auto auto; 
 }
 
 #welcome-container a {
-    transition: 100ms linear transform, 100ms linear box-shadow;
-    display: inline-block; 
-}
-
-
-        
-#my-games {
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), /* Black background with 85% opacity */
-    url("../../../public/backgrounds/background_myGames.png") no-repeat center center;    background-size: cover;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-}
- 
-
-#ratings {
-    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), /* Black background with 85% opacity */
-    url("../../../public/backgrounds/background_ratings.png") no-repeat center center;    background-size: cover;
-    background-color: rgba(0, 0, 0, 0.5);
+transition: 100ms linear transform, 100ms linear box-shadow;
+display: inline-block; 
 }
 
 .flexbox-row {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-        gap: 50px;
-        margin-right: 35px;
+display: flex;
+flex-direction: row;
+justify-content: space-around;
+align-items: center;
+gap: 50px;
+margin-right: 35px;
 }
 
 #search-bar {
-        border: 1px solid white;
-        width: 200px;
-        height: 30px;
-        padding: 10px;
-        background-color: transparent;
+border: 1px solid white;
+width: 200px;
+height: 30px;
+padding: 10px;
+background-color: transparent;
 }
 
 
 ::placeholder  { 
-        color: black;
-        font-size: 16px;
-        opacity: 0.8;
+color: black;
+font-size: 16px;
+opacity: 0.8;
 }
 .placeholderStyle::placeholder {
-    color: rgba(0, 0, 0, 0.5); 
-    font-size: 14px;
+color: rgba(0, 0, 0, 0.5); 
+font-size: 14px;
 }
 input[type="date"]::placeholder,
 input[type="time"]::placeholder {
-    color: black; 
+color: black; 
 }
 
 
 #accept-button,
 #deny-button {
-    width: 100px; 
-    height: 50px; 
-    padding: 50px;
-    border-radius: 12px;
-    border: 1px solid gray;
-    transition: 100ms linear opacity;
+width: 100px; 
+height: 50px; 
+padding: 50px;
+border-radius: 12px;
+border: 1px solid gray;
+transition: 100ms linear opacity;
 }
 
 #accept-button {
-    color: white;
-    background-color: rgb(0, 95, 0);
+color: white;
+background-color: rgb(0, 95, 0);
 }
 
 #deny-button {
-    color: white;
-    background-color: rgb(95, 0, 0);
+color: white;
+background-color: rgb(95, 0, 0);
 }
 
 #accept-button:hover,
 #deny-button:hover {
-    cursor: pointer;
-    opacity: 0.5;
+cursor: pointer;
+opacity: 0.5;
 }
 
 .cursor {
-    transition: 100ms linear opacity;
- }
-    
-.cursor:hover {
-    cursor: pointer;
-    opacity: 0.5;
+transition: 100ms linear opacity;
 }
-  
+
+.cursor:hover {
+cursor: pointer;
+opacity: 0.5;
+}
+
 /* H Scroller */
 .wrapper {
-    max-width: 70%;
-    display: flex;
-    overflow-x: scroll;
-    gap: 10px;
+max-width: 70%;
+display: flex;
+overflow-x: scroll;
+gap: 10px;
 }
-
-.wrapper .card-item {
-}
-
 
 #submitScoreButton, .buttonStyle, #create-button {
-    background: linear-gradient(to right, var(--background-gradient-start), var(--background-dark-orange));
-    border: 1px solid white;
-    transition: 0.1s linear transform;
-    font-size: 1.5rem;
-    font-family: var(--font-bold-italic);
-    color: white;
-    padding: 10px;
-    border-radius: 10px;
+background: linear-gradient(to right, var(--background-gradient-start), var(--background-dark-orange));
+border: 1px solid white;
+transition: 0.1s linear transform;
+font-size: 1.5rem;
+font-family: var(--font-bold-italic);
+color: white;
+padding: 10px;
+border-radius: 10px;
 }
 
 #submitScoreButton:hover, .buttonStyle:hover, #create-button:hover {
-    cursor: pointer;
-    transform: scale(1.05);
+cursor: pointer;
+transform: scale(1.05);
 }
 
 .opponentText {
-    font-size: 30px;
-    font-family: var(--font-bold-italic);
+font-size: 30px;
+font-family: var(--font-bold-italic);
 }
 
 .addressText {
-    color: gray;
-    font-size: 14px;
+color: gray;
+font-size: 14px;
 }
 
 #userScore, #opponentScore {
-    width: 35%;
-    height: 25px;
-    background: linear-gradient(to right, #000000, #3b3a3a);
-    border: 1px solid white;
-    color: white;
-    padding: 5px;
+width: 35%;
+height: 25px;
+background: linear-gradient(to right, #000000, #3b3a3a);
+border: 1px solid white;
+color: white;
+padding: 5px;
 }
 
 #userScore::placeholder, #opponentScore::placeholder {
-    color: #adadad;
+color: #adadad;
 }
 
 .enterText {
-    font-family: var(--font-bold-italic);
-    font-size: 18px;
-    color: var(--background-gradient-start);
+font-family: var(--font-bold-italic);
+font-size: 18px;
+color: var(--background-gradient-start);
 }
 
 .profile-button {
-    transition: 100ms linear transform;
+transition: 100ms linear transform;
 }
 
 .profile-button:hover {
-    cursor: pointer;
-    transform: scale(1.1);
+cursor: pointer;
+transform: scale(1.1);
 }
 
-  
-  /* New game and Exit buttons */
-  .fade-in {
-    animation: fadeIn 1s linear forwards, 
-  }
 
-  .rotateIn {
-    animation: rotateIn 300ms linear forwards;
-  }
-  .fade-in:hover {
-    cursor: pointer;
-  }
+/* New game and Exit buttons */
+.fade-in {
+animation: fadeIn 1s linear forwards, 
+}
 
-  .fade-out {
-    opacity: 0;
-    visibility: hidden;
-    transition: visibility 0s 0.35s, opacity 0.35s linear;
- }
- 
-   .fade-out.fade-out-active {
-    opacity: 0;
-   }
+.rotateIn {
+animation: rotateIn 300ms linear forwards;
+}
+.fade-in:hover {
+cursor: pointer;
+}
 
-   .display-none {
-    opacity: 1;
-    background: red;
-   }
-   
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  @keyframes rotateIn {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(90deg);
-    }
-  }
-  
-  .gridContainer {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    }
+.fade-out {
+opacity: 0;
+visibility: hidden;
+transition: visibility 0s 0.35s, opacity 0.35s linear;
+}
+
+.fade-out.fade-out-active {
+opacity: 0;
+}
+
+.display-none {
+opacity: 1;
+background: red;
+}
+
+@keyframes fadeIn {
+from {
+opacity: 0;
+}
+to {
+opacity: 1;
+}
+}
+
+@keyframes rotateIn {
+from {
+transform: rotate(0deg);
+}
+to {
+transform: rotate(90deg);
+}
+}
+
+.gridContainer {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 10px;
+}
 
 #createGameForm {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 40%;
-    width: 40%;
-    border-radius: 30px;
-    background-color: black;
-    border: 1px solid white;
-    transition: opacity 0.35s ease-in-out, transform 200s ease-in;
-    z-index: 999;
-    padding: 50px;
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+height: 40%;
+width: 40%;
+border-radius: 30px;
+background-color: black;
+border: 1px solid white;
+transition: opacity 0.35s ease-in-out, transform 200s ease-in;
+z-index: 999;
+padding: 50px;
 }
 
 .gridContainer div input, .gridContainer div select {
-    padding: 12px;
-    font-size: '16px';
+padding: 12px;
+font-size: '16px';
 }
-  
+
 #create-button{
-    padding: 10px;
-    font-size: 35px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
-    border: 1px solid white;
+padding: 10px;
+font-size: 35px;
+text-align: center;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
+border: 1px solid white;
 }
 
 #right-arrow {
-    position: relative;
-    left: 65px;
-    width: 50px;
-  }
+position: relative;
+left: 65px;
+width: 50px;
+}
 
 #left-arrow {
-    position: relative;
-    width: 50px;
+position: relative;
+width: 50px;
 }
 
 #rank:hover {
-    cursor: pointer;
+cursor: pointer;
 }
 
 
 
 
-  @media screen and (max-width: 600px) {
+@media screen and (max-width: 600px) {
 
-    .wrapper {
-        max-width: 90%;
-    }
+.wrapper {
+max-width: 90%;
+}
 
-    #search-bar, .hide {
-        display: none;
-    }
+#search-bar, .hide {
+display: none;
+}
 
-    a {
-        min-width: 100px;
-    }
+.wrapper a {
+min-width: 100px;
+}
 
-    #createGameForm {
-        font-size: small;
-        min-width: 60%;
-        min-height: max-content;
-        padding: 30px;
-        box-shadow: '0px 0px 10px 5px rgba(250, 70, 47, 0.625)';
-    }
+#createGameForm {
+font-size: small;
+min-width: 60%;
+min-height: max-content;
+padding: 30px;
+box-shadow: '0px 0px 10px 5px rgba(250, 70, 47, 0.625)';
+}
 
-    .gridContainer {
-        grid-template-columns: repeat(1, 1fr);
-        gap: 0;
-    }
+.gridContainer {
+grid-template-columns: repeat(1, 1fr);
+gap: 0;
+}
 
-    .gridContainer div input {
-        padding: 2px;
-        font-size: '12px';
-    }
+.gridContainer div input {
+padding: 2px;
+font-size: '12px';
+}
 
-    #create-button {
-        padding: 5px;
-        font-size: 20px;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
-        border: 1px solid white;
-    }
+#create-button {
+padding: 5px;
+font-size: 20px;
+text-align: center;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+background: linear-gradient(90deg, rgba(250, 70, 47, 0.625), rgba(175, 25, 5, 0.625));
+border: 1px solid white;
+}
 
-      .mobile-none {
-        display: none;
-      }
-  }
+.mobile-none {
+display: none;
+}
+}

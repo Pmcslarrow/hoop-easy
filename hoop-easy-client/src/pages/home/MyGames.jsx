@@ -3,7 +3,6 @@ import setGridStyle from '../../utils/setGridStyle';
 import { auth } from '../../config/firebase'
 import axios from 'axios'
 import { convertToLocalTime } from '../../utils/locationTimeFunctions';
-import {APIProvider, Map} from '@vis.gl/react-google-maps';
 import MapContainer from '../../components/ui/MapContainer';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,15 +20,6 @@ const MyGames = ({ props }) => {
     const { setRefreshToken, refreshToken, setAnimateOverallRating } = props;
     const [confirmedGames, setMyGames] = useState([])
     const [currentUserID, setCurrentUserID] = useState([])
-    const h1Style = setGridStyle(2, 2, 13, 2, undefined, "8vw", false);
-    const myGamesLocation = setGridStyle(2, 6, 12, 30, undefined, undefined, undefined)
-    const gridStyle = {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(13, 1fr)',
-        gridTemplateRows: 'repeat(30, 1fr)',
-        gap: '10px',
-    };
-    
 
     useEffect(() => {
         const getCurrentUserID = async () => {
@@ -151,10 +141,10 @@ const MyGames = ({ props }) => {
     ));
 
     return (
-        <section id='my-games' style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
+        <section id='my-games' style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
             <h1 style={{fontSize: '8vw', margin: '30px'}}>My Games</h1>
             <div className='wrapper'>
-                {renderedGames}
+                {renderedGames.length === 0 ? "Go find games!" : renderedGames}
             </div>
         </section>
     )

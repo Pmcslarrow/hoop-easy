@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from "../../config/firebase";
 import { createUserWithEmailAndPassword, signOut, sendEmailVerification } from 'firebase/auth';
@@ -6,17 +6,8 @@ import { handleError } from '../../utils/ErrorHandler.js';
 import { Navbar } from '../../components/ui/Navbar'
 import { db } from '../../config/firebase';
 import { collection, Timestamp } from 'firebase/firestore';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaRegCircle } from "react-icons/fa6";
 import axios from 'axios';
-import hoopEasyLogo from '../../assets/images/hoop-easy.png';
-import navButtonImg from '../../assets/images/269dd16fa1f5ff51accd09e7e1602267.png';
 import carouselImage1 from '../../assets/images/CAROUSEL IMAGES/1.png'
-import carouselImage2 from '../../assets/images/CAROUSEL IMAGES/2.png'
-import carouselImage3 from '../../assets/images/CAROUSEL IMAGES/3.png'
-import carouselImage4 from '../../assets/images/CAROUSEL IMAGES/4.png'
-import carouselImage5 from '../../assets/images/CAROUSEL IMAGES/5.png'
-
 
 import '../../assets/styling/create.css';
 
@@ -49,65 +40,18 @@ function CreateAccount({ props }) {
     setShowCustomizationForm(!showCustomizationForm)
   }
 
-
-
   const LeftPanel = () => {
-    const images = [carouselImage1, carouselImage2, carouselImage3, carouselImage4, carouselImage5];
-    const imagesText = ["PICK UP 1v1 GAMES.\nANYIME, ANYWHERE.", "WITH LIKE-MINDED,\nPASSIONATE HOOPERS.", "PLAY AT YOUR SKILL\nLEVEL", "AND COMPETETE\nGLOBALLY USING OUR\nCUTTING-EDGE\nRANKING SYSTEM.", "JOIN YOUR LOCAL\nBASKETBALL\nCOMMUNITY"]
-    const [prevSlideIndex, setPrev] = useState(0);
-    const [currSlideIndex, setCurr] = useState(0);
-    const circles = document.getElementsByClassName('circles');
-    const sliderRef = useRef(null);
-  
-    useEffect(() => {
-      circles[0].classList.add("active");
-    }, []);
-  
-    useEffect(() => {
-      const timeoutId = setTimeout(() => {
-        handleSlideChange(currSlideIndex);
-      }, 5000);
-  
-      return () => clearTimeout(timeoutId);
-    }, [currSlideIndex]); // Include currSlideIndex in the dependency array
-  
-    const handleSlideChange = (index) => {
-      const updatedIndex = (index + 1) % images.length;
-      setCurr(updatedIndex);
-      const slideElement = document.getElementById(`slide-${updatedIndex}`); // Use updatedIndex here
-      if (slideElement) {
-        slideElement.scrollIntoView({ behavior: 'smooth' });
-      }
-      circles[updatedIndex].classList.add("active");
-  
-      if (updatedIndex !== prevSlideIndex) {
-        circles[prevSlideIndex].classList.remove("active");
-      }
-      setPrev(updatedIndex);
-    };
+    const imageText = "PICK UP 1v1 GAMES.\nANYIME, ANYWHERE."
   
     return (
       <>
         <div className="left-panel">
-            <div className="sliderWrapper" ref={sliderRef}>
-                <div className="slider">
-                    {images.map((img, i) => (
-                    <div className="slider-item" key={i}>
-                        <img src={img} alt={`Slider img ${i}`} id={`slide-${i}`} />
-                        <div className="text-container">
-                            <p>{imagesText[i]}</p>
-                        </div>
-                    </div>
-                    ))}
+            <div className="slider-item">
+                <img src={carouselImage1} alt='Carousel' />
+                <div className="text-container">
+                    <p>{imageText}</p>
                 </div>
             </div>
-          <div className='slider-nav'>
-            {images.map((_, i) => (
-              <div key={i} >
-                <FaRegCircle className="circles" key={i}/>
-              </div>
-            ))}
-          </div>
         </div>
       </>
     );
@@ -121,7 +65,7 @@ function CreateAccount({ props }) {
         
         <div>
             <div>
-                <div onClick={toggleCustomizationForm} >
+                <div id='create-account-rect-wrapper' onClick={toggleCustomizationForm} >
                     <span className="rect center" >
                         <h1>Create An Account</h1>
                     </span>
