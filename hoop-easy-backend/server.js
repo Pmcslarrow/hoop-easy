@@ -29,7 +29,7 @@ function extractDateTime(datetime) {
     return { date: split[0], time: split[1] }
 }
 
-async function sortGamesByLocationDistance (games) {
+function sortGamesByLocationDistance (games) {
     const userCoordinates = await getUserCoordinates();
     const { latitude: userLat, longitude: userLon } = userCoordinates;
     const sortedGames = games.sort((game1, game2) => {
