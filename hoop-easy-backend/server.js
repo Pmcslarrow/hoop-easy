@@ -13,6 +13,9 @@ app.use(bodyParser.json());
 app.use(cors());
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of c1d9e4e (Initial comment on email conf)
 /*
 
 const connection = mysql.createConnection({
@@ -34,6 +37,7 @@ connection.connect((err) => {
 });
 
 */
+<<<<<<< HEAD
 =======
 // GLOBALS
 function createData(col1, col2, col3, col4, id) {
@@ -114,6 +118,8 @@ function getDistanceFromLatLonInMiles(lat1, lon1, lat2, lon2) {
     return deg * (Math.PI/180)
  }
 >>>>>>> 1386fc4ea061c00f4f08175a5e6b474e2ee80918
+=======
+>>>>>>> parent of c1d9e4e (Initial comment on email conf)
 
 
 const pool = mysql.createPool({
