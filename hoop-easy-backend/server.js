@@ -230,9 +230,15 @@ app.get('/api/availableGames', async (req, res) => {
             console.error('Error inserting user:', err);
             return res.status(500).json({ message: 'Failed to get available games' });
         }
-	const sortedGames = await sortGamesByLocationDistance(result.data);
-        res.send(sortedGames)
-        return sortedGames
+	sortGamesByLocationDistance(result.data)
+	    .then(sortedGames => {
+	        res.send(sortedGames);
+	        return sortedGames;
+	    })
+	    .catch(error => {
+	        console.error('Error sorting games by location distance:', error);
+	        res.status(500).send('Error sorting games by location distance');
+	    });
     })
 })
 
