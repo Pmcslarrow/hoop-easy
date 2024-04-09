@@ -29,21 +29,27 @@ function extractDateTime(datetime) {
     return { date: split[0], time: split[1] }
 }
 
-function sortGamesByLocationDistance (games) {
-    const userCoordinates = await getUserCoordinates();
-    const { latitude: userLat, longitude: userLon } = userCoordinates;
-    const sortedGames = games.sort((game1, game2) => {
-        const distance1 = getDistanceFromLatLonInMiles(userLat, userLon, game1.latitude, game1.longitude);
-        const distance2 = getDistanceFromLatLonInMiles(userLat, userLon, game2.latitude, game2.longitude);
-        return distance1 - distance2;
-    });
-    
-    sortedGames.forEach((game) => {
-        game.distance = getDistanceFromLatLonInMiles(userLat, userLon, game.latitude, game.longitude);
-        game.time = convertToLocalTime(game.dateOfGameInUTC);
-    });
-    
-    return sortedGames;
+function sortGamesByLocationDistance(games) {
+    return getUserCoordinates()
+        .then(userCoordinates => {
+            const { latitude: userLat, longitude: userLon } = userCoordinates;
+            const sortedGames = games.sort((game1, game2) => {
+                const distance1 = getDistanceFromLatLonInMiles(userLat, userLon, game1.latitude, game1.longitude);
+                const distance2 = getDistanceFromLatLonInMiles(userLat, userLon, game2.latitude, game2.longitude);
+                return distance1 - distance2;
+            });
+
+            sortedGames.forEach((game) => {
+                game.distance = getDistanceFromLatLonInMiles(userLat, userLon, game.latitude, game.longitude);
+                game.time = convertToLocalTime(game.dateOfGameInUTC);
+            });
+
+            return sortedGames;
+        })
+        .catch(error => {
+            console.error('Error getting user coordinates:', error);
+            return []; 
+        });
 };
 
 function getUserCoordinates() {
