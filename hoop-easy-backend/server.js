@@ -46,7 +46,7 @@ async function sortGamesByLocationDistance (games) {
     return sortedGames;
 };
 
-export default function getUserCoordinates() {
+function getUserCoordinates() {
     return new Promise((resolve, reject) => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
