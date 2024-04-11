@@ -286,6 +286,50 @@ app.post('/api/createHistoryInstance', async (req, res) => {
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
+    let errorOccurred = false;
+
+    for (let userID of team) {
+        if (errorOccurred) break; // If an error has occurred, stop processing
+
+        pool.query(sql, [userID, rating, my_team_score, opponent_team_score, game_date, game_location, opponent_ids], (err, result) => {
+            if (err) {
+                console.log("createTeamHistory error")
+                console.error(err)
+                res.status(500).send("Failed adding history data");
+                errorOccurred = true; // Set the flag to true if an error occurs
+            }            
+        });
+    }
+
+    if (!errorOccurred) {
+        res.status(200).send("Success adding history data");
+    }
+});
+
+
+/*
+app.post('/api/createHistoryInstance', async (req, res) => {
+    const historyData = req.body.params.values;
+    const team = historyData.team;
+    const rating = historyData.rating;
+    const my_team_score = historyData.what[0];
+    const opponent_team_score = historyData.what[1];
+    const game_date = historyData.when;
+    const game_location = historyData.where;
+    const opponent_ids = JSON.stringify(historyData.who); 
+    
+    const sql = `
+        INSERT INTO game_history (
+            userID,
+            rating,
+            my_team_score,
+            opponent_team_score,
+            game_date,
+            game_location,
+            opponent_ids
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
     for (let userID of team) {
         pool.query(sql, [userID, rating, my_team_score, opponent_team_score, game_date, game_location, opponent_ids], (err, result) => {
             if (err) {
@@ -297,7 +341,7 @@ app.post('/api/createHistoryInstance', async (req, res) => {
         });
     }
 });
-
+*/
 
 // PUT 
 app.put('/api/updateTeammates', (req, res) => {
