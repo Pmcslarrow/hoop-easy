@@ -289,6 +289,8 @@ app.post('/api/createHistoryInstance', async (req, res) => {
     for (let userID of team) {
         pool.query(sql, [userID, rating, my_team_score, opponent_team_score, game_date, game_location, opponent_ids], (err, result) => {
             if (err) {
+ 		console.log("createTeamHistory error")
+		console.error(err)
                 return res.status(500).send("Failed adding history data");
             }            
             res.status(200).send("Success adding history data");
@@ -380,7 +382,7 @@ app.put('/api/approveScore', (req, res) => {
 app.put('/api/updateTeamOverallRatings', (req, res) => {
     const ratingChange = parseFloat(req.query.overallChange).toFixed(2)
     const team = req.body.params.values
-
+    
     const sql = `
     UPDATE users
     SET 
@@ -392,6 +394,8 @@ app.put('/api/updateTeamOverallRatings', (req, res) => {
 
     pool.query(sql, [ratingChange, team], (err, result) => {
         if (err) {
+	    console.log("updateTeamOverallRatings error")
+	    console.error(err)
             res.status(500).send("Failed to update team overall ratings")
             return
         }
@@ -459,7 +463,8 @@ app.delete('/api/deleteGame', (req, res) => {
         const sql = 'DELETE FROM games WHERE gameID = ?';
         pool.query(sql, [gameID], (err, result) => {
             if (err) {
-                console.error("Error deleting game:", err);
+		console.log("deleteGame error")
+		console.error(err)
                 return res.status(500).send("Error trying to delete game");
             }
             console.log("Success deleting game!!!");
