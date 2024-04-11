@@ -382,7 +382,8 @@ app.put('/api/approveScore', (req, res) => {
 app.put('/api/updateTeamOverallRatings', (req, res) => {
     const ratingChange = parseFloat(req.query.overallChange).toFixed(2)
     const team = req.body.params.values
-    
+    console.log(ratingChange)
+    console.log(team)
     const sql = `
     UPDATE users
     SET 
